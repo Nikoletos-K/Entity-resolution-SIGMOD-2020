@@ -4,9 +4,32 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <libgen.h>
+#include "json.h"
 
 #define BUFFER 100
 
+void read_json(char* filename){
+	FILE * fp;
+	char word[1024];
+	
+	printf("-----------------------------------------\n" );
+	fp = fopen(filename,"r");
+	Json* js = malloc(sizeof(Json));
+	createJson(js);
+	char temp[2] = "\"";
+	
+	while(fscanf(fp,"%[^:]s",word)==1){
+		// printf("1. %s\n",word );
+		// fscanf(fp,"%[^\"]s",word);
+		// printf("2. %s\n",word );
+		// fscanf(fp,"%s",word);
+		// printf("3. %s\n",word );
+		// fscanf(fp,"%[^\"]s",word);
+		// printf("4. %s\n",word );
+		// fscanf(fp,"%[^\"]s",word);
+	}
+	fclose(fp);
+}
 
 void read_dir(char* nameOfDir){
 	DIR * dir;
@@ -31,6 +54,10 @@ void read_dir(char* nameOfDir){
 		}else{
 			char path[512];
 			char name[512];
+			char filename[512];
+			strcpy(filename,nameOfDir);
+			strcat(filename,"/");
+			strcat(filename,info->d_name);
 			char* tok;
 			char* dirname = basename(nameOfDir);
 			strcpy(path,dirname);
@@ -39,6 +66,7 @@ void read_dir(char* nameOfDir){
 			tok = strtok(name,".json");
 			strcat(path,tok);
 			printf("%s\n",path);
+			read_json(filename);
 		}
 	}
 
@@ -69,9 +97,11 @@ int read_csv(char * filename){
 }
 
 
+
+
 int main(){
 
-	read_csv("sigmod_medium_labelled_dataset.csv");
+	// read_csv("sigmod_medium_labelled_dataset.csv");
 	read_dir("2013_camera_specs");
 
 	return 0;
