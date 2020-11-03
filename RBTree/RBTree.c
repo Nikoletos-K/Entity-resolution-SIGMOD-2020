@@ -60,7 +60,7 @@ void SetColor(RBTNode * n,nodeColor color){ n->color=color; }
 
 int RBTempty(RBTNode * root){ return (root == GUARD ); }
 
-void * get_RBTData(RBTNode * node){	return node->data; }
+void * get_RBTData(RBTNode * node){	return (node==NULL ? NULL:node->data); }
 
 /*----------------------Search_function---------------------------*/
 
