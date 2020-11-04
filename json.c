@@ -15,12 +15,15 @@ void deleteJsonInfo(jsonInfo* jsInfo){
 	free(jsInfo);
 }
 
-void createJson(Json* js){
-	js->counter = 0;
-	js->infoArray[js->counter] = malloc(sizeof(jsonInfo));
+CamSpec* createCamSpec(char * name){
+	CamSpec* cs = malloc(sizeof(CamSpec));
+	cs->counter = 0;
+	cs->infoArray[js->counter] = malloc(sizeof(jsonInfo));
+	cs->name = strdup(name);
+	return cs;
 }
 
-void addJsonInfo(Json* js,char* key, char* value){
+void addJsonInfo(CamSpec* js,char* key, char* value){
 	js->infoArray[js->counter] = realloc(js->infoArray[js->counter],(js->counter+1));
 	initializeJsonInfo(key,value,js->infoArray[js->counter]);
 	js->counter +=1;

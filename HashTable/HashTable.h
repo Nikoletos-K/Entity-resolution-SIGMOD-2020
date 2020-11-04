@@ -1,65 +1,40 @@
-/* hashtable consists of buckets and buckets point to a memory that are stored HTrecords */
-#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#define ERROR -1
-#define NO_ERROR 1
+#include "./../RBTree/RBTree.h"
+#define empty NULL
+#define HASHTABLE_SIZE 1751
 
-typedef const void * comparatorValue;
-typedef struct Bucket Bucket;
+typedef char * keyType;
 
-typedef struct HTRecord{
-		
-	void * value;
-	char * key;
-	int counter;
+typedef struct HTNode{
+	RBTNode * rbtRoot;
+}HTNode;
 
-}HTRecord;
-
-typedef struct Bucket{
-
-	int records;		// counter of records saved in bucketMemory
-	void * bucketMemory;	// bucket storage
-	Bucket * next;
-
-}Bucket;
-
-typedef struct HashTable{
-	
-	size_t hashtableSize;
-	size_t bucketSize;
-	int records_perBucket;
-	int numOfRecords;
-	Bucket **buckets; 
-
+typedef struct HashTable {
+	unsigned int size;
+	HTNode **Table;	
 }HashTable;
 
 
-/*----------- HashTable functions ------------------*/ 
 
+/*---------Create_Functions-------------*/
+
+HashTable * HTConstruct(int size);
+
+/*-------------Insert_Functions-----------------*/
+
+void HTInsert(HashTable * ht,keyType key,void * data,int (*comparator)(valueType,valueType));
+
+/*------------Getters-----------------*/
+
+unsigned int hashCode(HashTable * ht,keyType key);
 unsigned int hashFunction(char * str,unsigned int length);
 
-// constructors
-HashTable * create_HashTable(size_t hashtableSize,size_t bucketSize);
-Bucket * createBucket(size_t bucketSize);
-HTRecord * createHTRecord(char * key);
+/*--------------Search_function-------------------*/
 
-// insertion functions
-int insert_toHashTable(void * value,char * HTkey,char * treeKey,HashTable * ht,int (*comparator)(comparatorValue,comparatorValue));
-int insertRecord(void * htRecord,Bucket * bucket);
-void increaseCounter(HTRecord * record);
+void * HTSearch(HashTable * ht,keyType key);
 
-// geters
-void * getValue(HTRecord * record);
-int getCounter(HTRecord * record);
-int getNumOfRecords(HashTable * ht);
+/*------------------Destructors----------------*/
 
-// search functions
-void numOfRecordsBetweenKeys(HashTable * hashtable,char * date1,char * date2,int (*comparator)(comparatorValue,comparatorValue));
-int findKeyData(HashTable * hashtable,char * wantedKey,char * date1,char * date2,int (*comparator)(comparatorValue,comparatorValue),char * funValue,int (*function)(void*,char*));
-
-// destructors
-void destroyHashTable(HashTable * hashtable);
-
-// print finction
-int printConditionHT(HashTable * hashtable,int (*condition)(void*,char*));
-
+void HTDestroy(HashTable * ht);

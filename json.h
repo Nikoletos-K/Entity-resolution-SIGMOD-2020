@@ -6,16 +6,16 @@ typedef struct jsonInfo{
 	char* value;	
 }jsonInfo;
 
-typedef struct Json{
-	//char* name;
+typedef struct CamSpec{
+	char* name;
 	jsonInfo** infoArray; 
 	int counter;
-}Json;
+}CamSpec;
 
 void initializeJsonInfo(char* key, char* value,jsonInfo * js);
 
 void deleteJsonInfo(jsonInfo* js);
 
-void createJson(Json* js);
+CamSpec * createCamSpec(char * name);
 
-void addJsonInfo(Json* js,char* key, char* value);
+void addJsonInfo(CamSpec* js,char* key, char* value);
