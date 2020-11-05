@@ -106,15 +106,12 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht){
 						label = atoi(token);
 						printf("--- %d\n",label);fflush(stdout);
 						break;
-					}
-
 				}
-				
-				spec_id++;
-				token = strtok(NULL,",");
+
 			}
-
-
+				
+			spec_id++;
+			token = strtok(NULL,",");
 			if(label == SAME_CAMERAS){
 				CamSpec * left_node = HTSearch(ht,left_spec_id);
 				CamSpec * right_node = HTSearch(ht,right_spec_id);
@@ -144,10 +141,10 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht){
 				}
 							
 			}
-
-			printf("\n");fflush(stdout);
 		}
+
 		line++;
+		printf("\n");fflush(stdout);
 	}
 	printf("%d\n",line );
 	return ht;
