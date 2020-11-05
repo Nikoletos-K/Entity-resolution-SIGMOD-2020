@@ -6,6 +6,8 @@
 #include <libgen.h>
 
 #include "./../include/utils.h"
+// #include "./../include/utils.h"
+
 
 int main(int argc,char ** argv){
 
@@ -23,6 +25,14 @@ int main(int argc,char ** argv){
 	HashTable * ht = HTConstruct(HASHTABLE_SIZE);
 	read_dir(argv[jsonDir],ht);
 	printf("%d\n",csvFile );
+	// HTSearch()
 
+	// for(int i=0;i<HASHTABLE_SIZE;i++){
+			
+	// 	if(ht->Table[i]->rbtRoot!=NULL)
+	// 		RBTPrintTree(ht->Table[i]->rbtRoot,printCamSpec);
+	// }
+
+	make_sets_from_csv(argv[csvFile],ht);
 	return 0;
 }

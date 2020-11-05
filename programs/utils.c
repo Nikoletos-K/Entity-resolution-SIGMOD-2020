@@ -64,7 +64,7 @@ void read_dir(char* nameOfDir,HashTable * ht){
 			strcpy(name,info->d_name);
 			tok = strtok(name,".json");
 			strcat(path,tok);
-			printf("%s\n",path);
+			// printf("%s\n",path);
 			CamSpec * cs = createCamSpec(path);
 			HTInsert(ht,path,(void *) cs,stringComparator);
 			// read_json(filename);
@@ -75,25 +75,82 @@ void read_dir(char* nameOfDir,HashTable * ht){
 	return;
 }
 
-int read_csv(char * filename){
+HashTable * make_sets_from_csv(char * csvfile,HashTable * ht){
 
-	FILE * csv = fopen(filename,"r");
+	FILE * csv = fopen(csvfile,"r");
 	int line=0;
+
+	// Reading csv line by line
 	while(!feof(csv)){
 		char buffer[BUFFER];
-		fscanf(csv,"%s",buffer);
-		printf("%s\n",buffer);
+		fscanf(csv,"%[^\n]\n",buffer);
+		// printf("%s\n",buffer );
 		if(line!=0){
+			char left_spec_id[BUFFER],right_spec_id[BUFFER];
 			char * token = strtok(buffer,",");
+			int spec_id=0;
+
+			// Reading line
 			while(token!=NULL){
-				printf("%s\n",token );
+				// printf("%s\n",token);
+				switch(spec_id){
+					case 0:
+						strcpy(left_spec_id,token);
+						printf("- %s\n",left_spec_id);fflush(stdout);
+						break;
+					case 1:
+						strcpy(right_spec_id,token);
+						printf("-- %s\n",right_spec_id);fflush(stdout);
+						break;
+					case 2:{
+						int label = atoi(token);
+						printf("--- %d\n",label);fflush(stdout);
+						break;
+					}
+
+				}
+				
+				spec_id++;
 				token = strtok(NULL,",");
 			}
+
+
+			if(label == SAME_CAMERAS){
+				CamSpec * left_node = HTSearch(ht,left_spec_id);
+				CamSpec * right_node = HTSearch(ht,right_spec_id);
+
+				if(left_node->set == NULL && right_node->set == NULL){
+
+					left_node->set =  HTConstruct(HASHTABLE_SIZE);
+					right_node->set = left_node->set;
+
+					HTInsert(left_node->set,left_node->name,left_node,stringComparator);
+					HTInsert(left_node->set,right_node->name,right_node,stringComparator);
+
+				}else if(left_node->set != NULL && right_node->set == NULL){
+
+					right_node->set = left_node->set;
+					HTInsert(left_node->set,right_node->name,right_node,stringComparator);
+
+				}else if(left_node->set == NULL && right_node->set != NULL){
+
+					left_node->set = right_node->set;
+					HTInsert(right_node->set,left_node->name,left_node,stringComparator);
+					
+				}else if(left_node->set != NULL && right_node->set != NULL){
+					
+					left_node->set = HTMerge(left_node->set,right_node->set);
+					right_node->set = left_node->set;
+				}
+							
+			}
+
+			printf("\n");fflush(stdout);
 		}
 		line++;
 	}
 	printf("%d\n",line );
-	return 1;
+	return ht;
 
 }
 

@@ -24,6 +24,10 @@ CamSpec* createCamSpec(char * name){
 	cs->infoArray = malloc(sizeof(jsonInfo*));
 	cs->infoArray[cs->counter] = malloc(sizeof(jsonInfo));
 	cs->name = strdup(name);
+	cs->set = NULL;
+	// cs->set = HTConstruct(HASHTABLE_SIZE);
+	// HTInsert(cs->set,cs->name,cs,stringComparator);
+
 	return cs;
 }
 
@@ -32,4 +36,8 @@ CamSpec* addJsonInfo(CamSpec* js,char* key, char* value){
 	initializeJsonInfo(key,value,js->infoArray[js->counter]);
 	js->counter +=1;
 	return  js;
+}
+
+void printCamSpec(void * data){
+	printf("%s\n",(char*)(((CamSpec*)data)->name));
 }

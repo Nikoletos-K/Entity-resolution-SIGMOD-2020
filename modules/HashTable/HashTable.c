@@ -58,6 +58,14 @@ void * HTSearch(HashTable * ht,keyType key){
 	return get_RBTData(RBTFindNode(ht->Table[index]->rbtRoot,key,comparator));
 }
 
+/*-------------------------------------Merge---------------------------------------*/
+
+
+HashTable * HTMerge(HashTable * ht1,HashTable * ht2){
+
+	
+}
+
 /*-------------------------------------Destructor---------------------------------------*/
 
 void HTDestroy(HashTable * ht){
