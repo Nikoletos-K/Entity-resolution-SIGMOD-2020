@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+#pragma once
 
 typedef struct jsonInfo{
 	char* key;

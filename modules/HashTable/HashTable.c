@@ -1,4 +1,7 @@
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "./../../include/HashTable.h"
 
 unsigned int hashFunction(char * str,unsigned int length){

@@ -1,3 +1,5 @@
+#pragma once
+
 enum nodeColor { BLACK, RED };
 
 typedef enum nodeColor nodeColor;

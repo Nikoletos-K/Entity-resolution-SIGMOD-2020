@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+#pragma once
 
 #include "./RBTree.h"
 #define empty NULL
