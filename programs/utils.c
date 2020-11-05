@@ -107,42 +107,20 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht){
 						printf("--- %d\n",label);fflush(stdout);
 						break;
 				}
-
+				spec_id++;
+				token = strtok(NULL,",");
 			}
-				
-			spec_id++;
-			token = strtok(NULL,",");
+			
 			if(label == SAME_CAMERAS){
 				CamSpec * left_node = HTSearch(ht,left_spec_id);
 				CamSpec * right_node = HTSearch(ht,right_spec_id);
 
-				if(left_node->set == NULL && right_node->set == NULL){
-
-					left_node->set =  HTConstruct(HASHTABLE_SIZE);
-					right_node->set = left_node->set;
-
-					HTInsert(left_node->set,left_node->name,left_node,stringComparator);
-					HTInsert(left_node->set,right_node->name,right_node,stringComparator);
-
-				}else if(left_node->set != NULL && right_node->set == NULL){
-
-					right_node->set = left_node->set;
-					HTInsert(left_node->set,right_node->name,right_node,stringComparator);
-
-				}else if(left_node->set == NULL && right_node->set != NULL){
-
-					left_node->set = right_node->set;
-					HTInsert(right_node->set,left_node->name,left_node,stringComparator);
-					
-				}else if(left_node->set != NULL && right_node->set != NULL){
-					
-					left_node->set = HTMerge(left_node->set,right_node->set);
+				if(left_node->set != right_node->set){
+					left_node->set = mergeLists(left_node->set,right_node->set);
 					right_node->set = left_node->set;
 				}
-							
 			}
 		}
-
 		line++;
 		printf("\n");fflush(stdout);
 	}

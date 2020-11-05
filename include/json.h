@@ -1,11 +1,12 @@
 #pragma once
 
 #include "./HashTable.h"
+#include "./list.h"
 
-typedef HashTable * Set;
+typedef List * Set;
 typedef struct jsonInfo{
 	char* key;
-	char* value;	
+	char* value;
 }jsonInfo;
 
 typedef struct CamSpec{

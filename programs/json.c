@@ -25,8 +25,8 @@ CamSpec* createCamSpec(char * name){
 	cs->infoArray[cs->counter] = malloc(sizeof(jsonInfo));
 	cs->name = strdup(name);
 	cs->set = NULL;
-	// cs->set = HTConstruct(HASHTABLE_SIZE);
-	// HTInsert(cs->set,cs->name,cs,stringComparator);
+	cs->set = createList();
+	insert_toList(cs->set,cs);
 
 	return cs;
 }

@@ -32,8 +32,6 @@ unsigned int hashFunction(char * str,unsigned int length);
 
 /*--------------Search_function-------------------*/
 
-
-HashTable * HTMerge(HashTable * ht1,HashTable * ht2);
 void * HTSearch(HashTable * ht,keyType key);
 
 /*------------------Destructors----------------*/
