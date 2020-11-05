@@ -17,4 +17,4 @@ void deleteJsonInfo(jsonInfo* js);
 
 CamSpec * createCamSpec(char * name);
 
-void addJsonInfo(CamSpec* js,char* key, char* value);
+CamSpec* addJsonInfo(CamSpec* js,char* key, char* value);
