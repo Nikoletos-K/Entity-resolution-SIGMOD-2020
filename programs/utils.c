@@ -88,7 +88,7 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht){
 		if(line!=0){
 			char left_spec_id[BUFFER],right_spec_id[BUFFER];
 			char * token = strtok(buffer,",");
-			int spec_id=0;
+			int spec_id=0,label;
 
 			// Reading line
 			while(token!=NULL){
@@ -102,8 +102,8 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht){
 						strcpy(right_spec_id,token);
 						printf("-- %s\n",right_spec_id);fflush(stdout);
 						break;
-					case 2:{
-						int label = atoi(token);
+					case 2:
+						label = atoi(token);
 						printf("--- %d\n",label);fflush(stdout);
 						break;
 					}
