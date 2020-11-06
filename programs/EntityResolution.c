@@ -23,8 +23,9 @@ int main(int argc,char ** argv){
 
 	initializeDataStructures();
 	HashTable * ht = HTConstruct(HASHTABLE_SIZE);
+	printf("- %s\n",argv[jsonDir] );
 	read_dir(argv[jsonDir],ht);
-	printf("%d\n",csvFile );
+	printf("- %d\n",csvFile );
 	// HTSearch()
 
 	// for(int i=0;i<HASHTABLE_SIZE;i++){
@@ -34,5 +35,6 @@ int main(int argc,char ** argv){
 	// }
 
 	make_sets_from_csv(argv[csvFile],ht);
+
 	return 0;
 }

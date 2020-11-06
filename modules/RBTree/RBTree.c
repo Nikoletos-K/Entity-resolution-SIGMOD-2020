@@ -44,7 +44,6 @@ void RBTInitialiseKey(RBTNode * n,valueType key){
 	n->key = strdup((char*)key);
 }
 
-
 /*------------------------------------- Getters -------------------------------------------*/
 
 

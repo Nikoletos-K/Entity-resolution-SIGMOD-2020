@@ -64,7 +64,6 @@ void read_dir(char* nameOfDir,HashTable * ht){
 			strcpy(name,info->d_name);
 			tok = strtok(name,".json");
 			strcat(path,tok);
-			// printf("%s\n",path);
 			CamSpec * cs = createCamSpec(path);
 			HTInsert(ht,path,(void *) cs,stringComparator);
 			// read_json(filename);
@@ -112,8 +111,8 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht){
 			}
 			
 			if(label == SAME_CAMERAS){
-				CamSpec * left_node = HTSearch(ht,left_spec_id);
-				CamSpec * right_node = HTSearch(ht,right_spec_id);
+				CamSpec * left_node = HTSearch(ht,left_spec_id,stringComparator);
+				CamSpec * right_node = HTSearch(ht,right_spec_id,stringComparator);
 
 				if(left_node->set != right_node->set){
 					left_node->set = mergeLists(left_node->set,right_node->set);

@@ -32,7 +32,7 @@ unsigned int hashFunction(char * str,unsigned int length);
 
 /*--------------Search_function-------------------*/
 
-void * HTSearch(HashTable * ht,keyType key);
+void * HTSearch(HashTable * ht,keyType key,int (*comparator)(valueType,valueType));
 
 /*------------------Destructors----------------*/
 

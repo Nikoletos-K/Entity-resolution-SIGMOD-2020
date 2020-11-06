@@ -51,11 +51,12 @@ void HTInsert(HashTable * ht,keyType key,void * data,int (*comparator)(valueType
 
 /*-------------------------------------Search_function---------------------------------------*/
 
-void * HTSearch(HashTable * ht,keyType key){
+void * HTSearch(HashTable * ht,keyType key,int (*comparator)(valueType,valueType)){
 
 	unsigned int index = hashFunction(key,strlen((char*)key))%ht->size;
+	RBTNode * node = RBTFindNode(ht->Table[index]->rbtRoot,key,comparator);
 
-	return get_RBTData(RBTFindNode(ht->Table[index]->rbtRoot,key,comparator));
+	return get_RBTData(node);
 }
 
 
