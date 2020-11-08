@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./../include/json.h"
+#include "./../../include/json.h"
 
 
 void initializeJsonInfo(char* key, char* value,jsonInfo * jsInfo){

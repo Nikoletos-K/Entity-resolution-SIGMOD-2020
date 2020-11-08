@@ -15,7 +15,7 @@ DisJointSet * DSJConstruct(int set_size,void ** objectArray){
 	for(int i=0;i<set_size;i++)
 		dsjSet->parentArray[i] = i;
 
-
+ 
 	return dsjSet;
 }
 
