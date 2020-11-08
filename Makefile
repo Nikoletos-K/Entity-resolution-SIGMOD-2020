@@ -11,7 +11,7 @@ MAKE += --silent
 PROGRAMS = $(subst programs/, , $(wildcard programs/*))
 
 # Compile: όλα, προγράμματα, βιβλιοθήκη και tests
-# all: programs lib tests
+all: programs lib tests
 all: programs lib
 
 # Η παρακάτω γραμμή δημιουργεί ένα target programs-<foo> για οποιοδήποτε <foo>. Η μεταβλητή $* περιέχει το "foo"
@@ -20,15 +20,15 @@ programs-%:
 
 programs: $(addprefix programs-, $(PROGRAMS))		# depend στο programs-<foo> για κάθε στοιχείο του PROGRAMS
 
-# tests:
-# 	$(MAKE) -C tests all
+tests:
+	$(MAKE) -C tests all
 
 lib:
 	$(MAKE) -C lib all
 
 # Εκτέλεση: όλα, προγράμματα, tests
 run: run-programs
-# run: run-tests run-programs
+run: run-tests run-programs
 
 
 run-programs-%:
@@ -36,8 +36,8 @@ run-programs-%:
 
 run-programs: $(addprefix run-programs-, $(PROGRAMS))
 
-# run-tests:
-# 	$(MAKE) -C tests run
+run-tests:
+	$(MAKE) -C tests run
 
 # Εκτέλεση με valgrind: όλα, προγράμματα, tests
 valgrind: valgrind-programs
@@ -49,19 +49,19 @@ valgrind-programs-%:
 
 valgrind-programs: $(addprefix valgrind-programs-, $(PROGRAMS))
 
-# valgrind-tests:
-# 	$(MAKE) -C tests valgrind
+valgrind-tests:
+	$(MAKE) -C tests valgrind
 
 # Εκκαθάριση
 clean-programs-%:
 	$(MAKE) -C programs/$* clean
 
 clean: $(addprefix clean-programs-, $(PROGRAMS))
-# 	$(MAKE) -C tests clean
+	$(MAKE) -C tests clean
 	$(MAKE) -C lib clean
 
 # Δηλώνουμε ότι οι παρακάτω κανόνες είναι εικονικοί, δεν παράγουν αρχεία. Θέλουμε δηλαδή
 # το "make programs" να εκτελεστεί παρόλο που υπάρχει ήδη ένα directory "programs".
 #
 .PHONY: programs lib run run-programs clean
-# .PHONY: programs tests lib run run-programs run-tests clean
+.PHONY: programs tests lib run run-programs run-tests clean
