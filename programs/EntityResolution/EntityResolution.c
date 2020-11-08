@@ -29,8 +29,18 @@ int main(int argc,char ** argv){
 	int num_of_cameras=0;
 	camArray = read_dir(argv[jsonDir],ht,camArray,&num_of_cameras);
 
-	DisJointSet * djSet = DSJConstruct(num_of_cameras,(void**)camArray);
+	DisJointSet * djSet = DJSConstruct(num_of_cameras,(void**)camArray);
 	make_sets_from_csv(argv[csvFile],ht,djSet);
 	printPairs(djSet); 
+
+
+	for(int i=0;i<num_of_cameras;i++){
+		destroyCamSpec(camArray[i]);
+		// free(camArray[i]);
+	}
+	free(camArray);
+	HTDestroy(ht);
+	DJSDestructor(djSet);
+	destroyDataStructures();
 	return 0;
 }

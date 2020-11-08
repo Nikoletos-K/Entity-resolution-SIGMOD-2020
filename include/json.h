@@ -13,13 +13,13 @@ typedef struct jsonInfo{
 typedef struct CamSpec{
 	char* name;
 	jsonInfo** infoArray; 
-	int counter;
+	int numOfSpecs;
 	int arrayPosition;
 	Set set;
 
 }CamSpec;
 
-void initializeJsonInfo(char* key, char* value,jsonInfo * js);
+jsonInfo * initializeJsonInfo(char* key, char* value);
 
 void deleteJsonInfo(jsonInfo* js);
 
@@ -28,4 +28,5 @@ CamSpec * createCamSpec(char * name,int arrayPosition);
 CamSpec* addJsonInfo(CamSpec* js,char* key, char* value);
 
 void printCamSpec(void * data);
+void destroyCamSpec(CamSpec * cs);
 int stringComparator(const void * str1,const void * str2);

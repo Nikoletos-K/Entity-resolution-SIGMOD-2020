@@ -118,13 +118,13 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 			if(label == SAME_CAMERAS){
 				CamSpec * left_node = HTSearch(ht,left_spec_id,stringComparator);
 				CamSpec * right_node = HTSearch(ht,right_spec_id,stringComparator);
-				DSJUnion(djSet,left_node->arrayPosition,right_node->arrayPosition);				
+				DJSUnion(djSet,left_node->arrayPosition,right_node->arrayPosition);				
 			}
 		}
 		line++;
 		// printf("\n");fflush(stdout);
 	}
-	printf("%d\n",line );
+	fclose(csv);
 	return ht;
 
 }
@@ -136,7 +136,7 @@ void printPairs(DisJointSet * djSet){
 	CamSpec** camArray = (CamSpec**) (djSet->objectArray);
 
 	for(int i=0;i<djSet->size;i++){
-		parent = DSJFindParent(djSet,i);
+		parent = DJSFindParent(djSet,i);
 		if(parent!=i){
 			insert_toList(camArray[parent]->set,camArray[i]);
 		}
@@ -144,8 +144,9 @@ void printPairs(DisJointSet * djSet){
 	// listNode * printedNode = rootList->firstNode;
 	// while(printedNode!=NULL){
 	for(int i=0;i<djSet->size;i++){
-		if(camArray[i]->set->numOfNodes >1)
+		if(!oneNodeList(camArray[i]->set))
 			printForward(camArray[i]->set,printCameraName);
+		fflush(stdout);
 	}
 	// 	printedNode = printedNode->nextNode;
 	// }
@@ -158,3 +159,4 @@ int stringComparator(const void * str1,const void * str2){
 void printCameraName(void * data){
 	printf("%s",((CamSpec*)data)->name);
 }
+

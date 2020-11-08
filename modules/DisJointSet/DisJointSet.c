@@ -5,7 +5,7 @@
 
 
 
-DisJointSet * DSJConstruct(int set_size,void ** objectArray){
+DisJointSet * DJSConstruct(int set_size,void ** objectArray){
 
 	DisJointSet * dsjSet = malloc(sizeof(DisJointSet));
 	dsjSet->size = set_size;
@@ -19,42 +19,50 @@ DisJointSet * DSJConstruct(int set_size,void ** objectArray){
 	return dsjSet;
 }
 
-void DSJUnion(DisJointSet * dsjSet,int x,int y){
+void DJSUnion(DisJointSet * dsjSet,int x,int y){
 
-	DSJConnect(dsjSet,DSJFindParent(dsjSet,x),DSJFindParent(dsjSet,y));
+	DJSConnect(dsjSet,DJSFindParent(dsjSet,x),DJSFindParent(dsjSet,y));
 }
 
-void DSJConnect(DisJointSet * dsjSet,int x,int y){
+void DJSConnect(DisJointSet * dsjSet,int x,int y){
 
-	if(DSJgetRank(dsjSet,x) > DSJgetRank(dsjSet,y))
-		DSJsetParent(dsjSet,y,x);
+	if(DJSgetRank(dsjSet,x) > DJSgetRank(dsjSet,y))
+		DJSsetParent(dsjSet,y,x);
 	else{
-		DSJsetParent(dsjSet,x,y);
-		if(DSJgetRank(dsjSet,x) == DSJgetRank(dsjSet,y))
-			DSJsetRank(dsjSet,y,DSJgetRank(dsjSet,y)+1);
+		DJSsetParent(dsjSet,x,y);
+		if(DJSgetRank(dsjSet,x) == DJSgetRank(dsjSet,y))
+			DJSsetRank(dsjSet,y,DJSgetRank(dsjSet,y)+1);
 	}
 }
 
-int DSJFindParent(DisJointSet * dsjSet,int x){
+int DJSFindParent(DisJointSet * dsjSet,int x){
 
-	if(x != DSJgetParent(dsjSet,x))
-		DSJsetParent(dsjSet,x,DSJFindParent(dsjSet,DSJgetParent(dsjSet,x)));
+	if(x != DJSgetParent(dsjSet,x))
+		DJSsetParent(dsjSet,x,DJSFindParent(dsjSet,DJSgetParent(dsjSet,x)));
 
-	return DSJgetParent(dsjSet,x);
+	return DJSgetParent(dsjSet,x);
 }
 
-int DSJgetRank(DisJointSet * dsjSet,int x){
+int DJSgetRank(DisJointSet * dsjSet,int x){
 	return dsjSet->rankArray[x];
 }
 
-int DSJgetParent(DisJointSet * dsjSet,int x){
+int DJSgetParent(DisJointSet * dsjSet,int x){
 	return dsjSet->parentArray[x];
 }
 
-void DSJsetRank(DisJointSet * dsjSet,int x,int newrank){
+void DJSsetRank(DisJointSet * dsjSet,int x,int newrank){
 	dsjSet->rankArray[x] = newrank;
 }
 
-void DSJsetParent(DisJointSet * dsjSet,int x,int newparent){
+void DJSsetParent(DisJointSet * dsjSet,int x,int newparent){
 	dsjSet->parentArray[x] = newparent;
+}
+
+void DJSDestructor(DisJointSet * dsjSet){
+
+	free(dsjSet->rankArray);
+	free(dsjSet->parentArray);
+	free(dsjSet);
+
 }

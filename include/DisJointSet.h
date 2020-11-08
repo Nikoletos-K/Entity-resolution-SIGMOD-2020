@@ -12,17 +12,20 @@ typedef struct DisJointSet {
 } DisJointSet;
 
 /* Constructor */
-DisJointSet * DSJConstruct(int set_size,void ** objectArray);
+DisJointSet * DJSConstruct(int set_size,void ** objectArray);
 
 /* Methods */
-void DSJUnion(DisJointSet * dsjSet,int x,int y);
-void DSJConnect(DisJointSet * dsjSet,int x,int y);
-int DSJFindParent(DisJointSet * dsjSet,int x);
+void DJSUnion(DisJointSet * dsjSet,int x,int y);
+void DJSConnect(DisJointSet * dsjSet,int x,int y);
+int DJSFindParent(DisJointSet * dsjSet,int x);
 
 /* Getters */
-int DSJgetRank(DisJointSet * dsjSet,int x);
-int DSJgetParent(DisJointSet * dsjSet,int x);
+int DJSgetRank(DisJointSet * dsjSet,int x);
+int DJSgetParent(DisJointSet * dsjSet,int x);
 
 /* Setters */
-void DSJsetParent(DisJointSet * dsjSet,int x,int newparent);
-void DSJsetRank(DisJointSet * dsjSet,int x,int newrank);
+void DJSsetParent(DisJointSet * dsjSet,int x,int newparent);
+void DJSsetRank(DisJointSet * dsjSet,int x,int newrank);
+
+/* Destructor */
+void DJSDestructor(DisJointSet * dsjSet);
