@@ -131,22 +131,24 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 
 void printPairs(DisJointSet * djSet){
 
-
-	List * rootList = createList();
+	// List * rootList = createList();
 	int parent;
+	CamSpec** camArray = (CamSpec**) (djSet->objectArray);
+
 	for(int i=0;i<djSet->size;i++){
 		parent = DSJFindParent(djSet,i);
-		CamSpec** camArray = (CamSpec**) (djSet->objectArray);
 		if(parent!=i){
 			insert_toList(camArray[parent]->set,camArray[i]);
-			insert_toList(rootList,camArray[parent]->set);
 		}
 	}
-	listNode * printedNode = rootList->firstNode;
-	while(printedNode!=NULL){
-		printForward(printedNode->data,printCameraName);
-		printedNode = printedNode->nextNode;
+	// listNode * printedNode = rootList->firstNode;
+	// while(printedNode!=NULL){
+	for(int i=0;i<djSet->size;i++){
+		if(camArray[i]->set->numOfNodes >1)
+			printForward(camArray[i]->set,printCameraName);
 	}
+	// 	printedNode = printedNode->nextNode;
+	// }
 }
 
 int stringComparator(const void * str1,const void * str2){
