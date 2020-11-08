@@ -2,7 +2,6 @@
 
 #include "./HashTable.h"
 #include "./list.h"
-#include "./DisJointSet.h"
 
 
 typedef List * Set;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./json.h"
+#include "./DisJointSet.h"
 
 
 

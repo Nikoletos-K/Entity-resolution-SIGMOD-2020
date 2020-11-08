@@ -131,18 +131,19 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 
 void printPairs(DisJointSet * djSet){
 
+
 	List * rootList = createList();
 	int parent;
 	for(int i=0;i<djSet->size;i++){
-
 		parent = DSJFindParent(djSet,i);
 		CamSpec** camArray = (CamSpec**) (djSet->objectArray);
-		insert_toList(camArray[parent]->set,camArray[i]);
-		insert_toList(rootList,camArray[parent]->set);
+		if(parent!=i){
+			insert_toList(camArray[parent]->set,camArray[i]);
+			insert_toList(rootList,camArray[parent]->set);
+		}
 	}
-
 	listNode * printedNode = rootList->firstNode;
-	while(printedNode==NULL){
+	while(printedNode!=NULL){
 		printForward(printedNode->data,printCameraName);
 		printedNode = printedNode->nextNode;
 	}

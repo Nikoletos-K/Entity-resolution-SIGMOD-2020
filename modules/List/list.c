@@ -95,7 +95,7 @@ void printForward(List * list,void (*printData)(void*)){
 		while(rightNode!=NULL){
 
 			printData(leftNode->data);
-			printf(",");
+			printf(", ");
 			printData(rightNode->data);
 			printf("\n");
 			rightNode = rightNode->nextNode;
