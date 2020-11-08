@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdio.h>
+
 #define NO_ERROR 1
 #define ERROR -1
 
@@ -47,4 +49,4 @@ int oneNodeList(List * list);
 
 // merge lists
 List * mergeLists(List * list1,List * list2);
-void printForward(List * list,void (*printData)(void*));
+void printForward(List * list,FILE * output,void (*printData)(void*,FILE *));

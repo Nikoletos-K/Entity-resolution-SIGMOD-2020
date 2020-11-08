@@ -4,6 +4,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <libgen.h>
+#include <sys/times.h>
+#include <unistd.h>
 
 #include "./../../include/utils.h"
 
@@ -88,7 +90,7 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 	while(!feof(csv)){
 		char buffer[BUFFER];
 		fscanf(csv,"%[^\n]\n",buffer);
-		// printf("%s\n",buffer );
+
 		if(line!=0){
 			char left_spec_id[BUFFER],right_spec_id[BUFFER];
 			char * token = strtok(buffer,",");
@@ -96,19 +98,16 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 
 			// Reading line
 			while(token!=NULL){
-				// printf("%s\n",token);
+
 				switch(spec_id){
 					case 0:
 						strcpy(left_spec_id,token);
-						// printf("- %s\n",left_spec_id);fflush(stdout);
 						break;
 					case 1:
 						strcpy(right_spec_id,token);
-						// printf("-- %s\n",right_spec_id);fflush(stdout);
 						break;
 					case 2:
 						label = atoi(token);
-						// printf("--- %d\n",label);fflush(stdout);
 						break;
 				}
 				spec_id++;
@@ -122,41 +121,45 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 			}
 		}
 		line++;
-		// printf("\n");fflush(stdout);
 	}
 	fclose(csv);
 	return ht;
 
 }
 
-void printPairs(DisJointSet * djSet){
+void printPairs(DisJointSet * djSet,int print_stdout){
 
-	// List * rootList = createList();
+	FILE * output;
+	if(print_stdout)
+		output = stdout;
+	else
+		output = fopen("PAIRS.txt","w+");
+
+
 	int parent;
 	CamSpec** camArray = (CamSpec**) (djSet->objectArray);
 
 	for(int i=0;i<djSet->size;i++){
 		parent = DJSFindParent(djSet,i);
-		if(parent!=i){
+		if(parent!=i)
 			insert_toList(camArray[parent]->set,camArray[i]);
-		}
 	}
-	// listNode * printedNode = rootList->firstNode;
-	// while(printedNode!=NULL){
+
 	for(int i=0;i<djSet->size;i++){
 		if(!oneNodeList(camArray[i]->set))
-			printForward(camArray[i]->set,printCameraName);
+			printForward(camArray[i]->set,output,printCameraName);
 		fflush(stdout);
 	}
-	// 	printedNode = printedNode->nextNode;
-	// }
+
+	if(!print_stdout)
+		fclose(output);
 }
 
 int stringComparator(const void * str1,const void * str2){
     return strcmp((char*) str1,(char*) str2);
 }
 
-void printCameraName(void * data){
-	printf("%s",((CamSpec*)data)->name);
+void printCameraName(void * data,FILE * output){
+	fprintf(output,"%s",((CamSpec*)data)->name);
 }
 

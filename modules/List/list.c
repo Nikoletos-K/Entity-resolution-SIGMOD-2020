@@ -85,7 +85,7 @@ void printList(List * list,void (*printData)(void*)){
 	}
 }
 
-void printForward(List * list,void (*printData)(void*)){
+void printForward(List * list,FILE * output,void (*printData)(void*,FILE *)){
 
 	listNode * leftNode = list->firstNode,* rightNode;
 	
@@ -94,10 +94,10 @@ void printForward(List * list,void (*printData)(void*)){
 		rightNode = leftNode->nextNode;
 		while(rightNode!=NULL){
 
-			printData(leftNode->data);
-			printf(", ");
-			printData(rightNode->data);
-			printf("\n");
+			printData(leftNode->data,output);
+			fprintf(output,", ");
+			printData(rightNode->data,output);
+			fprintf(output,"\n");
 			rightNode = rightNode->nextNode;
 		}
 		leftNode = leftNode->nextNode;
