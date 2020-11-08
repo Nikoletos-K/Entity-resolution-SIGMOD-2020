@@ -8,6 +8,6 @@
 #define SAME_CAMERAS 1
 
 void read_json(char* filename);
-void read_dir(char* nameOfDir,HashTable * ht);
+CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *array_position);
 int read_csv(char * filename);
-HashTable * make_sets_from_csv(char * csvfile,HashTable * ht);
+HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet * djSet);

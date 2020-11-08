@@ -22,19 +22,15 @@ int main(int argc,char ** argv){
 	}
 
 	initializeDataStructures();
+	
 	HashTable * ht = HTConstruct(HASHTABLE_SIZE);
-	printf("- %s\n",argv[jsonDir] );
-	read_dir(argv[jsonDir],ht);
-	printf("- %d\n",csvFile );
-	// HTSearch()
 
-	// for(int i=0;i<HASHTABLE_SIZE;i++){
-			
-	// 	if(ht->Table[i]->rbtRoot!=NULL)
-	// 		RBTPrintTree(ht->Table[i]->rbtRoot,printCamSpec);
-	// }
+	CamSpec ** camArray = malloc(sizeof(CamSpec *));
+	int num_of_cameras=0;
+	camArray = read_dir(argv[jsonDir],ht,camArray,&num_of_cameras);
 
-	make_sets_from_csv(argv[csvFile],ht);
+	DisJointSet * djSet = DSJConstruct(num_of_cameras,(void**)camArray);
+	make_sets_from_csv(argv[csvFile],ht,djSet);
 
 	return 0;
 }

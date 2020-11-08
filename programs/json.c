@@ -18,12 +18,13 @@ void deleteJsonInfo(jsonInfo* jsInfo){
 	free(jsInfo);
 }
 
-CamSpec* createCamSpec(char * name){
+CamSpec* createCamSpec(char * name,int arrayPosition){
 	CamSpec* cs = malloc(sizeof(CamSpec));
 	cs->counter = 0;
 	cs->infoArray = malloc(sizeof(jsonInfo*));
 	cs->infoArray[cs->counter] = malloc(sizeof(jsonInfo));
 	cs->name = strdup(name);
+	cs->arrayPosition = arrayPosition;
 	cs->set = NULL;
 	cs->set = createList();
 	insert_toList(cs->set,cs);

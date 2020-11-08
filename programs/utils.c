@@ -30,13 +30,13 @@ void read_json(char* filename){
 	// fclose(fp);
 }
 
-void read_dir(char* nameOfDir,HashTable * ht){
+CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *array_position){
 	DIR * dir;
 	struct dirent *info;
 	char pathOfDir[1024];
 	
 	if((dir = opendir(nameOfDir))==NULL)
-		return;
+		return camArray;
 
 
 	while((info = readdir(dir)) != NULL){
@@ -48,7 +48,7 @@ void read_dir(char* nameOfDir,HashTable * ht){
 				strcpy(pathOfDir,nameOfDir);
 				strcat(pathOfDir,"/");
 				strcat(pathOfDir,info->d_name);
-				read_dir(pathOfDir,ht);
+				camArray = read_dir(pathOfDir,ht,camArray,array_position);
 			}
 		}else{
 			char path[512];
@@ -64,17 +64,22 @@ void read_dir(char* nameOfDir,HashTable * ht){
 			strcpy(name,info->d_name);
 			tok = strtok(name,".json");
 			strcat(path,tok);
-			CamSpec * cs = createCamSpec(path);
+			CamSpec * cs = createCamSpec(path,*array_position);
 			HTInsert(ht,path,(void *) cs,stringComparator);
+			camArray = realloc(camArray,(*array_position+1)*sizeof(CamSpec*));
+			camArray[*array_position] = cs;
+			(*array_position)++;
+
+
 			// read_json(filename);
 		}
 	}
 
 	closedir(dir);
-	return;
+	return camArray;
 }
 
-HashTable * make_sets_from_csv(char * csvfile,HashTable * ht){
+HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet){
 
 	FILE * csv = fopen(csvfile,"r");
 	int line=0;
@@ -113,11 +118,7 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht){
 			if(label == SAME_CAMERAS){
 				CamSpec * left_node = HTSearch(ht,left_spec_id,stringComparator);
 				CamSpec * right_node = HTSearch(ht,right_spec_id,stringComparator);
-
-				if(left_node->set != right_node->set){
-					left_node->set = mergeLists(left_node->set,right_node->set);
-					right_node->set = left_node->set;
-				}
+				DSJUnion(djSet,left_node->arrayPosition,right_node->arrayPosition);				
 			}
 		}
 		line++;
@@ -127,6 +128,8 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht){
 	return ht;
 
 }
+
+// void printPairs(DisJointSet * )
 
 int stringComparator(const void * str1,const void * str2){
     return strcmp((char*) str1,(char*) str2);
