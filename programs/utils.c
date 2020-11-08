@@ -100,15 +100,15 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 				switch(spec_id){
 					case 0:
 						strcpy(left_spec_id,token);
-						printf("- %s\n",left_spec_id);fflush(stdout);
+						// printf("- %s\n",left_spec_id);fflush(stdout);
 						break;
 					case 1:
 						strcpy(right_spec_id,token);
-						printf("-- %s\n",right_spec_id);fflush(stdout);
+						// printf("-- %s\n",right_spec_id);fflush(stdout);
 						break;
 					case 2:
 						label = atoi(token);
-						printf("--- %d\n",label);fflush(stdout);
+						// printf("--- %d\n",label);fflush(stdout);
 						break;
 				}
 				spec_id++;
@@ -122,15 +122,36 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 			}
 		}
 		line++;
-		printf("\n");fflush(stdout);
+		// printf("\n");fflush(stdout);
 	}
 	printf("%d\n",line );
 	return ht;
 
 }
 
-// void printPairs(DisJointSet * )
+void printPairs(DisJointSet * djSet){
+
+	List * rootList = createList();
+	int parent;
+	for(int i=0;i<djSet->size;i++){
+
+		parent = DSJFindParent(djSet,i);
+		CamSpec** camArray = (CamSpec**) (djSet->objectArray);
+		insert_toList(camArray[parent]->set,camArray[i]);
+		insert_toList(rootList,camArray[parent]->set);
+	}
+
+	listNode * printedNode = rootList->firstNode;
+	while(printedNode==NULL){
+		printForward(printedNode->data,printCameraName);
+		printedNode = printedNode->nextNode;
+	}
+}
 
 int stringComparator(const void * str1,const void * str2){
     return strcmp((char*) str1,(char*) str2);
+}
+
+void printCameraName(void * data){
+	printf("%s",((CamSpec*)data)->name);
 }

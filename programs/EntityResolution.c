@@ -31,6 +31,6 @@ int main(int argc,char ** argv){
 
 	DisJointSet * djSet = DSJConstruct(num_of_cameras,(void**)camArray);
 	make_sets_from_csv(argv[csvFile],ht,djSet);
-
+	printPairs(djSet);
 	return 0;
 }

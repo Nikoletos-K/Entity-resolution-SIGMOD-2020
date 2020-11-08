@@ -47,3 +47,4 @@ int oneNodeList(List * list);
 
 // merge lists
 List * mergeLists(List * list1,List * list2);
+void printForward(List * list,void (*printData)(void*));

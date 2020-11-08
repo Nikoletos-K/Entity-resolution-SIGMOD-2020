@@ -85,6 +85,25 @@ void printList(List * list,void (*printData)(void*)){
 	}
 }
 
+void printForward(List * list,void (*printData)(void*)){
+
+	listNode * leftNode = list->firstNode,* rightNode;
+	
+	while(leftNode!=NULL){
+
+		rightNode = leftNode->nextNode;
+		while(rightNode!=NULL){
+
+			printData(leftNode->data);
+			printf(",");
+			printData(rightNode->data);
+			printf("\n");
+			rightNode = rightNode->nextNode;
+		}
+		leftNode = leftNode->nextNode;
+	}
+}
+
 
 int oneNodeList(List * list){
 	return (list->numOfNodes==1);
