@@ -6,16 +6,12 @@
 
 
 jsonInfo * initializeJsonInfo(char* key, char* value){
+	
 	jsonInfo * jsInfo = malloc(sizeof(jsonInfo));
 	jsInfo->key = strdup(key);
 	jsInfo->value = strdup(value);
 
 	return jsInfo;
-}
-
-void destroyJsonInfo(jsonInfo * jsInfo){
-	free(jsInfo->key);
-	free(jsInfo->value);
 }
 
 void deleteJsonInfo(jsonInfo* jsInfo){
@@ -38,7 +34,7 @@ CamSpec* createCamSpec(char * name,int arrayPosition){
 }
 
 CamSpec* addJsonInfo(CamSpec* js,char* key, char* value){
-	js->infoArray = realloc(js->infoArray,(js->numOfSpecs+1));
+	js->infoArray = realloc(js->infoArray,(js->numOfSpecs+1)*(sizeof(jsonInfo*)));
 	js->infoArray[js->numOfSpecs] = initializeJsonInfo(key,value);
 	js->numOfSpecs +=1;
 	return  js;
@@ -50,10 +46,8 @@ void printCamSpec(void * data){
 
 void destroyCamSpec(CamSpec * cs){
 	free(cs->name);
-	for(int i=0;i<cs->numOfSpecs;i++){
-		destroyJsonInfo(cs->infoArray[i]);
-		free(cs->infoArray[i]);
-	}
+	for(int i=0;i<cs->numOfSpecs;i++)
+		deleteJsonInfo(cs->infoArray[i]);
 	deleteList(cs->set);
 	free(cs->infoArray);
 	free(cs);

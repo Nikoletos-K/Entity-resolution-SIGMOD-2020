@@ -7,26 +7,36 @@
 #include <sys/times.h>
 #include <unistd.h>
 
+
+char * clean_text(char * str){
+	str++;
+	str[strlen(str)-1] = '\0';	
+	return str;
+}
+
 void read_jsonSpecs(char* filename){
-	
-	
 	
 	FILE * json_file = fopen(filename,"r");
 
-	// char temp[2] = "\"";
-	printf("%d\n", json_file == NULL);
 	while(!feof(json_file)){
 		char line[1024];
 		fscanf(json_file,"%[^\n]\n",line);
-		if(strcmp(line,"{\n") && strcmp(line,"}\n")){
-			printf("%s\n",line );
+		if(strcmp(line,"{") && strcmp(line,"}")){
+
+			char * key = strtok(line,":");
+			key++;
+			key[strlen(key)-1] = '\0';	
+
+			char * value = strtok(NULL,"");
+			value = value+2;
+			value[strlen(value)-2] = '\0';	
+
 		}
-
-
 	}
 	fclose(json_file);
 
 }
+
 
 
 int main(){

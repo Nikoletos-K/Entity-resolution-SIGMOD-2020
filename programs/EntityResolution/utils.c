@@ -9,37 +9,43 @@
 
 #include "./../../include/utils.h"
 
-void read_json(char* filename){
-	// FILE * fp;
-	// char word[1024];
-	
-	// printf("-----------------------------------------\n" );
-	// fp = fopen(filename,"r");
-	// CamSpec* js = malloc(sizeof(CamSpec));
-	// createJson(js);
-	// char temp[2] = "\"";
-	
-	// while(fscanf(fp,"%[^:]s",word)==1){
-	// 	// printf("1. %s\n",word );
-	// 	// fscanf(fp,"%[^\"]s",word);
-	// 	// printf("2. %s\n",word );
-	// 	// fscanf(fp,"%s",word);
-	// 	// printf("3. %s\n",word );
-	// 	// fscanf(fp,"%[^\"]s",word);
-	// 	// printf("4. %s\n",word );
-	// 	// fscanf(fp,"%[^\"]s",word);
-	// }
-	// fclose(fp);
+CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
+
+	FILE * json_file = fopen(filename,"r");
+
+	while(!feof(json_file)){
+		char line[1024];
+		fscanf(json_file,"%[^\n]\n",line);
+		if(strcmp(line,"{") && strcmp(line,"}")){
+
+			printf("\nLINE %s\n",line );
+			char * key = strtok(line,":");
+			key++;
+			key[strlen(key)-1] = '\0';
+
+			char * value = strtok(NULL,"");	
+			printf("%s\n",filename );
+			if(!strcmp(value,"[")){
+				value = value+2;
+				value[strlen(value)-2] = '\0';
+			}
+			cs = addJsonInfo(cs,key,value);
+			printf("KEY:   %s \nVALUE:   %s\n\n",key,value);
+
+		}
+	}
+	fclose(json_file);
+
+	return cs;
 }
 
 CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *array_position){
 	DIR * dir;
 	struct dirent *info;
-	char pathOfDir[1024];
+	char pathOfDir[BUFFER];
 	
 	if((dir = opendir(nameOfDir))==NULL)
 		return camArray;
-
 
 	while((info = readdir(dir)) != NULL){
 
@@ -71,9 +77,7 @@ CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *arra
 			camArray = realloc(camArray,(*array_position+1)*sizeof(CamSpec*));
 			camArray[*array_position] = cs;
 			(*array_position)++;
-
-
-			// read_json(filename);
+			cs = read_jsonSpecs(filename,cs);
 		}
 	}
 
