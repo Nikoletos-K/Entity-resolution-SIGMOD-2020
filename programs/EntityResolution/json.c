@@ -5,19 +5,37 @@
 #include "./../../include/json.h"
 
 
-jsonInfo * initializeJsonInfo(char* key, char* value){
+jsonInfo * initializeJsonInfo(char* key){
 	
 	jsonInfo * jsInfo = malloc(sizeof(jsonInfo));
 	jsInfo->key = strdup(key);
-	jsInfo->value = strdup(value);
+	jsInfo->value = malloc(sizeof(char*));
+	jsInfo->numOfvalues = 0;
 
 	return jsInfo;
 }
 
 void deleteJsonInfo(jsonInfo* jsInfo){
 	free(jsInfo->key);
+	for (int i = 0; i < jsInfo->numOfvalues; i++){
+		free(jsInfo->value[i]);
+	}
 	free(jsInfo->value);
 	free(jsInfo);
+}
+
+char** addValue(jsonInfo* js, char* value){
+	js->value = realloc(js->value,(js->numOfvalues+1)*sizeof(char*));
+	// js->value[js->numOfvalues] = strdup(value);
+	js->value[js->numOfvalues] = malloc(sizeof(char)*strlen(value)+1);
+	strcpy(js->value[js->numOfvalues],value);
+	(js->numOfvalues)++;
+	return js->value;
+}
+
+CamSpec * addValuetoCS(CamSpec* cs, char* value){
+	cs->infoArray[cs->numOfSpecs-1]->value = addValue(cs->infoArray[cs->numOfSpecs-1], value);
+	return cs;
 }
 
 CamSpec* createCamSpec(char * name,int arrayPosition){
@@ -33,9 +51,9 @@ CamSpec* createCamSpec(char * name,int arrayPosition){
 	return cs;
 }
 
-CamSpec* addJsonInfo(CamSpec* js,char* key, char* value){
+CamSpec* addJsonInfo(CamSpec* js,char* key){
 	js->infoArray = realloc(js->infoArray,(js->numOfSpecs+1)*(sizeof(jsonInfo*)));
-	js->infoArray[js->numOfSpecs] = initializeJsonInfo(key,value);
+	js->infoArray[js->numOfSpecs] = initializeJsonInfo(key);
 	js->numOfSpecs +=1;
 	return  js;
 }
