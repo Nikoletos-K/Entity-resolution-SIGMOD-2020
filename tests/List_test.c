@@ -7,10 +7,11 @@ void test_create(void) {
 
 	List *list = createList();
 
-	TEST_ASSERT(list != NULL);
-	TEST_ASSERT(list->firstNode == NULL);
-	TEST_ASSERT(list->lastNode == NULL);
-	TEST_ASSERT(list->numOfNodes == 0);
+	if(TEST_ASSERT(list != NULL)){
+		TEST_ASSERT(list->firstNode == NULL);
+		TEST_ASSERT(list->lastNode == NULL);
+		TEST_ASSERT(list->numOfNodes == 0);
+	}
 
 	deleteList(list);
 }
@@ -20,7 +21,9 @@ void test_createNode(void) {
 	int data = 10; 
 	listNode * node = create_listNode((void*) &data);
 
-	TEST_ASSERT(node != NULL);
+	if(TEST_ASSERT(node != NULL)){
+		TEST_ASSERT(node->data,&data);
+	}
 
 	free(node);
 }
@@ -57,7 +60,7 @@ int compare_ints(Pointer a, Pointer b) {
 	return *(int*)a - *(int*)b;
 }
 
-void test_find() {
+void test_find(void) {
 	List *list = createList();
 	int N = 1000;
 	int* array = malloc(N * sizeof(*array));					
@@ -80,7 +83,7 @@ void test_find() {
 	free(array);
 }
 
-void test_one_node_list(){
+void test_one_node_list(void){
 	List *list = createList();
 
 	int data = 10;
