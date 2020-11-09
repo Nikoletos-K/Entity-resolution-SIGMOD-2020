@@ -1,29 +1,29 @@
-#include "./../include/acutest.h"			
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "./../iclude/DisJointSet.h"
+#include "./../include/acutest.h"			
+#include "./../include/DisJointSet.h"
 
 void test_create(void){
 	int size=10;
-	int* array = malloc(N * sizeof(*array));
-	DisJointSet * set = DJSConstruct(size,&array);
+	int* array = malloc(size * sizeof(*array));
+	DisJointSet * set = DJSConstruct(size,(void**) &array);
 
-	if(TEST_ASSERT(set != NULL)){
+	TEST_ASSERT(set != NULL);
 
-		if(TEST_ASSERT(set->rankArray != NULL)){
+	TEST_ASSERT(set->rankArray != NULL);
 
-			for(int i=0;i<set->size;i++)
-				TEST_ASSERT(set->rankArray[i] == 0);
-		}
+	for(int i=0;i<set->size;i++)
+		TEST_ASSERT(set->rankArray[i] == 0);
+	
+	TEST_ASSERT(set->parentArray != NULL);
 
-		if(TEST_ASSERT(set->parentArray != NULL)){
-
-			for(int i=0;i<set->size;i++)
-				TEST_ASSERT(set->parentArray[i] == i);
-		}
-
-		TEST_ASSERT(array!=NULL);
-	}
-
+	for(int i=0;i<set->size;i++)
+		TEST_ASSERT(set->parentArray[i] == i);
+	
+	TEST_ASSERT(array!=NULL);
+	
 	free(array);
 	DJSDestructor(set);
 } 
@@ -31,19 +31,20 @@ void test_create(void){
 void test_union(void){
 	int size=10;
 	int x=1,y=2;
-	int* array = malloc(N * sizeof(*array));
-	DisJointSet * set = DJSConstruct(size,&array);
+	int* array = malloc(size * sizeof(*array));
+	DisJointSet * set = DJSConstruct(size,(void**) &array);
 
 	DJSUnion(set,x,y);
-	TEST_ASSERT(DJSFindParent(set,x) == DJSFindParent(set,y))
+	TEST_ASSERT(DJSFindParent(set,x) == DJSFindParent(set,y));
 
 	free(array);
 	DJSDestructor(set);
 }
 
 void test_getters(void){
-	int* array = malloc(N * sizeof(*array));
-	DisJointSet * set = DJSConstruct(size,&array);
+	int size = 10;
+	int* array = malloc(size * sizeof(*array));
+	DisJointSet * set = DJSConstruct(size,(void**) &array);
 
 	int x=0;
 
@@ -55,10 +56,11 @@ void test_getters(void){
 }
 
 void test_setters(void){
-	int* array = malloc(N * sizeof(*array));
-	DisJointSet * set = DJSConstruct(size,&array);
+	int size = 10;
+	int* array = malloc(size * sizeof(*array));
+	DisJointSet * set = DJSConstruct(size,(void**) &array);
 
-	int x=0,int y=1;
+	int x=0, y=1;
 
 	DJSsetParent(set, x, y);
 	DJSsetRank(set, x, y);
@@ -70,10 +72,10 @@ void test_setters(void){
 	DJSDestructor(set);
 }
 
-TEST_SET = {
+TEST_LIST = {
 	{ "DJSConstruct", test_create },
 	{ "DJSUnion", test_union },
 	{ "DJSgetRank", test_getters },
-	{ "DJSsetParent",test_setters}
+	{ "DJSsetParent",test_setters},
 	{ NULL, NULL } 
 };
