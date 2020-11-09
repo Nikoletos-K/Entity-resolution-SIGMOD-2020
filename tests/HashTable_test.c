@@ -29,7 +29,7 @@ void test_HTConstruct(void){
 	int size=10;
 	HashTable * ht = HTConstruct(size);
 	TEST_ASSERT(ht != NULL);
-	TEST_ASSERT(ht->size = size);
+	TEST_ASSERT(ht->size == size);
 	TEST_ASSERT(ht->Table != NULL);
 
 	HTDestroy(ht);

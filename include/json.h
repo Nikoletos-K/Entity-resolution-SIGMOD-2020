@@ -16,7 +16,6 @@ typedef struct CamSpec{
 	int numOfSpecs;
 	int arrayPosition;
 	Set set;
-
 }CamSpec;
 
 jsonInfo * initializeJsonInfo(char* key, char* value);
@@ -26,3 +25,4 @@ CamSpec* addJsonInfo(CamSpec* js,char* key, char* value);
 void printCamSpec(void * data);
 void destroyCamSpec(CamSpec * cs);
 int stringComparator(const void * str1,const void * str2);
+CamSpec * read_jsonSpecs(char* filename,CamSpec * cs);
