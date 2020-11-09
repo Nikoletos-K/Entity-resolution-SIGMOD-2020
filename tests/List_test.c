@@ -1,28 +1,32 @@
-//////////////////////////////////////////////////////////////////
-//
-// Unit tests για τον ADT List.
-// Οποιαδήποτε υλοποίηση οφείλει να περνάει όλα τα tests.
-//
-//////////////////////////////////////////////////////////////////
+#include "./../include/acutest.h"			// Απλή βιβλιοθήκη για unit testing
 
-#include "acutest.h"			// Απλή βιβλιοθήκη για unit testing
-
-#include "../iclude/list.h"
+#include "./../iclude/list.h"
 
 
 void test_create(void) {
-	// Δημιουργούμε μια κενή λίστα με NULL δείκτη συνάρτησης delete_value
-	List *list = createList();
-	// list_set_destroy_value(list, NULL);
 
-	// Ελέγχουμε ότι δεν απέτυχε η malloc στην λίστα, και ότι
-	// αρχικοποιείται με μέγεθος 0 (δηλαδή χωρίς κόμβους)
+	List *list = createList();
+
 	TEST_ASSERT(list != NULL);
+	TEST_ASSERT(list->firstNode == NULL);
+	TEST_ASSERT(list->lastNode == NULL);
 	TEST_ASSERT(list->numOfNodes == 0);
 
-	list_destroy(list);
+	deleteList(list);
 }
 
+void test_createNode(void) {
+
+	int data = 10; 
+	listNode * node = create_listNode();
+
+	TEST_ASSERT(list != NULL);
+	TEST_ASSERT(list->firstNode == NULL);
+	TEST_ASSERT(list->lastNode == NULL);
+	TEST_ASSERT(list->numOfNodes == 0);
+
+	deleteList(list);
+}
 
 void test_insert(void) {
 	

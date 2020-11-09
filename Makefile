@@ -40,8 +40,8 @@ run-tests:
 	$(MAKE) -C tests run
 
 # Εκτέλεση με valgrind: όλα, προγράμματα, tests
-valgrind: valgrind-programs
-# valgrind: valgrind-tests valgrind-programs
+# valgrind: valgrind-programs
+valgrind: valgrind-tests valgrind-programs
 
 
 valgrind-programs-%:
