@@ -13,7 +13,9 @@ void initializeDataStructures(){
 RBTNode * createGuard(){
 
 	RBTNode * temp = malloc(sizeof(RBTNode));
-	temp->parent = temp -> left = temp -> right = GUARD;			/* Guard:GLOBAL POINTER with color istead of NULL */
+	temp -> parent = temp;
+	temp -> left = temp;
+	temp -> right = temp;			/* Guard:GLOBAL POINTER with color istead of NULL */
 	temp->data = NULL;
 	temp->key = NULL;
 	temp->color = BLACK ;
@@ -283,6 +285,7 @@ void RBTDestroyNode(RBTNode * node){
 
 void destroyGuard(){
 	free(GUARD);
+	GUARD==NULL;
 }
 
 

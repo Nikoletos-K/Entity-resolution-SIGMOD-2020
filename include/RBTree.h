@@ -32,6 +32,8 @@ RBTNode * GetGrandParent(RBTNode * n);
 valueType GetKey(RBTNode * n);
 nodeColor GetColor(RBTNode * n);
 void * get_RBTData(RBTNode * node);
+int RBTempty(RBTNode * root);
+void SetColor(RBTNode * n,nodeColor color);
 
 void RotateLeft(RBTNode **treeRoot,RBTNode * x);
 void RotateRight(RBTNode **treeRoot,RBTNode * x);

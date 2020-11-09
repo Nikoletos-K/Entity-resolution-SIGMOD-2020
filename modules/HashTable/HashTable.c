@@ -43,7 +43,7 @@ void HTInsert(HashTable * ht,keyType key,void * data,int (*comparator)(valueType
 	unsigned int index = hashFunction(key,strlen((char*)key))%ht->size;
 
 	
-	if(ht->Table[index]->rbtRoot == empty)		/*If empty create new key and then insert the data */
+	if(ht->Table[index]->rbtRoot == NULL)		/*If empty create new key and then insert the data */
 		ht->Table[index]->rbtRoot = RBTConstruct();
 
 	RBTInsert(&ht->Table[index]->rbtRoot,data,key,comparator);
