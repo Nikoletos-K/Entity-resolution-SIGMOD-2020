@@ -17,9 +17,8 @@ jsonInfo * initializeJsonInfo(char* key){
 }
 
 
-char** addValue(jsonInfo* js, char* value){
+char** addValue(jsonInfo* js, char* value){		// add value to the array of values
 	js->value = realloc(js->value,(js->numOfvalues+1)*sizeof(char*));
-	// js->value[js->numOfvalues] = strdup(value);
 	js->value[js->numOfvalues] = malloc(sizeof(char)*strlen(value)+1);
 	strcpy(js->value[js->numOfvalues],value);
 	(js->numOfvalues)++;
@@ -49,15 +48,15 @@ CamSpec* createCamSpec(char * name,int arrayPosition){
 	return cs;
 }
 
-CamSpec * addValuetoCS(CamSpec* cs, char* value){
-	cs->infoArray[cs->numOfSpecs-1]->value = addValue(cs->infoArray[cs->numOfSpecs-1], value);
-	return cs;
+CamSpec * addValuetoCS(CamSpec* cs, char* value){	// add value to spec
+	cs->infoArray[cs->numOfSpecs-1]->value = addValue(cs->infoArray[cs->numOfSpecs-1], value); // add the value to the array of the last json
+	return cs;		
 }
 
 
-CamSpec* addJsonInfo(CamSpec* js,char* key){
+CamSpec* addJsonInfo(CamSpec* js,char* key){	// create a new json
 	js->infoArray = realloc(js->infoArray,(js->numOfSpecs+1)*(sizeof(jsonInfo*)));
-	js->infoArray[js->numOfSpecs] = initializeJsonInfo(key);
+	js->infoArray[js->numOfSpecs] = initializeJsonInfo(key);		// initialize json with key
 	js->numOfSpecs +=1;
 	return  js;
 }
