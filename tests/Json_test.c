@@ -10,6 +10,7 @@ void test_jsonInfo(void){
 	char * key = "key";
 	jsonInfo * ji = initializeJsonInfo(key);
 
+	/* checking structs pointer and data initialization */
 	TEST_ASSERT(ji!=NULL);
 	TEST_ASSERT(ji->numOfvalues == 0);
 	TEST_ASSERT(ji->value != NULL);
@@ -19,6 +20,7 @@ void test_jsonInfo(void){
 	char * value = "value";
 	char * string_exampleArray[10] = {"i","a","c","d","b","f","g","e","h","j"};
 	
+	/* inserting values to its array */
 	for(int i=0;i<10;i++){
 	
 		ji->value = addValue(ji,string_exampleArray[i]);
@@ -27,6 +29,7 @@ void test_jsonInfo(void){
 		TEST_ASSERT(ji->numOfvalues == i+1);
 	}
 
+	/* chencking if insertion is done */ 
 	for(int i=0;i<10;i++)
 		TEST_ASSERT(strcmp(string_exampleArray[i],ji->value[i]) == 0);
 
@@ -38,6 +41,7 @@ void test_CamSpec(void){
 	char * name = "camera_1";
 	int arrayPosition = 0;
 
+	/* checking structs pointer and data initialization */
 	CamSpec* cs = createCamSpec(name,arrayPosition);
 	TEST_ASSERT(cs!=NULL);
 	TEST_ASSERT(cs->numOfSpecs == 0);
@@ -50,14 +54,14 @@ void test_CamSpec(void){
 	char * key_exampleArray[10] = {"k0","k1","k2","k3","k4","k5","k6","k7","k8","k9"};
 	char * value_exampleArray[10] = {"v0","v1","v2","v3","v4","v5","v6","v7","v8","v9"};
 
+	/* inserting json specs */
 	for(int i=0;i<10;i++){
 		cs = addJsonInfo(cs,key_exampleArray[i]);
 		for(int j=0;j<10;j++)
 			cs = addValuetoCS(cs,value_exampleArray[j]);
 	}
 
-
-
+	/* chencking if insertion is done */ 
 	for(int i=0;i<10;i++){
 
 		TEST_ASSERT(cs->numOfSpecs == 10);
@@ -75,6 +79,8 @@ void test_CamSpec(void){
 void test_jsonParser(void){
 
 	char * name = "camera_1";
+
+	/* json file in the current directory */
 	char * test_json_file = "json_test_file.json";
 	int arrayPosition = 0;
 
@@ -87,6 +93,8 @@ void test_jsonParser(void){
 
 	for(int i=0;i<true_numOfKeys;i++){
 
+		/* five rows of json */
+		/* checking if stored data match with json initial data */
 		switch(i){
 			case 0:
 				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);

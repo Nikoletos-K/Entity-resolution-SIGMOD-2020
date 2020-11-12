@@ -10,8 +10,8 @@ void test_create(void){
 	int* array = malloc(size * sizeof(*array));
 	DisJointSet * set = DJSConstruct(size,(void**) &array);
 
+	/* Checking pointers initialization */
 	TEST_ASSERT(set != NULL);
-
 	TEST_ASSERT(set->rankArray != NULL);
 
 	for(int i=0;i<set->size;i++)
@@ -34,6 +34,7 @@ void test_union(void){
 	int* array = malloc(size * sizeof(*array));
 	DisJointSet * set = DJSConstruct(size,(void**) &array);
 
+	/* Checking union of x and y if exists */
 	DJSUnion(set,x,y);
 	TEST_ASSERT(DJSFindParent(set,x) == DJSFindParent(set,y));
 

@@ -110,6 +110,7 @@ void test_RBTInsert(void){
 
 	RBTNode * root = RBTConstruct();
 
+	/* Inserting an array of elements to RBT */
     for(int i=0;i<sizeofArray;i++)
 		RBTInsert(&root,(void *) &integer_exampleArray[i],(void*)string_exampleArray[i],compare_str);
     
@@ -129,9 +130,11 @@ void test_RBTFindNode(void){
 
 	RBTNode * root = RBTConstruct();
 
+	/* Inserting an array of elements to RBT */
     for(int i=0;i<sizeofArray;i++)
 		RBTInsert(&root,(void *) &integer_exampleArray[i],(void*)string_exampleArray[i],compare_str);
     
+    /* Checking if all data are inserted */
 	for(int i=0;i<sizeofArray;i++){
 		RBTNode * temp = RBTFindNode(root,(void*)string_exampleArray[i],compare_str);
 		char * found_key = (char*)GetKey(temp);
@@ -147,11 +150,14 @@ void test_RBTFindNode(void){
 void test_RBTempty(void){
 	initializeDataStructures();
 	RBTNode * root = RBTConstruct();
+
+	/* initially must be empty */
 	TEST_ASSERT(RBTempty(root)==1);
 
 	int data = 1;
 	char * key = "abcdf";
 	RBTInsert(&root,(void *) &data,(void*)key,compare_str);
+	/* not empty situation */
 	TEST_ASSERT(RBTempty(root)==0);
 
 	RBTDestroyTree(root);
