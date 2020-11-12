@@ -76,13 +76,12 @@ void test_CamSpec(void){
 	destroyCamSpec(cs);
 }
 
-void test_jsonParser(void){
-
-	char * name = "camera_1";
+void test_jsonParser(void){	
 
 	/* json file in the current directory */
 	char * test_json_file = "json_test_file.json";
 	int arrayPosition = 0;
+	char * name = "camera_1";
 
 	CamSpec* cs = createCamSpec(name,arrayPosition);
 	cs = read_jsonSpecs(test_json_file,cs);
