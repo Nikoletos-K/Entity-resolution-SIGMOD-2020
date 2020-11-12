@@ -118,3 +118,5 @@ List * mergeLists(List * list1,List * list2){
 
 	return list1;
 }
+
+int get_listSize(List * list){ return list->numOfNodes;};

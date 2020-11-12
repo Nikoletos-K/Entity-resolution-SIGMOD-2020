@@ -69,6 +69,8 @@ void test_one_node_list(void){
 	int data2 = 12;
 	insert_toList(list,(void*) &data2);
 	TEST_ASSERT(oneNodeList(list) != 1);
+
+	deleteList(list);
 }
 
 TEST_LIST = {

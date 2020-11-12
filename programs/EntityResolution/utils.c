@@ -13,7 +13,7 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 
 	FILE * json_file = fopen(filename,"r");
 	
-	printf("%s\n",filename );
+	// printf("%s\n",filename );
 	char line[20000];
 
 	while(!feof(json_file)){
@@ -21,11 +21,11 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 		fscanf(json_file,"%[^\n]\n",line);
 		if(strcmp(line,"{") && strcmp(line,"}")){
 
-			printf("\nLINE %s\n",line );
+			// printf("\nLINE %s\n",line );
 			char * key = strtok(line,":");
 			key++;
 			key[strlen(key)-1] = '\0';
-			printf("KEY: %s\n",key );
+			// printf("KEY: %s\n",key );
 			cs = addJsonInfo(cs,key);
 			
 			char * value = strtok(NULL,"");	
@@ -38,7 +38,7 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 				else 
 					value[strlen(value)-1] = '\0';
 				cs = addValuetoCS(cs, value);
-				printf("1.VALUE:   %s\n\n",value);
+				// printf("1.VALUE:   %s\n\n",value);
 
 			}else{
 				fscanf(json_file,"%[^\n]\n",line);
@@ -52,7 +52,7 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 						value[strlen(value)-1] = '\0';
 					
 					cs = addValuetoCS(cs, value);
-					printf("2.VALUE:   %s\n\n",value);
+					// printf("2.VALUE:   %s\n\n",value);
 					fscanf(json_file,"%[^\n]\n",line);
 				}
 			}

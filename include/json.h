@@ -5,12 +5,15 @@
 
 
 typedef List * Set;
+
+/* struct of json specs */
 typedef struct jsonInfo{
 	char* key;
 	char** value;
 	int numOfvalues;
 }jsonInfo;
 
+/* Struct that stores every usefull information of a camera */
 typedef struct CamSpec{
 	char* name;
 	jsonInfo** infoArray; 
@@ -19,13 +22,14 @@ typedef struct CamSpec{
 	Set set;
 }CamSpec;
 
+/* jsonInfo functions */
 jsonInfo * initializeJsonInfo(char* key);
 void deleteJsonInfo(jsonInfo* js);
+char** addValue(jsonInfo* js, char* value);
+CamSpec * addValuetoCS(CamSpec* cs, char* value);
+
+/* CamSpec functions */
 CamSpec * createCamSpec(char * name,int arrayPosition);
 CamSpec* addJsonInfo(CamSpec* js,char* key);
 void printCamSpec(void * data);
 void destroyCamSpec(CamSpec * cs);
-int stringComparator(const void * str1,const void * str2);
-CamSpec * read_jsonSpecs(char* filename,CamSpec * cs);
-char** addValue(jsonInfo* js, char* value);
-CamSpec * addValuetoCS(CamSpec* cs, char* value);
