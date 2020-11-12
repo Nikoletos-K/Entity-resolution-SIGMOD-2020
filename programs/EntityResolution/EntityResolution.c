@@ -90,7 +90,7 @@ int main(int argc,char ** argv){
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
-	printf("-> Restoring memory\n");
+	printf("\n-> Restoring memory\n");
 	for(int i=0;i<num_of_cameras;i++)
 		destroyCamSpec(camArray[i]);
 
@@ -102,7 +102,7 @@ int main(int argc,char ** argv){
 
 	ft2 = (double) times(&ftb2);
 	fcpu_time = (double) ((ftb2.tms_utime + ftb2.tms_stime) - (ftb1.tms_utime + ftb1.tms_stime));
-	printf("\nPERFORMANCE of system overall:\n");
+	printf("PERFORMANCE of system overall:\n");
 	printf("- CPU_TIME: %.2lf sec\n",fcpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(ft2-ft1)/ticspersec);
 
