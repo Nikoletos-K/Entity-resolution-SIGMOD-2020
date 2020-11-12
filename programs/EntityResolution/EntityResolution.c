@@ -14,6 +14,8 @@ int main(int argc,char ** argv){
 
 	int i=1,print_stdout=1;
 	int jsonDir,csvFile;
+
+	/* Variables for counting time */
 	double t1, t2, cpu_time,ft1,ft2,fcpu_time;
 	struct tms tb1, tb2,ftb1,ftb2;
 	double ticspersec;

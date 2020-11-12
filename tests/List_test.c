@@ -40,9 +40,12 @@ void test_insert(void) {
 	int N = 10;
 	int* array = malloc(N * sizeof(*array));	
 
+	/* inserting elements to list */
 	for (int i = 0; i < N; i++) {
 
 		insert_toList(list, (void *)  &array[i]);
+
+		/* checking if couner informs */
 		TEST_ASSERT(list->numOfNodes == (i + 1));	
 	}
 
@@ -50,6 +53,7 @@ void test_insert(void) {
 
 	for (int i = 0; i < N; i++) {
 
+		/* checking if data are stored succesfully into list */
 		TEST_ASSERT(node->data == (void*)  &array[i]);	
 		node = node->nextNode;
 	}
