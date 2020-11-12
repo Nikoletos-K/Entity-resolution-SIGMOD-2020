@@ -25,34 +25,46 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 			char * key = strtok(line,":");
 			key++;
 			key[strlen(key)-1] = '\0';
-
+			printf("KEY: %s\n",key );
 			cs = addJsonInfo(cs,key);
 			
 			char * value = strtok(NULL,"");	
 			
 			if(strcmp(value," [")){
 				value = value+2;
-				value[strlen(value)-2] = '\0';
+
+				if(value[strlen(value)-1] == ',')
+					value[strlen(value)-2] = '\0';
+				else 
+					value[strlen(value)-1] = '\0';
 				cs = addValuetoCS(cs, value);
+				printf("1.VALUE:   %s\n\n",value);
 
 			}else{
 				fscanf(json_file,"%[^\n]\n",line);
 				while(!feof(json_file) && strcmp(line,"],")){
-					printf("-------->%s\n",line );
+					value = line;
+					value++;
+
+					if(value[strlen(value)-1] == ',')
+						value[strlen(value)-2] = '\0';
+					else 
+						value[strlen(value)-1] = '\0';
+					
+					cs = addValuetoCS(cs, value);
+					printf("2.VALUE:   %s\n\n",value);
 					fscanf(json_file,"%[^\n]\n",line);
 				}
 			}
-			printf("KEY:   %s \nVALUE:   %s\n\n",key,value);
+			
 		}
 		int c = getc(json_file);
 		if(c == '}'){
-			printf("%c\n",c );
 			break;
 		}
 		else
 			ungetc(c,json_file);
 
-		printf("-------->>>>%c\n",c );
 	}
 	fclose(json_file);
 
@@ -80,7 +92,6 @@ CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *arra
 				camArray = read_dir(pathOfDir,ht,camArray,array_position);
 			}
 		}else{
-			printf("ELSE\n");
 			char path[512];
 			char name[512];
 			char filename[512];
@@ -99,7 +110,6 @@ CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *arra
 			camArray = realloc(camArray,(*array_position+1)*sizeof(CamSpec*));
 			camArray[*array_position] = cs;
 			(*array_position)++;
-			printf("----> %s\n",filename );
 			cs = read_jsonSpecs(filename,cs);
 		}
 	}
