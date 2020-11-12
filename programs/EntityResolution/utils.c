@@ -150,7 +150,8 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 			if(label == SAME_CAMERAS){		// if label is 1
 				CamSpec * left_node = HTSearch(ht,left_spec_id,stringComparator);		// search left in the hashtable
 				CamSpec * right_node = HTSearch(ht,right_spec_id,stringComparator);		// search right in the hashtable
-				DJSUnion(djSet,left_node->arrayPosition,right_node->arrayPosition);		// add them as same in the disjoint set			
+				if(left_node != NULL && right_node != NULL)
+					DJSUnion(djSet,left_node->arrayPosition,right_node->arrayPosition);		// add them as same in the disjoint set			
 			}
 		}
 		line++;
