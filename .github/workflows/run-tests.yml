@@ -10,17 +10,17 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: make run
-      run: make run CFLAGS=-fPIC
+    - name: make
+      run: make
 
-    - name: make valgrind
-      if: matrix.os == 'ubuntu-16.04'
-      run: |
-        sudo apt install valgrind
-        make valgrind CFLAGS=-fPIC
-    - name: Upload
-      if: startsWith(github.event.ref, 'refs/tags/v')
-      uses: actions/upload-artifact@v2
-      with:
-        name: compiled-${{ matrix.os }}
-        path: .
+    # - name: make valgrind
+    #   if: matrix.os == 'ubuntu-16.04'
+    #   run: |
+    #     sudo apt install valgrind
+    #     make valgrind CFLAGS=-fPIC
+    # - name: Upload
+    #   if: startsWith(github.event.ref, 'refs/tags/v')
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: compiled-${{ matrix.os }}
+    #     path: .
