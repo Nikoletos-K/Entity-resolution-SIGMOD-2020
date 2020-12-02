@@ -17,7 +17,6 @@ void test_jsonInfo(void){
 	TEST_ASSERT(ji->key != NULL);
 	TEST_ASSERT(strcmp(ji->key,key) == 0);
 
-	char * value = "value";
 	char * string_exampleArray[10] = {"i","a","c","d","b","f","g","e","h","j"};
 	
 	/* inserting values to its array */
@@ -76,12 +75,13 @@ void test_CamSpec(void){
 	destroyCamSpec(cs);
 }
 
-void test_jsonParser(void){	
+void test_jsonParser(void){
+
+	char * name = "camera_1";
 
 	/* json file in the current directory */
 	char * test_json_file = "json_test_file.json";
 	int arrayPosition = 0;
-	char * name = "camera_1";
 
 	CamSpec* cs = createCamSpec(name,arrayPosition);
 	cs = read_jsonSpecs(test_json_file,cs);

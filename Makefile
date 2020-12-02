@@ -5,7 +5,8 @@
 # το οποίο είναι ισοδύναμο με το να τρέξουμε make <target> μέσα στο directory <foo>
 
 # Τρέχουμε το make με --silent γιατί η έξοδος είναι τεράστια
-MAKE += --silent
+# MAKE += --silent
+
 
 # Ολα τα directories μέσα στο programs directory
 PROGRAMS = $(subst programs/, , $(wildcard programs/*))

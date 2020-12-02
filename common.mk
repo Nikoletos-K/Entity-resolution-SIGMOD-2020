@@ -46,12 +46,13 @@ LIB		:= $(MY_PATH)lib
 #
 # Το override επιτρέπει την προσθήκη επιπλέον παραμέτρων από τη γραμμή εντολών: make CFLAGS=...
 #
-override CFLAGS += -g -Werror -MMD -I$(INCLUDE)
+override CFLAGS += -g -Wall -Werror -MMD -I$(INCLUDE)
 
 # Linker options
-#   -lm        Link με τη math library
+#  -lm        Link με τη math library
 #
-# LDFLAGS += -lm
+
+LDFLAGS += -lm
 
 # Αν στα targets με τα οποία έχει κληθεί το make (μεταβλητή MAKECMDGOALS) υπάρχει κάποιο
 # coverage*, τότε προσθέτουμε το --coverage στα compile & link flags

@@ -4,6 +4,7 @@
 
 #include "./../../include/RBTree.h"
 
+RBTNode * GUARD ;
 /*---------------------------------Create_Functions-------------------------------------------*/
 void initializeDataStructures(){
 	GUARD = createGuard();
@@ -70,13 +71,15 @@ RBTNode * RBTFindNode(RBTNode * node,valueType key,int (*comparator)(valueType,v
 	if(node==GUARD || !(*comparator)(GetKey(node),key)){
 		if(node==GUARD)
 			return NULL;
-		return node;
+		else
+			return node;
 	}
 
 	if((*comparator)(key,GetKey(node))<0)
-		RBTFindNode(node->left,key,comparator);
+		return RBTFindNode(node->left,key,comparator);
 	else
-		RBTFindNode(node->right,key,comparator);
+		return RBTFindNode(node->right,key,comparator);
+
 
 }
 
@@ -285,7 +288,7 @@ void RBTDestroyNode(RBTNode * node){
 
 void destroyGuard(){
 	free(GUARD);
-	GUARD==NULL;
+	GUARD=NULL;
 }
 
 

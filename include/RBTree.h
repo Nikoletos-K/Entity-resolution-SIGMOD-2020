@@ -6,7 +6,7 @@ typedef enum nodeColor nodeColor;
 typedef struct Node RBTNode;
 typedef const void * valueType;
 
-RBTNode * GUARD ;				/* Global pointer for guard */
+extern RBTNode * GUARD ;				/* Global pointer for guard */
 
 typedef struct Node {
 
@@ -17,8 +17,6 @@ typedef struct Node {
 	void * data;
 
 } RBTNode;
-
-int (*comparator)(valueType value,valueType key);
 
 RBTNode * createGuard();
 void destroyGuard();

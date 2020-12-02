@@ -55,9 +55,8 @@ void * HTSearch(HashTable * ht,keyType key,int (*comparator)(valueType,valueType
 
 	unsigned int index = hashFunction(key,strlen((char*)key))%ht->size;
 	RBTNode * node = RBTFindNode(ht->Table[index]->rbtRoot,key,comparator);
-	
-	if(node==NULL)	return NULL;
-	else return get_RBTData(node);
+
+	return get_RBTData(node);
 }
 
 

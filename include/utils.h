@@ -15,3 +15,7 @@ void printPairs(DisJointSet * djSet,int print_stdout);
 
 /* utils */
 int stringComparator(const void * str1,const void * str2);
+
+/* Cantor functions */
+int CantorEncode(int num1,int num2);
+int CantorDecode(int cantor_number,int* num1,int* num2);
