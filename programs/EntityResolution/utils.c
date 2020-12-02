@@ -211,6 +211,7 @@ Qlique** CreateSets(DisJointSet * djSet,int* numOfsets){
 	for(int i=0;i<djSet->size;i++){	// for every spec
 		if(!oneNodeList(camArray[i]->set)){		
 			qliquesArray = realloc(qliquesArray,(*numOfsets+1)*sizeof(Qlique*));
+			qliquesArray[*numOfsets] = malloc(sizeof(Qlique));
 			qliquesArray[*numOfsets]->set = camArray[i]->set;
 			qliquesArray[*numOfsets]->numOfNegativeQliques = 0;
 			qliquesArray[*numOfsets]->negativeQliques = NULL;
