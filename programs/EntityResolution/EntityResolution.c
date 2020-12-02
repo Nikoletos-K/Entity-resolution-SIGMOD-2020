@@ -12,7 +12,7 @@
 
 int main(int argc,char ** argv){
 
-	int i=1,print_stdout=1;
+	int i=1;
 	int jsonDir,csvFile;
 
 	/* Variables for counting time */
@@ -49,7 +49,7 @@ int main(int argc,char ** argv){
 	HashTable * ht = HTConstruct(HASHTABLE_SIZE);
 	CamSpec ** camArray = malloc(sizeof(CamSpec *));
 	int num_of_cameras=0;
-	List** listOfSets;
+	Qlique** qliqueIndex;
 
 	ticspersec = (double) sysconf(_SC_CLK_TCK);
 	t1 = (double) times(&tb1);
@@ -71,9 +71,11 @@ int main(int argc,char ** argv){
 	printf("   and informing sets\n ");
 
 	DisJointSet * djSet = DJSConstruct(num_of_cameras,(void**)camArray);
-	make_sets_from_csv(argv[csvFile],ht,djSet);
+
+	List * diffPairsList = createList();
+	make_sets_from_csv(argv[csvFile],ht,djSet,diffPairsList);
 	int numOfsets = 0;
-	listOfSets = CreateSets(djSet,&numOfsets);
+	qliqueIndex = CreateSets(djSet,&numOfsets);
 
 	printf("<- End\n");
 	t2 = (double) times(&tb2);
@@ -84,7 +86,7 @@ int main(int argc,char ** argv){
 
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing qliques: \n");
-	printPairs(listOfSets,numOfsets); 
+	printPairs(qliqueIndex,numOfsets); 
 	printf(" <- End of printing qliques\n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
@@ -92,6 +94,15 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
+	t1 = (double) times(&tb1);
+	printf("\n-> Forming negative qliques: \n");
+	qliqueIndex = createNegConnections(diffPairsList,qliqueIndex); 
+	printf(" <- End of forming negative qliques\n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of printing qliques:\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 	printf("-> Restoring memory\n");
 	for(int i=0;i<num_of_cameras;i++)
@@ -101,7 +112,7 @@ int main(int argc,char ** argv){
 	HTDestroy(ht);
 	DJSDestructor(djSet);
 	destroyDataStructures();
-	destroySets(listOfSets,numOfsets);
+	destroySets(qliqueIndex,numOfsets);
 	printf("<- All frees done\n");
 
 	ft2 = (double) times(&ftb2);

@@ -11,6 +11,7 @@
 
 #include "./../../include/utils.h"
 
+
 CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 
 	FILE * json_file = fopen(filename,"r");
@@ -120,7 +121,7 @@ CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *arra
 	return camArray;
 }
 
-HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet){
+HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet,List * diffPairsList){
 
 	FILE * csv = fopen(csvfile,"r");
 	int line=0;
@@ -152,11 +153,23 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 				spec_id++;
 				token = strtok(NULL,",");
 			}
-			
-			if(label == SAME_CAMERAS){
-				CamSpec * left_node = HTSearch(ht,left_spec_id,stringComparator);
-				CamSpec * right_node = HTSearch(ht,right_spec_id,stringComparator);
-				DJSUnion(djSet,left_node->arrayPosition,right_node->arrayPosition);				
+	
+			CamSpec * left_node = HTSearch(ht,left_spec_id,stringComparator);
+			CamSpec * right_node = HTSearch(ht,right_spec_id,stringComparator);
+
+			if(left_node != NULL && right_node!=NULL){	
+					
+				if(label == SAME_CAMERAS)
+				
+					DJSUnion(djSet,left_node->arrayPosition,right_node->arrayPosition);				
+				
+				else if(label == DIFFERENT_CAMERAS){
+
+					DiffCamerasPair * pair = createPair(left_node,right_node);
+					insert_toList(diffPairsList,(void*) pair);
+
+				}else
+					fprintf(stderr,"make_sets_from_csv: Only 1 and 0 accepted\n");
 			}
 		}
 		line++;
@@ -166,24 +179,24 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 
 }
 
-void printPairs(List** setsArray,int numOfsets ){
+void printPairs(Qlique** qliquesArray,int numOfsets ){
 
 	FILE * output;
 
 	output = fopen("PAIRS.txt","w+");		// or in file
 
 
-	for(int i=0;i<numOfsets;i++){	// for every spec
-		printForward(setsArray[i],output,printCameraName);	// print every pair in the list
-	}
+	for(int i=0;i<numOfsets;i++)	// for every spec
+		printForward(qliquesArray[i]->set,output,printCameraName);	// print every pair in the list
+	
 
 	fclose(output);
 
 }
 
-List** CreateSets(DisJointSet * djSet,int* numOfsets){
+Qlique** CreateSets(DisJointSet * djSet,int* numOfsets){
 	int parent;
-	List** setsArray = malloc(sizeof(List*));
+	Qlique** qliquesArray = malloc(sizeof(Qlique*));
 	List* set;
 	CamSpec* data;
 	
@@ -197,11 +210,14 @@ List** CreateSets(DisJointSet * djSet,int* numOfsets){
 
 	for(int i=0;i<djSet->size;i++){	// for every spec
 		if(!oneNodeList(camArray[i]->set)){		
-			setsArray = realloc(setsArray,(*numOfsets+1)*sizeof(List*));
-			setsArray[*numOfsets] = camArray[i]->set;
+			qliquesArray = realloc(qliquesArray,(*numOfsets+1)*sizeof(Qlique*));
+			qliquesArray[*numOfsets]->set = camArray[i]->set;
+			qliquesArray[*numOfsets]->numOfNegativeQliques = 0;
+			qliquesArray[*numOfsets]->negativeQliques = NULL;
+
 			(*numOfsets)++;
 
-			set = setsArray[*numOfsets-1] ;
+			set = (qliquesArray[*numOfsets-1])->set;
 
 			listNode * node = set->firstNode;
 	
@@ -214,7 +230,50 @@ List** CreateSets(DisJointSet * djSet,int* numOfsets){
 		}
 			
 	}
-	return setsArray;
+	return qliquesArray;
+}
+
+Qlique** createNegConnections(List * diffPairsList,Qlique ** qliqueIndex){
+
+	BF * bloomFilter = createBF((unsigned int) get_listSize(diffPairsList));
+
+	listNode * node = diffPairsList->firstNode;
+	while(node != NULL){
+
+		DiffCamerasPair * pair = (DiffCamerasPair*) node->data;
+
+		int qliqueKey_1 = pair->camera1->arrayPosition;
+		int qliqueKey_2 = pair->camera2->arrayPosition;
+
+		int encodedKey = CantorEncode(qliqueKey_1,qliqueKey_2);
+
+		if(!checkBF(bloomFilter,(void*) &encodedKey)){
+			// insert_toList(newList,(void*)pair);
+			insertBF(bloomFilter,(void*) &encodedKey);
+			insert_NegConnection(qliqueIndex[qliqueKey_1],qliqueKey_1);
+			insert_NegConnection(qliqueIndex[qliqueKey_2],qliqueKey_2);
+
+		}
+
+		node = node->nextNode;
+	}
+
+	return qliqueIndex;
+}
+
+Qlique * insert_NegConnection(Qlique * ql,int arrayPosition){
+
+	if(ql->negativeQliques == NULL)
+		ql->negativeQliques = malloc(sizeof(int));
+	
+	else
+		ql->negativeQliques = realloc(ql->negativeQliques,(ql->numOfNegativeQliques+1)*sizeof(int));
+	
+
+	ql->negativeQliques[ql->numOfNegativeQliques] = arrayPosition;
+	(ql->numOfNegativeQliques)++;
+
+	return ql;
 }
 
 int stringComparator(const void * str1,const void * str2){
@@ -237,6 +296,20 @@ int CantorDecode(int cantor_number,int* num1,int* num2){
 	*num1 = w - *num2; 
 	return cantor_number;
 }
-void destroySets(List** setsArray,int numOfsets){
-	free(setsArray);
+void destroySets(Qlique** qliquesArray,int numOfsets){
+	free(qliquesArray);
+}
+
+DiffCamerasPair * createPair(CamSpec * c1, CamSpec * c2){
+
+	DiffCamerasPair * pair = malloc(sizeof(DiffCamerasPair));
+	pair-> camera1 = c1;
+	pair-> camera2 = c2;
+
+	return pair;
+
+}
+
+void deletePair(DiffCamerasPair * pair){
+	free(pair);
 }
