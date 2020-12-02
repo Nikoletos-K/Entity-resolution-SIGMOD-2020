@@ -29,26 +29,27 @@ int main(int argc,char ** argv){
 	}
 
 	printf("\n--------------- ENTITY RESOLUTION SYSTEM ----------------\n");
-	while(1){
-		printf("Printing results to stdout? [y/n]: ");
-		char answer[BUFFER];
-		scanf("%s",answer);
-		if(!strcmp(answer,"y")){
-		 	print_stdout = 1;
-		 	printf("Identical cameras pairs will be printed in stdout\n");
-		 	break;
-		}else if(!strcmp(answer,"n")){
-			print_stdout = 0;
-		 	printf("Identical cameras pairs will be printed in file named: PAIRS.txt in the current directory\n");
-			break;
-		}else
-			printf("Press 'y' for printing in stdout or 'n' for printing in a file \n");
-	}
+	// while(1){
+	// 	printf("Printing results to stdout? [y/n]: ");
+	// 	char answer[BUFFER];
+	// 	scanf("%s",answer);
+	// 	if(!strcmp(answer,"y")){
+	// 	 	print_stdout = 1;
+	// 	 	printf("Identical cameras pairs will be printed in stdout\n");
+	// 	 	break;
+	// 	}else if(!strcmp(answer,"n")){
+	// 		print_stdout = 0;
+	// 	 	printf("Identical cameras pairs will be printed in file named: PAIRS.txt in the current directory\n");
+	// 		break;
+	// 	}else
+	// 		printf("Press 'y' for printing in stdout or 'n' for printing in a file \n");
+	// }
 	ft1 = (double) times(&ftb1);
 	initializeDataStructures();
 	HashTable * ht = HTConstruct(HASHTABLE_SIZE);
 	CamSpec ** camArray = malloc(sizeof(CamSpec *));
 	int num_of_cameras=0;
+	List** listOfSets;
 
 	ticspersec = (double) sysconf(_SC_CLK_TCK);
 	t1 = (double) times(&tb1);
@@ -71,6 +72,8 @@ int main(int argc,char ** argv){
 
 	DisJointSet * djSet = DJSConstruct(num_of_cameras,(void**)camArray);
 	make_sets_from_csv(argv[csvFile],ht,djSet);
+	int numOfsets = 0;
+	listOfSets = CreateSets(djSet,&numOfsets);
 
 	printf("<- End\n");
 	t2 = (double) times(&tb2);
@@ -81,7 +84,7 @@ int main(int argc,char ** argv){
 
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing qliques: \n");
-	printPairs(djSet,print_stdout); 
+	printPairs(listOfSets,numOfsets); 
 	printf(" <- End of printing qliques\n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
@@ -98,6 +101,7 @@ int main(int argc,char ** argv){
 	HTDestroy(ht);
 	DJSDestructor(djSet);
 	destroyDataStructures();
+	destroySets(listOfSets,numOfsets);
 	printf("<- All frees done\n");
 
 	ft2 = (double) times(&ftb2);

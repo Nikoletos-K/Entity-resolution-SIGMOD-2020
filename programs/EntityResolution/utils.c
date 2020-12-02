@@ -166,16 +166,27 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 
 }
 
-void printPairs(DisJointSet * djSet,int print_stdout){
+void printPairs(List** setsArray,int numOfsets ){
 
 	FILE * output;
-	if(print_stdout)
-		output = stdout;
-	else
-		output = fopen("PAIRS.txt","w+");
+
+	output = fopen("PAIRS.txt","w+");		// or in file
 
 
+	for(int i=0;i<numOfsets;i++){	// for every spec
+		printForward(setsArray[i],output,printCameraName);	// print every pair in the list
+	}
+
+	fclose(output);
+
+}
+
+List** CreateSets(DisJointSet * djSet,int* numOfsets){
 	int parent;
+	List** setsArray = malloc(sizeof(List*));
+	List* set;
+	CamSpec* data;
+	
 	CamSpec** camArray = (CamSpec**) (djSet->objectArray);
 
 	for(int i=0;i<djSet->size;i++){
@@ -184,14 +195,26 @@ void printPairs(DisJointSet * djSet,int print_stdout){
 			insert_toList(camArray[parent]->set,camArray[i]);
 	}
 
-	for(int i=0;i<djSet->size;i++){
-		if(!oneNodeList(camArray[i]->set))
-			printForward(camArray[i]->set,output,printCameraName);
-		fflush(stdout);
-	}
+	for(int i=0;i<djSet->size;i++){	// for every spec
+		if(!oneNodeList(camArray[i]->set)){		
+			setsArray = realloc(setsArray,(*numOfsets+1)*sizeof(List*));
+			setsArray[*numOfsets] = camArray[i]->set;
+			(*numOfsets)++;
 
-	if(!print_stdout)
-		fclose(output);
+			set = setsArray[*numOfsets-1] ;
+
+			listNode * node = set->firstNode;
+	
+			while(node!=NULL){
+
+				data = (CamSpec*) node->data;
+				data->arrayPosition = *numOfsets-1;
+				node = node->nextNode;
+			}
+		}
+			
+	}
+	return setsArray;
 }
 
 int stringComparator(const void * str1,const void * str2){
@@ -213,4 +236,7 @@ int CantorDecode(int cantor_number,int* num1,int* num2){
 	*num2 = cantor_number-t;
 	*num1 = w - *num2; 
 	return cantor_number;
+}
+void destroySets(List** setsArray,int numOfsets){
+	free(setsArray);
 }
