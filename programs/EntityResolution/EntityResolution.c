@@ -29,26 +29,13 @@ int main(int argc,char ** argv){
 	}
 
 	printf("\n--------------- ENTITY RESOLUTION SYSTEM ----------------\n");
-	while(1){
-		printf("Printing results to stdout? [y/n]: ");
-		char answer[BUFFER];
-		scanf("%s",answer);
-		if(!strcmp(answer,"y")){
-		 	print_stdout = 1;
-		 	printf("Identical cameras pairs will be printed in stdout\n");
-		 	break;
-		}else if(!strcmp(answer,"n")){
-			print_stdout = 0;
-		 	printf("Identical cameras pairs will be printed in file named: PAIRS.txt in the current directory\n");
-			break;
-		}else
-			printf("Press 'y' for printing in stdout or 'n' for printing in a file \n");
-	}
+
 	ft1 = (double) times(&ftb1);
 	initializeDataStructures();
 	HashTable * ht = HTConstruct(HASHTABLE_SIZE);
 	CamSpec ** camArray = malloc(sizeof(CamSpec *));
 	int num_of_cameras=0;
+	Clique** cliqueIndex;
 
 	ticspersec = (double) sysconf(_SC_CLK_TCK);
 	t1 = (double) times(&tb1);
@@ -71,21 +58,23 @@ int main(int argc,char ** argv){
 
 	DisJointSet * djSet = DJSConstruct(num_of_cameras,(void**)camArray);
 	make_sets_from_csv(argv[csvFile],ht,djSet);
+	int numOfsets = 0;
+	cliqueIndex = CreateSets(djSet,&numOfsets);
 
 	printf("<- End\n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	printf("PERFORMANCE of reading .csv file and forming qliques:\n");
+	printf("PERFORMANCE of reading .csv file and forming cliques:\n");
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 	t1 = (double) times(&tb1);
-	printf("\n-> Printing qliques: \n");
-	printPairs(djSet,print_stdout); 
-	printf(" <- End of printing qliques\n");
+	printf("\n-> Printing cliques: \n");
+	printPairs(cliqueIndex,numOfsets); 
+	printf(" <- End of printing cliques\n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	printf("PERFORMANCE of printing qliques:\n");
+	printf("PERFORMANCE of printing cliques:\n");
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
