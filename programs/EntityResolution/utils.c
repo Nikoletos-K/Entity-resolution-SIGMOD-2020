@@ -18,7 +18,8 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 	while(!feof(json_file)){		// read every line until EOF is read
 		
 		fscanf(json_file,"%[^\n]\n",line);
-		if(strcmp(line,"{") && strcmp(line,"}")){		
+
+		if(strcmp(line,"{") && strcmp(line,"}")){	
 
 			char * key = strtok(line,":");		// split the line to key and value
 			key++;		// remove the first "
@@ -160,33 +161,65 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 	return ht;
 
 }
-
-void printPairs(DisJointSet * djSet,int print_stdout){
+void printPairs(Clique** cliquesArray,int numOfsets ){
 
 	FILE * output;
-	if(print_stdout)	// if user wants data to be printed in the stdout
-		output = stdout;
-	else
-		output = fopen("PAIRS.txt","w+");		// or in file
+
+	output = fopen("PAIRS.txt","w+");		// or in file
 
 
+	for(int i=0;i<numOfsets;i++)	// for every spec
+		printForward(cliquesArray[i]->set,output,printCameraName);	// print every pair in the list
+	
+	fclose(output);
+
+}
+
+/*-------------------------------- Clique functions -------------------------------*/
+
+
+Clique** CreateSets(DisJointSet * djSet,int* numOfsets){
 	int parent;
+	Clique** cliquesArray = malloc(sizeof(Clique*));
+	List* set;
+	CamSpec* data;
+	
 	CamSpec** camArray = (CamSpec**) (djSet->objectArray);
 
-	for(int i=0;i<djSet->size;i++){		// find root parent of every spec
+	for(int i=0;i<djSet->size;i++){
 		parent = DJSFindParent(djSet,i);
 		if(parent!=i)
-			insert_toList(camArray[parent]->set,camArray[i]);	// insert it to parent's list
+			insert_toList(camArray[parent]->set,camArray[i]);
 	}
 
 	for(int i=0;i<djSet->size;i++){	// for every spec
-		if(!oneNodeList(camArray[i]->set))		// if the list was not empty
-			printForward(camArray[i]->set,output,printCameraName);	// print every pair in the list
-		fflush(stdout);
-	}
+		if(!oneNodeList(camArray[i]->set)){		
+			cliquesArray = realloc(cliquesArray,(*numOfsets+1)*sizeof(Clique*));
+			cliquesArray[*numOfsets] = malloc(sizeof(Clique));
+			cliquesArray[*numOfsets]->set = camArray[i]->set;
+			cliquesArray[*numOfsets]->numOfNegativeCliques = 0;
+			cliquesArray[*numOfsets]->negativeCliques = NULL;
 
-	if(!print_stdout)
-		fclose(output);
+			(*numOfsets)++;
+
+			set = (cliquesArray[*numOfsets-1])->set;
+
+			listNode * node = set->firstNode;
+	
+			while(node!=NULL){
+
+				data = (CamSpec*) node->data;
+				data->arrayPosition = *numOfsets-1;
+				node = node->nextNode;
+			}
+		}
+			
+	}
+	return cliquesArray;
+}
+
+void destroySets(Clique** cliquesArray,int numOfsets){
+	free(cliquesArray);
 }
 
 int stringComparator(const void * str1,const void * str2){
