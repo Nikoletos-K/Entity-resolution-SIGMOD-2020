@@ -179,7 +179,7 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet,
 
 }
 
-void printPairs(Qlique** qliquesArray,int numOfsets ){
+void printPairs(Clique** cliquesArray,int numOfsets ){
 
 	FILE * output;
 
@@ -187,16 +187,15 @@ void printPairs(Qlique** qliquesArray,int numOfsets ){
 
 
 	for(int i=0;i<numOfsets;i++)	// for every spec
-		printForward(qliquesArray[i]->set,output,printCameraName);	// print every pair in the list
+		printForward(cliquesArray[i]->set,output,printCameraName);	// print every pair in the list
 	
-
 	fclose(output);
 
 }
 
-Qlique** CreateSets(DisJointSet * djSet,int* numOfsets){
+Clique** CreateSets(DisJointSet * djSet,int* numOfsets){
 	int parent;
-	Qlique** qliquesArray = malloc(sizeof(Qlique*));
+	Clique** cliquesArray = malloc(sizeof(Clique*));
 	List* set;
 	CamSpec* data;
 	
@@ -210,15 +209,15 @@ Qlique** CreateSets(DisJointSet * djSet,int* numOfsets){
 
 	for(int i=0;i<djSet->size;i++){	// for every spec
 		if(!oneNodeList(camArray[i]->set)){		
-			qliquesArray = realloc(qliquesArray,(*numOfsets+1)*sizeof(Qlique*));
-			qliquesArray[*numOfsets] = malloc(sizeof(Qlique));
-			qliquesArray[*numOfsets]->set = camArray[i]->set;
-			qliquesArray[*numOfsets]->numOfNegativeQliques = 0;
-			qliquesArray[*numOfsets]->negativeQliques = NULL;
+			cliquesArray = realloc(cliquesArray,(*numOfsets+1)*sizeof(Clique*));
+			cliquesArray[*numOfsets] = malloc(sizeof(Clique));
+			cliquesArray[*numOfsets]->set = camArray[i]->set;
+			cliquesArray[*numOfsets]->numOfNegativeCliques = 0;
+			cliquesArray[*numOfsets]->negativeCliques = NULL;
 
 			(*numOfsets)++;
 
-			set = (qliquesArray[*numOfsets-1])->set;
+			set = (cliquesArray[*numOfsets-1])->set;
 
 			listNode * node = set->firstNode;
 	
@@ -231,10 +230,10 @@ Qlique** CreateSets(DisJointSet * djSet,int* numOfsets){
 		}
 			
 	}
-	return qliquesArray;
+	return cliquesArray;
 }
 
-Qlique** createNegConnections(List * diffPairsList,Qlique ** qliqueIndex){
+Clique** createNegConnections(List * diffPairsList,Clique ** cliqueIndex){
 
 	BF * bloomFilter = createBF((unsigned int) get_listSize(diffPairsList));
 
@@ -243,36 +242,36 @@ Qlique** createNegConnections(List * diffPairsList,Qlique ** qliqueIndex){
 
 		DiffCamerasPair * pair = (DiffCamerasPair*) node->data;
 
-		int qliqueKey_1 = pair->camera1->arrayPosition;
-		int qliqueKey_2 = pair->camera2->arrayPosition;
+		int cliqueKey_1 = pair->camera1->arrayPosition;
+		int cliqueKey_2 = pair->camera2->arrayPosition;
 
-		int encodedKey = CantorEncode(qliqueKey_1,qliqueKey_2);
+		int encodedKey = CantorEncode(cliqueKey_1,cliqueKey_2);
 
 		if(!checkBF(bloomFilter,(void*) &encodedKey)){
 			// insert_toList(newList,(void*)pair);
 			insertBF(bloomFilter,(void*) &encodedKey);
-			insert_NegConnection(qliqueIndex[qliqueKey_1],qliqueKey_1);
-			insert_NegConnection(qliqueIndex[qliqueKey_2],qliqueKey_2);
+			insert_NegConnection(cliqueIndex[cliqueKey_1],cliqueKey_1);
+			insert_NegConnection(cliqueIndex[cliqueKey_2],cliqueKey_2);
 
 		}
 
 		node = node->nextNode;
 	}
 
-	return qliqueIndex;
+	return cliqueIndex;
 }
 
-Qlique * insert_NegConnection(Qlique * ql,int arrayPosition){
+Clique * insert_NegConnection(Clique * ql,int arrayPosition){
 
-	if(ql->negativeQliques == NULL)
-		ql->negativeQliques = malloc(sizeof(int));
+	if(ql->negativeCliques == NULL)
+		ql->negativeCliques = malloc(sizeof(int));
 	
 	else
-		ql->negativeQliques = realloc(ql->negativeQliques,(ql->numOfNegativeQliques+1)*sizeof(int));
+		ql->negativeCliques = realloc(ql->negativeCliques,(ql->numOfNegativeCliques+1)*sizeof(int));
 	
 
-	ql->negativeQliques[ql->numOfNegativeQliques] = arrayPosition;
-	(ql->numOfNegativeQliques)++;
+	ql->negativeCliques[ql->numOfNegativeCliques] = arrayPosition;
+	(ql->numOfNegativeCliques)++;
 
 	return ql;
 }
@@ -297,8 +296,8 @@ int CantorDecode(int cantor_number,int* num1,int* num2){
 	*num1 = w - *num2; 
 	return cantor_number;
 }
-void destroySets(Qlique** qliquesArray,int numOfsets){
-	free(qliquesArray);
+void destroySets(Clique** cliquesArray,int numOfsets){
+	free(cliquesArray);
 }
 
 DiffCamerasPair * createPair(CamSpec * c1, CamSpec * c2){
