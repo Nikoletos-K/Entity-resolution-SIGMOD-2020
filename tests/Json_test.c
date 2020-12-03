@@ -79,14 +79,14 @@ void test_CamSpec(void){
 void test_jsonParser(void){	
 
 	/* json file in the current directory */
-	char * test_json_file = "json_test_file.json";
+	char  test_json_file[20] = "json_test_file.json";
 	int arrayPosition = 0;
 	char * name = "camera_1";
 
 	CamSpec* cs = createCamSpec(name,arrayPosition);
 	cs = read_jsonSpecs(test_json_file,cs);
 	int true_numOfKeys = 5;
-	char * key_exampleArray[5] = {"<page title>", "auto focusing af modes","battery technology","colour of product","width"};
+	char * key_exampleArray[5] = {"<page title>", "brand name","builtin flash","camera modes","exposure control"};
 
 	TEST_ASSERT(cs->numOfSpecs == true_numOfKeys);
 
@@ -98,28 +98,27 @@ void test_jsonParser(void){
 			case 0:
 				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
 				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Sony QX100 Lens-Style Camera - Digital Cameras - Photo - Visual | ILGS.net") == 0);
+				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Polaroid Is426") == 0);
 				break;
 			case 1:
 				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
 				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Centre weighted Auto Focus") == 0);
+				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Polaroid") == 0);
 				break;
 			case 2:
 				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
 				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Lithium-Ion (Li-Ion)") == 0);			
+				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Yes") == 0);			
 				break;
 			case 3:
-				TEST_ASSERT(cs->infoArray[i]->numOfvalues==2);
+				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
 				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Black") == 0);		
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[1],"Black") == 0);				
+				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Scene Modes: Portrait Night") == 0);		
 				break;
 			case 4:
 				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
 				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"6.25 cm") == 0);
+				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Auto") == 0);
 				break;
 		}
 	}
