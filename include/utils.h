@@ -5,13 +5,27 @@
 
 #define BUFFER 1024
 #define SAME_CAMERAS 1
+#define DIFFERENT_CAMERAS 0
+
+typedef struct Clique{
+
+	Set set;
+	char * negativeCliques;
+	size_t numOfNegativeCliques; 
+
+} Clique;
 
 /* Body of entity resolution */
 CamSpec * read_jsonSpecs(char* filename,CamSpec * cs);
 CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *array_position);
 HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet * djSet);
 void printCameraName(void * data,FILE * output);
-void printPairs(DisJointSet * djSet,int print_stdout);
+
+
+/*clique*/
+void printPairs(Clique** setsList,int numOfsets );
+Clique** CreateSets(DisJointSet * djSet,int* numOfsets);
+void destroySets(Clique** setsList,int numOfsets);
 
 /* utils */
 int stringComparator(const void * str1,const void * str2);
