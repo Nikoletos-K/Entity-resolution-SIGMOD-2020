@@ -12,7 +12,7 @@
 
 int main(int argc,char ** argv){
 
-	int i=1,print_stdout=1;
+	int i=1;
 	int jsonDir,csvFile;
 
 	/* Variables for counting time */
@@ -57,9 +57,13 @@ int main(int argc,char ** argv){
 	printf("   and informing sets\n ");
 
 	DisJointSet * djSet = DJSConstruct(num_of_cameras,(void**)camArray);
-	make_sets_from_csv(argv[csvFile],ht,djSet);
+
+	List * diffPairsList = createList();
+	make_sets_from_csv(argv[csvFile],ht,djSet,diffPairsList);
 	int numOfsets = 0;
 	cliqueIndex = CreateSets(djSet,&numOfsets);
+
+	printf("%d\n",numOfsets  );
 
 	printf("<- End\n");
 	t2 = (double) times(&tb2);
@@ -78,8 +82,17 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
+	t1 = (double) times(&tb1);
+	printf("\n-> Forming negative cliques: \n");
+	cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
+	printf(" <- End of forming negative cliques\n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of printing cliques:\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
-	printf("\n-> Restoring memory\n");
+	printf("-> Restoring memory\n");
 	for(int i=0;i<num_of_cameras;i++)
 		destroyCamSpec(camArray[i]);
 
@@ -87,11 +100,12 @@ int main(int argc,char ** argv){
 	HTDestroy(ht);
 	DJSDestructor(djSet);
 	destroyDataStructures();
+	destroySets(cliqueIndex,numOfsets);
 	printf("<- All frees done\n");
 
 	ft2 = (double) times(&ftb2);
 	fcpu_time = (double) ((ftb2.tms_utime + ftb2.tms_stime) - (ftb1.tms_utime + ftb1.tms_stime));
-	printf("PERFORMANCE of system overall:\n");
+	printf("\nPERFORMANCE of system overall:\n");
 	printf("- CPU_TIME: %.2lf sec\n",fcpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(ft2-ft1)/ticspersec);
 

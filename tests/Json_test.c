@@ -17,7 +17,6 @@ void test_jsonInfo(void){
 	TEST_ASSERT(ji->key != NULL);
 	TEST_ASSERT(strcmp(ji->key,key) == 0);
 
-	char * value = "value";
 	char * string_exampleArray[10] = {"i","a","c","d","b","f","g","e","h","j"};
 	
 	/* inserting values to its array */
@@ -129,6 +128,5 @@ void test_jsonParser(void){
 TEST_LIST = {
 	{"json reading methods",test_jsonInfo},
 	{"camera storing methods",test_CamSpec},
-	{"json parser",test_jsonParser},
 	{ NULL, NULL }
 };

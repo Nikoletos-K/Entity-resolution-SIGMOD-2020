@@ -24,8 +24,7 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 			char * key = strtok(line,":");		// split the line to key and value
 			key++;		// remove the first "
 			key[strlen(key)-1] = '\0';		 // remove the last " 
-			cs = addJsonInfo(cs,key);			// create the json pair and \
-														initialize it with the key
+			cs = addJsonInfo(cs,key);			// create the json pair and initialize it with the key
 			
 			char * value = strtok(NULL,"");	
 			
@@ -115,7 +114,7 @@ CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *arra
 	return camArray;
 }
 
-HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet){
+HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet,List * diffPairsList){
 
 	FILE * csv = fopen(csvfile,"r");
 	int line=0;
@@ -127,7 +126,7 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 
 		if(line!=0){
 			char left_spec_id[BUFFER],right_spec_id[BUFFER];
-			char * token = strtok(buffer,",");		// split the line
+			char * token = strtok(buffer,",");
 			int spec_id=0,label;
 
 			// Reading line
@@ -147,12 +146,23 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 				spec_id++;
 				token = strtok(NULL,",");
 			}
-			
-			if(label == SAME_CAMERAS){		// if label is 1
-				CamSpec * left_node = HTSearch(ht,left_spec_id,stringComparator);		// search left in the hashtable
-				CamSpec * right_node = HTSearch(ht,right_spec_id,stringComparator);		// search right in the hashtable
-				if(left_node != NULL && right_node != NULL)
-					DJSUnion(djSet,left_node->arrayPosition,right_node->arrayPosition);		// add them as same in the disjoint set			
+	
+			CamSpec * left_node = HTSearch(ht,left_spec_id,stringComparator);
+			CamSpec * right_node = HTSearch(ht,right_spec_id,stringComparator);
+
+			if(left_node != NULL && right_node!=NULL){	
+					
+				if(label == SAME_CAMERAS)
+				
+					DJSUnion(djSet,left_node->arrayPosition,right_node->arrayPosition);				
+				
+				else if(label == DIFFERENT_CAMERAS){
+
+					DiffCamerasPair * pair = createPair(left_node,right_node);
+					insert_toList(diffPairsList,(void*) pair);
+
+				}else
+					fprintf(stderr,"make_sets_from_csv: Only 1 and 0 accepted\n");
 			}
 		}
 		line++;
@@ -161,6 +171,7 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet)
 	return ht;
 
 }
+
 void printPairs(Clique** cliquesArray,int numOfsets ){
 
 	FILE * output;
@@ -212,14 +223,72 @@ Clique** CreateSets(DisJointSet * djSet,int* numOfsets){
 				data->arrayPosition = *numOfsets-1;
 				node = node->nextNode;
 			}
-		}
-			
+		}	
 	}
+
+	for (int i = 0; i < *numOfsets; i++)
+		cliquesArray[i]->bitArray =  createBF(*numOfsets);
+	
 	return cliquesArray;
 }
 
 void destroySets(Clique** cliquesArray,int numOfsets){
 	free(cliquesArray);
+}
+
+Clique** createNegConnections(List * diffPairsList,Clique ** cliqueIndex){
+
+	listNode * node = diffPairsList->firstNode;
+	while(node != NULL){
+
+		DiffCamerasPair * pair = (DiffCamerasPair*) node->data;
+
+		int cliqueKey_1 = pair->camera1->arrayPosition;
+		int cliqueKey_2 = pair->camera2->arrayPosition;
+
+		if(!checkBit(cliqueIndex[cliqueKey_1]->bitArray,cliqueKey_2)){
+			setBit(cliqueIndex[cliqueKey_1]->bitArray,cliqueKey_2);
+			cliqueIndex[cliqueKey_1] = insert_NegConnection(cliqueIndex[cliqueKey_1],cliqueKey_2);
+		}
+		if(!checkBit(cliqueIndex[cliqueKey_2]->bitArray,cliqueKey_1)){
+			setBit(cliqueIndex[cliqueKey_2]->bitArray,cliqueKey_1);
+			cliqueIndex[cliqueKey_2] = insert_NegConnection(cliqueIndex[cliqueKey_2],cliqueKey_1);	
+		}
+
+		node = node->nextNode;
+	}
+
+	return cliqueIndex;
+}
+
+
+Clique * insert_NegConnection(Clique * cl,int arrayPosition){
+
+	if(cl->negativeCliques == NULL)
+		cl->negativeCliques = malloc(sizeof(int));
+	
+	else
+		cl->negativeCliques = realloc(cl->negativeCliques,(cl->numOfNegativeCliques+1)*sizeof(int));
+	
+
+	cl->negativeCliques[cl->numOfNegativeCliques] = arrayPosition;
+	(cl->numOfNegativeCliques)++;
+
+	return cl;
+}
+
+DiffCamerasPair * createPair(CamSpec * c1, CamSpec * c2){
+
+	DiffCamerasPair * pair = malloc(sizeof(DiffCamerasPair));
+	pair-> camera1 = c1;
+	pair-> camera2 = c2;
+
+	return pair;
+
+}
+
+void deletePair(DiffCamerasPair * pair){
+	free(pair);
 }
 
 int stringComparator(const void * str1,const void * str2){

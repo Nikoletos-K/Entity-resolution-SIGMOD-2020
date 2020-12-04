@@ -13,8 +13,7 @@ DisJointSet * DJSConstruct(int set_size,void ** objectArray){
 	dsjSet->objectArray = objectArray;
 	dsjSet->parentArray = malloc(dsjSet->size*sizeof(int));
 	for(int i=0;i<set_size;i++)
-		dsjSet->parentArray[i] = i;		// initialize the array with \
-										the same value as the index
+		dsjSet->parentArray[i] = i;		// initialize the array with the same value as the index
 
 	return dsjSet;
 }

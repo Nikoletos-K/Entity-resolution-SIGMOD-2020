@@ -46,7 +46,7 @@ LIB		:= $(MY_PATH)lib
 #
 # Το override επιτρέπει την προσθήκη επιπλέον παραμέτρων από τη γραμμή εντολών: make CFLAGS=...
 #
-override CFLAGS += -g -Werror -MMD -I$(INCLUDE)
+override CFLAGS += -g -Werror -Wall -MMD -I$(INCLUDE)
 
 # Linker options
 #   -lm        Link με τη math library
