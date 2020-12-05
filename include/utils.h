@@ -29,8 +29,8 @@ typedef struct CamerasPair{
 } CamerasPair;
 
 /* Body of entity resolution */
-CamSpec * read_jsonSpecs(char* filename,CamSpec * cs);
-CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *array_position);
+CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords);
+CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *array_position,HashTable* stopwords);
 HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet,List * diffPairsList);
 void printCameraName(void * data,FILE * output);
 
@@ -56,3 +56,7 @@ List * createNegativePairs(Clique ** CliqueIndex,int numOfcliques);
 /* Dataset */
 CamerasPair ** createDataset(List * sameCameras,List * differentCameras,int * dataset_size);
 void printDataset(CamerasPair ** Dataset,int dataset_size);
+
+void addWord(char *word, CamSpec* cs, HashTable* stopwords);
+
+HashTable * createStopWords(char* file);
