@@ -75,55 +75,55 @@ void test_CamSpec(void){
 	destroyCamSpec(cs);
 }
 
-void test_jsonParser(void){	
+// void test_jsonParser(void){	
 
-	/* json file in the current directory */
-	char  test_json_file[20] = "json_test_file.json";
-	int arrayPosition = 0;
-	char * name = "camera_1";
+// 	/* json file in the current directory */
+// 	char  test_json_file[20] = "json_test_file.json";
+// 	int arrayPosition = 0;
+// 	char * name = "camera_1";
 
-	CamSpec* cs = createCamSpec(name,arrayPosition);
-	cs = read_jsonSpecs(test_json_file,cs);
-	int true_numOfKeys = 5;
-	char * key_exampleArray[5] = {"<page title>", "brand name","builtin flash","camera modes","exposure control"};
+// 	CamSpec* cs = createCamSpec(name,arrayPosition);
+// 	cs = read_jsonSpecs(test_json_file,cs);
+// 	int true_numOfKeys = 5;
+// 	char * key_exampleArray[5] = {"<page title>", "brand name","builtin flash","camera modes","exposure control"};
 
-	TEST_ASSERT(cs->numOfSpecs == true_numOfKeys);
+// 	TEST_ASSERT(cs->numOfSpecs == true_numOfKeys);
 
-	for(int i=0;i<true_numOfKeys;i++){
+// 	for(int i=0;i<true_numOfKeys;i++){
 
-		/* five rows of json */
-		/* checking if stored data match with json initial data */
-		switch(i){
-			case 0:
-				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Polaroid Is426") == 0);
-				break;
-			case 1:
-				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Polaroid") == 0);
-				break;
-			case 2:
-				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Yes") == 0);			
-				break;
-			case 3:
-				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Scene Modes: Portrait Night") == 0);		
-				break;
-			case 4:
-				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
-				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Auto") == 0);
-				break;
-		}
-	}
+// 		/* five rows of json */
+// 		/* checking if stored data match with json initial data */
+// 		switch(i){
+// 			case 0:
+// 				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
+// 				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
+// 				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Polaroid Is426") == 0);
+// 				break;
+// 			case 1:
+// 				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
+// 				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
+// 				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Polaroid") == 0);
+// 				break;
+// 			case 2:
+// 				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
+// 				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
+// 				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Yes") == 0);			
+// 				break;
+// 			case 3:
+// 				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
+// 				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
+// 				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Scene Modes: Portrait Night") == 0);		
+// 				break;
+// 			case 4:
+// 				TEST_ASSERT(cs->infoArray[i]->numOfvalues==1);
+// 				TEST_ASSERT(strcmp(cs->infoArray[i]->key,key_exampleArray[i]) == 0);
+// 				TEST_ASSERT(strcmp(cs->infoArray[i]->value[0],"Auto") == 0);
+// 				break;
+// 		}
+// 	}
 
-	destroyCamSpec(cs);
-}
+// 	destroyCamSpec(cs);
+// }
 
 TEST_LIST = {
 	{"json reading methods",test_jsonInfo},
