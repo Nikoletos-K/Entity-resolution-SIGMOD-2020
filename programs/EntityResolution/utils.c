@@ -7,14 +7,18 @@
 #include <sys/times.h>
 #include <unistd.h>
 #include <time.h>
+#include <ctype.h>
 
 #include "./../../include/utils.h"
 
-CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
+CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords){
 
 	FILE * json_file = fopen(filename,"r");		// open the json file
 	
 	char line[20000];
+
+	const char s[2] = " ";
+   	char *token;
 
 	while(!feof(json_file)){		// read every line until EOF is read
 		
@@ -25,9 +29,19 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 			char * key = strtok(line,":");		// split the line to key and value
 			key++;		// remove the first "
 			key[strlen(key)-1] = '\0';		 // remove the last " 
-			cs = addJsonInfo(cs,key);			// create the json pair and initialize it with the key
-			
+			cs = addJsonInfo(cs,key);			// create the json pair and initialize it with the key  
+
 			char * value = strtok(NULL,"");	
+
+			token = strtok(key, s);
+
+			if(token==NULL)
+				addWord(key,cs,stopwords);
+
+			while( token != NULL ) {
+			  addWord(token,cs,stopwords);		    
+		      token = strtok(NULL, s);
+		   }
 			
 			if(strcmp(value," [")){		// if value is not a list 
 				value = value+2;
@@ -37,6 +51,16 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 				else 
 					value[strlen(value)-1] = '\0';
 				cs = addValuetoCS(cs, value);			// add the value
+
+				token = strtok(value, s);
+
+				if(token==NULL)
+					addWord(value,cs,stopwords);
+
+				while( token != NULL ) {
+				  addWord(token,cs,stopwords);		    
+			      token = strtok(NULL, s);
+			   }
 				
 			}else{
 				fscanf(json_file,"%[^\n]\n",line);		// read the next line
@@ -50,6 +74,17 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 						value[strlen(value)-1] = '\0';
 					
 					cs = addValuetoCS(cs, value);		// add every value of the list
+
+					token = strtok(value, s);
+
+					if(token==NULL)
+						addWord(value,cs,stopwords);
+
+					while( token != NULL ) {
+					  addWord(token,cs,stopwords);		    
+				      token = strtok(NULL, s);
+				    }
+
 					fscanf(json_file,"%[^\n]\n",line);		// read next line
 				}
 			}
@@ -68,8 +103,41 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs){
 	return cs;
 }
 
+void addWord(char *word, CamSpec* cs,HashTable* stopwords){
 
-CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *array_position){
+	for (int i = 0, j; word[i] != '\0'; ++i) {
+
+		if(!islower(word[i]))
+			word[i] = tolower(word[i]);
+
+	      // enter the loop if the character is not an alphabet
+	      // and not the null character
+		while (!(word[i] >= 'a' && word[i] <= 'z') && !(word[i] >= 'A' && word[i] <= 'Z') && !(word[i] == '\0')) {
+
+			for (j = i; word[j] != '\0'; ++j) {
+
+			// if jth element of line is not an alphabet,
+			// assign the value of (j+1)th element to the jth element
+				word[j] = word[j + 1];
+			}
+			word[j] = '\0';
+		}
+	}
+
+	if(strlen(word)>1){
+		if(HTSearch(stopwords,word,stringComparator)!=NULL)
+			return;
+
+		cs->json = realloc(cs->json,(cs->numOfWords+1)*sizeof(char*));
+		cs->json[cs->numOfWords] = malloc(sizeof(char)*strlen(word)+1);
+		strcpy(cs->json[cs->numOfWords],word);
+		(cs->numOfWords)++;
+	}  
+}
+
+
+
+CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *array_position,HashTable* stopwords){
 	DIR * dir;
 	struct dirent *info;
 	char pathOfDir[BUFFER];
@@ -86,7 +154,7 @@ CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *arra
 				strcpy(pathOfDir,nameOfDir);
 				strcat(pathOfDir,"/");
 				strcat(pathOfDir,info->d_name);
-				camArray = read_dir(pathOfDir,ht,camArray,array_position);
+				camArray = read_dir(pathOfDir,ht,camArray,array_position,stopwords);
 			}
 		}else{				// if it is a file
 			char path[512];			// create the name of the spec
@@ -107,7 +175,7 @@ CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *arra
 			camArray = realloc(camArray,(*array_position+1)*sizeof(CamSpec*));
 			camArray[*array_position] = cs;		// add it to the array for the disjointtest
 			(*array_position)++;
-			cs = read_jsonSpecs(filename,cs);		// read the file and save the json info
+			cs = read_jsonSpecs(filename,cs,stopwords);		// read the file and save the json info
 		}
 	}
 
@@ -437,3 +505,20 @@ void printCameraName(void * data,FILE * output){
 	fprintf(output,"%s",((CamSpec*)data)->name);
 }
 
+HashTable * createStopWords(char* file){
+
+	FILE * fp = fopen(file,"r");
+
+	HashTable * ht = HTConstruct(50);
+
+
+
+	while(!feof(fp)){
+		char buffer[BUFFER];
+		fscanf(fp,"%[^\n]\n",buffer);
+		buffer[strlen(buffer)-1] = buffer[strlen(buffer)];
+
+		HTInsert(ht,buffer,(void *) buffer,stringComparator);		
+	}
+	return ht;
+}
