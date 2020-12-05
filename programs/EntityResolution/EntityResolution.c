@@ -36,6 +36,7 @@ int main(int argc,char ** argv){
 	CamSpec ** camArray = malloc(sizeof(CamSpec *));
 	int num_of_cameras=0;
 	Clique** cliqueIndex;
+	HashTable * stopwords = createStopWords("./../../data/stopwords.txt");
 
 
 	/* ----------------   READING JSON DIRECTORY -------------------------- */
@@ -44,7 +45,7 @@ int main(int argc,char ** argv){
 	printf("\n-> Starting reading directory (%s)  \n ",argv[jsonDir] );
 	printf("   and informing data structures from given .json files\n ");
 
-	camArray = read_dir(argv[jsonDir],ht,camArray,&num_of_cameras);
+	camArray = read_dir(argv[jsonDir],ht,camArray,&num_of_cameras,stopwords);
 
 	printf("<- End of reading directory\n");
 	t2 = (double) times(&tb2);
@@ -125,6 +126,7 @@ int main(int argc,char ** argv){
 
 	free(camArray);
 	HTDestroy(ht);
+	HTDestroy(stopwords);
 	DJSDestructor(djSet);
 	destroyDataStructures();
 	destroySets(cliqueIndex,numOfsets);
