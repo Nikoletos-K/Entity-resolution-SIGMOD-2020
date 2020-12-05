@@ -85,24 +85,24 @@ void printList(List * list,void (*printData)(void*)){
 	}
 }
 
-void printForward(List * list,FILE * output,void (*printData)(void*,FILE *)){
+// void printForward(List * list,FILE * output,void (*printData)(void*,FILE *)){
 
-	listNode * leftNode = list->firstNode,* rightNode;
+// 	listNode * leftNode = list->firstNode,* rightNode;
 	
-	while(leftNode!=NULL){
+// 	while(leftNode!=NULL){
 
-		rightNode = leftNode->nextNode;
-		while(rightNode!=NULL){
+// 		rightNode = leftNode->nextNode;
+// 		while(rightNode!=NULL){
 
-			printData(leftNode->data,output);
-			fprintf(output,", ");
-			printData(rightNode->data,output);
-			fprintf(output,"\n");
-			rightNode = rightNode->nextNode;
-		}
-		leftNode = leftNode->nextNode;
-	}
-}
+// 			printData(leftNode->data,output);
+// 			fprintf(output,", ");
+// 			printData(rightNode->data,output);
+// 			fprintf(output,"\n");
+// 			rightNode = rightNode->nextNode;
+// 		}
+// 		leftNode = leftNode->nextNode;
+// 	}
+// }
 
 
 int oneNodeList(List * list){

@@ -37,6 +37,8 @@ int main(int argc,char ** argv){
 	int num_of_cameras=0;
 	Clique** cliqueIndex;
 
+
+	/* ----------------   READING JSON DIRECTORY -------------------------- */
 	ticspersec = (double) sysconf(_SC_CLK_TCK);
 	t1 = (double) times(&tb1);
 	printf("\n-> Starting reading directory (%s)  \n ",argv[jsonDir] );
@@ -51,19 +53,20 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
-
+	
+	/* ----------------   CREATING CLIQUES -------------------------- */
 	t1 = (double) times(&tb1);
 	printf("\n-> Starting reading .csv file  (%s)  \n ",argv[csvFile] );
 	printf("   and informing sets\n ");
 
-	DisJointSet * djSet = DJSConstruct(num_of_cameras,(void**)camArray);
 
+	DisJointSet * djSet = DJSConstruct(num_of_cameras,(void**)camArray);
 	List * diffPairsList = createList();
 	make_sets_from_csv(argv[csvFile],ht,djSet,diffPairsList);
 	int numOfsets = 0;
 	cliqueIndex = CreateSets(djSet,&numOfsets);
-
 	printf("%d\n",numOfsets  );
+
 
 	printf("<- End\n");
 	t2 = (double) times(&tb2);
@@ -72,9 +75,12 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
+	/* ----------------   PRINTING CLIQUES -------------------------- */
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing cliques: \n");
-	printPairs(cliqueIndex,numOfsets); 
+
+	List * sameCameras = printPairs(cliqueIndex,numOfsets); 
+	
 	printf(" <- End of printing cliques\n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
@@ -82,17 +88,38 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
+	/* ----------------   FORMING NEGATIVE CLIQUES -------------------------- */
 	t1 = (double) times(&tb1);
 	printf("\n-> Forming negative cliques: \n");
+	
 	cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
+	List * differentCameras = createNegativePairs(cliqueIndex,numOfsets);
+
 	printf(" <- End of forming negative cliques\n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	printf("PERFORMANCE of printing cliques:\n");
+	printf("PERFORMANCE of forming negative cliques:\n");
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
-	printf("-> Restoring memory\n");
+
+	/* ----------------   FORMING DATASET -------------------------- */
+	t1 = (double) times(&tb1);
+	printf("\n-> Forming DATASET \n");
+	
+	int dataset_size=0;
+	CamerasPair ** Dataset =  createDataset(sameCameras,differentCameras, &dataset_size);
+	printDataset(Dataset,dataset_size);
+
+	printf(" <- End of forming DATASET\n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of DATASET:\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+
+	/* ----------------   FREE OF MEMORY -------------------------- */
+	printf("\n\n-> Restoring memory\n");
 	for(int i=0;i<num_of_cameras;i++)
 		destroyCamSpec(camArray[i]);
 

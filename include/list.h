@@ -52,4 +52,3 @@ int get_listSize(List * list);
 
 // merge lists
 List * mergeLists(List * list1,List * list2);
-void printForward(List * list,FILE * output,void (*printData)(void*,FILE *));
