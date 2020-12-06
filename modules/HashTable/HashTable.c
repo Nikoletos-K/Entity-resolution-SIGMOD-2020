@@ -54,10 +54,16 @@ void HTInsert(HashTable * ht,keyType key,void * data,int (*comparator)(valueType
 void * HTSearch(HashTable * ht,keyType key,int (*comparator)(valueType,valueType)){
 
 	unsigned int index = hashFunction(key,strlen((char*)key))%ht->size;
-	RBTNode * node = RBTFindNode(ht->Table[index]->rbtRoot,key,comparator);
-	
-	if(node==NULL)	return NULL;
-	else return get_RBTData(node);
+
+	if(ht->Table[index]->rbtRoot != NULL){
+		RBTNode * node = RBTFindNode(ht->Table[index]->rbtRoot,key,comparator);
+		if(node==NULL)	return NULL;
+		else return get_RBTData(node);
+
+
+	}else
+		return NULL;
+
 }
 
 

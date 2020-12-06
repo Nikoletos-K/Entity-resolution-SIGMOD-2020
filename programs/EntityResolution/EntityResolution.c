@@ -9,6 +9,8 @@
 
 #include "./../../include/utils.h"
 
+HashTable * Dictionary;
+size_t DictionarySize;
 
 int main(int argc,char ** argv){
 
@@ -37,7 +39,7 @@ int main(int argc,char ** argv){
 	int num_of_cameras=0;
 	Clique** cliqueIndex;
 	HashTable * stopwords = createStopWords("./../../data/stopwords.txt");
-
+	Dictionary = HTConstruct(HASHTABLE_SIZE*5);
 
 	/* ----------------   READING JSON DIRECTORY -------------------------- */
 	ticspersec = (double) sysconf(_SC_CLK_TCK);
@@ -118,6 +120,24 @@ int main(int argc,char ** argv){
 	printf("PERFORMANCE of DATASET:\n");
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+
+
+	/* ----------------   FORMING BoW Vectors -------------------------- */
+	t1 = (double) times(&tb1);
+	printf("\n-> Forming BoW Vectors  \n");
+	
+
+	float ** bowVectors = createBoWVectors(camArray,num_of_cameras,DictionarySize);
+	printBoWVector(bowVectors,num_of_cameras,DictionarySize);
+
+
+	printf(" <- End of forming BoW Vectors \n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of BoW Vectors :\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+
 
 	/* ----------------   FREE OF MEMORY -------------------------- */
 	printf("\n\n-> Restoring memory\n");

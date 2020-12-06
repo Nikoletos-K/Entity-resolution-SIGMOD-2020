@@ -124,14 +124,28 @@ void addWord(char *word, CamSpec* cs,HashTable* stopwords){
 		}
 	}
 
+	int * returnedIndex;
 	if(strlen(word)>1){
 		if(HTSearch(stopwords,word,stringComparator)!=NULL)
 			return;
 
-		cs->json = realloc(cs->json,(cs->numOfWords+1)*sizeof(char*));
-		cs->json[cs->numOfWords] = malloc(sizeof(char)*strlen(word)+1);
-		strcpy(cs->json[cs->numOfWords],word);
-		(cs->numOfWords)++;
+
+		cs->dictionaryWords = realloc(cs->dictionaryWords,(cs->numOfWords+1)*sizeof(int));
+
+		// printf("%ld\n",DictionarySize );
+		if(( returnedIndex = (int*) HTSearch(Dictionary,word,stringComparator)) == NULL){
+			int * index = malloc(sizeof(int));
+			*index = DictionarySize;
+			DictionarySize++;
+
+			cs->dictionaryWords[cs->numOfWords] = *index;
+			(cs->numOfWords)++;
+			
+			HTInsert(Dictionary,word,(void *) index,stringComparator);
+		}else{
+			cs->dictionaryWords[cs->numOfWords] = *returnedIndex;
+			(cs->numOfWords)++;
+		}
 	}  
 }
 
@@ -458,7 +472,7 @@ CamerasPair ** createDataset(List * sameCameras,List * differentCameras,int * da
 		if(samePair_node!=NULL)	
 			setLabel(samePair_node->data,SAME_CAMERAS);
 
-		if((rand()%3 == 0 && samePair_node!=NULL) || (difPair_node == NULL && samePair_node !=NULL)){
+		if((rand()%20 == 0 && samePair_node!=NULL) || (difPair_node == NULL && samePair_node !=NULL)){
 			Dataset[i] = (CamerasPair*)samePair_node->data;
 			i++;
 			if(samePair_node!=NULL)	
@@ -476,6 +490,38 @@ CamerasPair ** createDataset(List * sameCameras,List * differentCameras,int * da
 
 
 	return Dataset;
+
+}
+
+float ** createBoWVectors(CamSpec ** camArray,int num_of_cameras,int vector_size){
+
+	float ** bowVectors = malloc(num_of_cameras*sizeof(float*));
+	for(int i=0;i<num_of_cameras;i++){
+
+		int numOfWords       = camArray[i]->numOfWords;
+		int* dictionaryWords = camArray[i]->dictionaryWords;
+		bowVectors[i] = calloc(vector_size,sizeof(float));
+
+		for(int p=0;p<numOfWords;p++){
+			int vector_position = dictionaryWords[p];
+			if(vector_position<vector_size)
+				bowVectors[i][vector_position]++;
+		}
+	}
+
+	return bowVectors;
+
+}
+
+void printBoWVector(float ** bowVectors,int num_of_cameras,int vector_size){
+
+	for(int i=0;i<num_of_cameras;i++){
+		printf("%03d:  ",i);
+		for(int p=0;p<vector_size;p+=vector_size/10){
+			printf("%.4f ",bowVectors[i][p]);
+		}
+		printf("\n");
+	}	
 
 }
 
@@ -510,8 +556,6 @@ HashTable * createStopWords(char* file){
 	FILE * fp = fopen(file,"r");
 
 	HashTable * ht = HTConstruct(50);
-
-
 
 	while(!feof(fp)){
 		char buffer[BUFFER];

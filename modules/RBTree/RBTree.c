@@ -4,6 +4,7 @@
 
 #include "./../../include/RBTree.h"
 
+RBTNode * GUARD;
 /*---------------------------------Create_Functions-------------------------------------------*/
 void initializeDataStructures(){
 	GUARD = createGuard();

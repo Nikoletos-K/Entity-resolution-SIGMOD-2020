@@ -20,7 +20,7 @@ typedef struct CamSpec{
 	int numOfSpecs;
 	int arrayPosition;
 	Set set;
-	char ** json;
+	int* dictionaryWords;
 	int numOfWords;
 }CamSpec;
 

@@ -45,7 +45,7 @@ CamSpec* createCamSpec(char * name,int arrayPosition){
 	cs->set = createList();
 	insert_toList(cs->set,cs);
 
-	cs->json = malloc(sizeof(char*));
+	cs->dictionaryWords = malloc(sizeof(int*));
 	cs->numOfWords = 0;
 	return cs;
 }
@@ -72,10 +72,7 @@ void destroyCamSpec(CamSpec * cs){
 	for(int i=0;i<cs->numOfSpecs;i++)
 		deleteJsonInfo(cs->infoArray[i]);
 	deleteList(cs->set);
-	for (int i = 0; i < cs->numOfWords; i++){
-		free(cs->json[i]);
-	}
-	free(cs->json);
+	free(cs->dictionaryWords);
 	free(cs->infoArray);
 	free(cs);
 }

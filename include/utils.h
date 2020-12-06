@@ -28,6 +28,9 @@ typedef struct CamerasPair{
 
 } CamerasPair;
 
+extern HashTable * Dictionary;
+extern size_t DictionarySize;
+
 /* Body of entity resolution */
 CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords);
 CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *array_position,HashTable* stopwords);
@@ -60,3 +63,9 @@ void printDataset(CamerasPair ** Dataset,int dataset_size);
 void addWord(char *word, CamSpec* cs, HashTable* stopwords);
 
 HashTable * createStopWords(char* file);
+
+
+/*BoW*/
+
+float ** createBoWVectors(CamSpec ** camArray,int num_of_cameras,int vector_size);
+void printBoWVector(float ** bowVectors,int num_of_cameras,int vector_size);
