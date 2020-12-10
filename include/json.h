@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./HashTable.h"
+#include "./dictionary.h"
 #include "./list.h"
 
 
