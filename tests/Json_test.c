@@ -5,6 +5,11 @@
 #include "./../include/acutest.h"
 #include "./../include/utils.h"
 
+HashTable * Dictionary;
+size_t DictionarySize;
+
+dictNode ** DictionaryNodes;
+
 void test_jsonInfo(void){
 
 	char * key = "key";
