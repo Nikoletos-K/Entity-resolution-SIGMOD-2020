@@ -28,8 +28,6 @@ typedef struct CamerasPair{
 
 } CamerasPair;
 
-extern HashTable * Dictionary;
-extern size_t DictionarySize;
 
 /* Body of entity resolution */
 CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords);
@@ -61,9 +59,6 @@ CamerasPair ** createDataset(List * sameCameras,List * differentCameras,int * da
 void printDataset(CamerasPair ** Dataset,int dataset_size);
 
 void addWord(char *word, CamSpec* cs, HashTable* stopwords);
-
-HashTable * createStopWords(char* file);
-
 
 /*BoW*/
 
