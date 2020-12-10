@@ -12,6 +12,10 @@
 HashTable * Dictionary;
 size_t DictionarySize;
 
+dictNode ** DictionaryNodes;
+
+
+
 int main(int argc,char ** argv){
 
 	int i=1;
@@ -40,6 +44,8 @@ int main(int argc,char ** argv){
 	Clique** cliqueIndex;
 	HashTable * stopwords = createStopWords("./../../data/stopwords.txt");
 	Dictionary = HTConstruct(HASHTABLE_SIZE*5);
+	DictionaryNodes = malloc(sizeof(dictNode*));
+
 
 	/* ----------------   READING JSON DIRECTORY -------------------------- */
 	ticspersec = (double) sysconf(_SC_CLK_TCK);
@@ -68,8 +74,6 @@ int main(int argc,char ** argv){
 	make_sets_from_csv(argv[csvFile],ht,djSet,diffPairsList);
 	int numOfsets = 0;
 	cliqueIndex = CreateSets(djSet,&numOfsets);
-	printf("%d\n",numOfsets  );
-
 
 	printf("<- End\n");
 	t2 = (double) times(&tb2);
@@ -90,6 +94,19 @@ int main(int argc,char ** argv){
 	printf("PERFORMANCE of printing cliques:\n");
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+
+	/*----------------------- Vectorization ----------------------------*/
+
+
+	qsort(DictionaryNodes, DictionarySize, sizeof(dictNode*), cmpfunc);
+
+	// for (int i = DictionarySize-1; i >= DictionarySize-1000; i--){
+	// 	printf("%d - %s\n", DictionaryNodes[i]->num, DictionaryNodes[i]->word ); 
+
+	// }
+
+
+
 
 	/* ----------------   FORMING NEGATIVE CLIQUES -------------------------- */
 	t1 = (double) times(&tb1);
@@ -127,8 +144,8 @@ int main(int argc,char ** argv){
 	printf("\n-> Forming BoW Vectors  \n");
 	
 
-	float ** bowVectors = createBoWVectors(camArray,num_of_cameras,DictionarySize);
-	printBoWVector(bowVectors,num_of_cameras,DictionarySize);
+	// float ** bowVectors = createBoWVectors(camArray,num_of_cameras,DictionarySize);
+	// printBoWVector(bowVectors,num_of_cameras,DictionarySize);
 
 
 	printf(" <- End of forming BoW Vectors \n");
@@ -144,6 +161,7 @@ int main(int argc,char ** argv){
 	for(int i=0;i<num_of_cameras;i++)
 		destroyCamSpec(camArray[i]);
 
+	free(DictionaryNodes);
 	free(camArray);
 	HTDestroy(ht);
 	HTDestroy(stopwords);
