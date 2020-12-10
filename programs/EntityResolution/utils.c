@@ -115,6 +115,9 @@ void addWord(char *word, CamSpec* cs,HashTable* stopwords){
 		while (!(word[i] >= 'a' && word[i] <= 'z') && !(word[i] >= 'A' && word[i] <= 'Z') && !(word[i] == '\0')) {
 
 			for (j = i; word[j] != '\0'; ++j) {
+				
+				if(!islower(word[j]))
+					word[i] = tolower(word[j]);
 
 			// if jth element of line is not an alphabet,
 			// assign the value of (j+1)th element to the jth element
@@ -124,27 +127,40 @@ void addWord(char *word, CamSpec* cs,HashTable* stopwords){
 		}
 	}
 
-	int * returnedIndex;
-	if(strlen(word)>1){
+
+	if(strlen(word)>1 && strlen(word)<20){
 		if(HTSearch(stopwords,word,stringComparator)!=NULL)
 			return;
 
 
 		cs->dictionaryWords = realloc(cs->dictionaryWords,(cs->numOfWords+1)*sizeof(int));
 
-		// printf("%ld\n",DictionarySize );
-		if(( returnedIndex = (int*) HTSearch(Dictionary,word,stringComparator)) == NULL){
+		dictNode* node;
+
+		node = (dictNode*) HTSearch(Dictionary,word,stringComparator);
+
+		if(node == NULL){
 			int * index = malloc(sizeof(int));
 			*index = DictionarySize;
+
 			DictionarySize++;
 
 			cs->dictionaryWords[cs->numOfWords] = *index;
+
+			node = malloc(sizeof(dictNode));
+			node->num = 1;
+			node->index = *index;
+			node->word = strdup(word);
 			(cs->numOfWords)++;
+
+			DictionaryNodes = realloc(DictionaryNodes,DictionarySize*sizeof(dictNode*));
+			DictionaryNodes[DictionarySize-1] = node;
 			
-			HTInsert(Dictionary,word,(void *) index,stringComparator);
+			HTInsert(Dictionary,word,(void *) node,stringComparator);
 		}else{
-			cs->dictionaryWords[cs->numOfWords] = *returnedIndex;
+			cs->dictionaryWords[cs->numOfWords] = node->index;
 			(cs->numOfWords)++;
+			(node->num)++;
 		}
 	}  
 }
@@ -549,20 +565,4 @@ int stringComparator(const void * str1,const void * str2){
 
 void printCameraName(void * data,FILE * output){
 	fprintf(output,"%s",((CamSpec*)data)->name);
-}
-
-HashTable * createStopWords(char* file){
-
-	FILE * fp = fopen(file,"r");
-
-	HashTable * ht = HTConstruct(50);
-
-	while(!feof(fp)){
-		char buffer[BUFFER];
-		fscanf(fp,"%[^\n]\n",buffer);
-		buffer[strlen(buffer)-1] = buffer[strlen(buffer)];
-
-		HTInsert(ht,buffer,(void *) buffer,stringComparator);		
-	}
-	return ht;
 }
