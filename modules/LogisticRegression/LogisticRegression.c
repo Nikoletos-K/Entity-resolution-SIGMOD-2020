@@ -29,7 +29,7 @@ LogisticRegression* LR_construct(size_t vectorSize){
 	return model;
 }
 
-void LR_train(LogisticRegression* model,float * x_vector,float y,float learning_rate,float threshold){
+void LR_train(LogisticRegression* model,float * x_vector,int y,float learning_rate,float threshold){
 
 	int num_epochs = 100000;
 	float gradient;
@@ -66,7 +66,7 @@ void LR_train(LogisticRegression* model,float * x_vector,float y,float learning_
 
 }
 
-float LR_predict(LogisticRegression* model,float * x_vector){
+int LR_predict(LogisticRegression* model,float * x_vector){
 
 	float p_x = 0.0;
 
