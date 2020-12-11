@@ -71,3 +71,7 @@ void addWord(char *word, CamSpec* cs, HashTable* stopwords);
 
 void createVectors(CamSpec ** camArray,int num_of_cameras);
 void printVector(CamSpec ** camArray,int num_of_cameras);
+
+
+void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold);
+float* testCliques(Clique** cliqueIndex,int numOfCliques);
