@@ -4,7 +4,9 @@ project.a_OBJS = 																\
 	$(MODULES)/HashTable/HashTable.o 										\
 	$(MODULES)/List/list.o  											\
 	$(MODULES)/DisJointSet/DisJointSet.o 								 	\
-	$(MODULES)/LogisticRegression/LogisticRegression.o 								
+	$(MODULES)/LogisticRegression/LogisticRegression.o 					\
+	$(MODULES)/Dataset/Dataset.o 					
+
 	
 
 include ../common.mk	

@@ -12,7 +12,9 @@ Json_test_OBJS = 																									\
 	$(MODULES)/List/list.o 		 																		\
 	$(MODULES)/DisJointSet/DisJointSet.o 																			\
 	$(MODULES)/HashTable/HashTable.o  																		\
-	$(MODULES)/RBTree/RBTree.o
+	$(MODULES)/RBTree/RBTree.o 																				\
+	$(MODULES)/Dataset/Dataset.o 					
+
 
 # Ο βασικός κορμός του Makefile
 include ../common.mk

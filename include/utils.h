@@ -4,27 +4,12 @@
 #include "./DisJointSet.h"
 #include "./bitArray.h"
 #include "./LogisticRegression.h"
+#include "./Dataset.h"
 
 #define BUFFER 1024
 #define SAME_CAMERAS 1
 #define DIFFERENT_CAMERAS 0
 
-typedef struct Dataset {
-
-	Xy_Split *  train;
-	Xy_Split *  validation;
-	Xy_Split *  test;
-	
-} Dataset;
-
-
-typedef struct Xy_Split{
-
-	float ** X;
-	int * y;
-	size_t size;
-		
-} Xy_Split;
 
 typedef struct Clique{
 
@@ -74,11 +59,10 @@ Clique * insert_uniqueNegConnection(Clique * cl,int arrayPosition);
 Clique * insert_NegConnection(Clique * ql,int arrayPosition);
 List * createNegativePairs(Clique ** CliqueIndex,int numOfcliques);
 
-/* Dataset */
-CamerasPair ** createDataset(List * sameCameras,List * differentCameras,int * dataset_size);
+/* Pairs */
+CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,int * dataset_size);
 void printDataset(CamerasPair ** Dataset,int dataset_size);
-void createCliquesDatasets(Clique ** cliqueIndex,int numOfCliques);
-
+void train_test_split(Clique ** cliqueIndex,int numOfCliques);
 
 
 void addWord(char *word, CamSpec* cs, HashTable* stopwords);

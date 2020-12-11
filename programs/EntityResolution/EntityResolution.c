@@ -87,7 +87,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing cliques: \n");
 
-	List * sameCameras = printPairs(cliqueIndex,numOfCliques); 
+	printPairs(cliqueIndex,numOfCliques); 
 	
 	printf(" <- End of printing cliques\n");
 	t2 = (double) times(&tb2);
@@ -102,29 +102,12 @@ int main(int argc,char ** argv){
 	printf("\n-> Forming negative cliques: \n");
 	
 	cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
-	List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques);
+	// List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques);
 
 	printf(" <- End of forming negative cliques\n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
 	printf("PERFORMANCE of forming negative cliques:\n");
-	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
-
-
-	/* ----------------   FORMING DATASET -------------------------- */
-	t1 = (double) times(&tb1);
-	printf("\n-> Forming DATASET \n");
-	
-	// int dataset_size=0;
-	// CamerasPair ** Dataset =  createDataset(sameCameras,differentCameras, &dataset_size);
-	createCliquesDatasets(cliqueIndex,numOfCliques);
-	// printDataset(Dataset,dataset_size);
-
-	printf(" <- End of forming DATASET\n");
-	t2 = (double) times(&tb2);
-	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	printf("PERFORMANCE of DATASET:\n");
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
@@ -146,6 +129,24 @@ int main(int argc,char ** argv){
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
+	/* ----------------   FORMING DATASET -------------------------- */
+	t1 = (double) times(&tb1);
+	printf("\n-> Forming DATASET \n");
+	
+	// int dataset_size=0;
+	// CamerasPair ** Dataset =  createDataset(sameCameras,differentCameras, &dataset_size);
+	train_test_split(cliqueIndex,numOfCliques);
+	// printDataset(Dataset,dataset_size);
+
+	printf(" <- End of forming DATASET\n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of DATASET:\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+
+
+
 	/* ----------------   TRAINING CLIQUES -------------------------- */
 
 
@@ -153,7 +154,7 @@ int main(int argc,char ** argv){
 	printf("\n-> Training cliques  \n");
 	
 
-	trainCliques(cliqueIndex,numOfCliques);
+	// trainCliques(cliqueIndex,numOfCliques);
 
 
 	printf(" <- End of Training cliques  \n");

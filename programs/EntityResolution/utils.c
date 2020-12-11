@@ -476,7 +476,7 @@ List * createNegativePairs(Clique ** cliqueIndex,int numOfcliques){
 
 /* ---------------------- Dataset ---------------------- */
 
-CamerasPair ** createDataset(List * sameCameras,List * differentCameras,int * dataset_size){
+CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,int * dataset_size){
 
 	srand(time(NULL));
 	int same = get_listSize(sameCameras),different = get_listSize(differentCameras);
@@ -529,10 +529,10 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 
 	int mapIndex = 1;
 	for (int i = DictionarySize-1; i >= DictionarySize-1000; i--){
-			int position  = DictionaryNodes[i]->index; 
-			dictionaryMap[position] = mapIndex;
-			mapIndex++;
-			printf("%d  ----  %s\n",mapIndex, DictionaryNodes[i]->word);
+		int position  = DictionaryNodes[i]->index; 
+		dictionaryMap[position] = mapIndex;
+		mapIndex++;
+			// printf("%d  ----  %s\n",mapIndex, DictionaryNodes[i]->word);
 	}
 
 	// float ** bowVectors = malloc(num_of_cameras*sizeof(float*));
@@ -593,16 +593,85 @@ void printDataset(CamerasPair ** Dataset,int dataset_size){
 	fclose(dataset_file);
 }
 
-void createCliquesDatasets(Clique ** cliqueIndex,int numOfCliques){
+
+void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 
 	for(int c=0;c<numOfCliques;c++){
 
-		
-		
+		Dataset * dataset = createDataset();
+
+		List * clique    = cliqueIndex[c]->set;
+		int sizeofClique = get_listSize(clique);
+		int numOfNegativeCliques = cliqueIndex[c]->numOfNegativeCliques;
+		printf("numOfNegativeCliques %d\n",numOfNegativeCliques);
+		printf("qlique size %d\n",sizeofClique );
+		int * currdata_inSet    = calloc(numOfNegativeCliques+1,sizeof(int));
+		int * alldata_inSet = calloc(numOfNegativeCliques+1,sizeof(int));
+
+		listNode ** nodesRead = malloc(sizeof(listNode*)*(numOfNegativeCliques+1));
+	
+		for(int i=0;i<numOfNegativeCliques;i++){
+			int negClique_pos = cliqueIndex[c]->negativeCliques[i];
+			nodesRead[i] = cliqueIndex[negClique_pos]->set->firstNode;
+			alldata_inSet[i] = get_listSize(cliqueIndex[negClique_pos]->set);
+			printf("%d. neg qlique size %d\n",negClique_pos,alldata_inSet[i] );
+		}
+
+		nodesRead[numOfNegativeCliques] = clique->firstNode;
+		alldata_inSet[numOfNegativeCliques] = sizeofClique;
 
 
+		int setsCreated = FALSE,y;
+
+		while(!setsCreated){
+
+			for(int l=0;l<numOfNegativeCliques+1;l++){
+
+				if(nodesRead[l] == NULL)
+					continue;
+
+
+				CamSpec* camera = (CamSpec*)nodesRead[l]->data;
+				float * X       = camera->vector;
+
+				if(l == numOfNegativeCliques) y=1;
+				else y=0;
+
+
+				if(currdata_inSet[l] <= 0.6*alldata_inSet[l])
+					dataset = insert_toDataset(dataset,X,y,Train);
+				else if(currdata_inSet[l] > 0.6*alldata_inSet[l] && currdata_inSet[l] <= 0.8*alldata_inSet[l])
+					dataset = insert_toDataset(dataset,X,y,Test);
+				else
+					dataset = insert_toDataset(dataset,X,y,Validation);
+
+
+				currdata_inSet[l]++;
+				nodesRead[l] = nodesRead[l]->nextNode;
+			}
+
+
+			int listsFinished=TRUE;
+			for(int l=0;l<numOfNegativeCliques+1;l++){
+				if(nodesRead[l] != NULL)
+					listsFinished = FALSE;
+			}
+
+			if(listsFinished==TRUE) break;
+		}
+		
+		cliqueIndex[c]->dataset = dataset;
+
+		printf("Clique %d\n",c);
+		printf("Train  %ld\n",cliqueIndex[c]->dataset->train->size);
+		printf("Test  %ld\n",cliqueIndex[c]->dataset->test->size);
+		printf("Validation  %ld\n",cliqueIndex[c]->dataset->validation->size);
+
+
+		free(currdata_inSet);
+		free(alldata_inSet);
+		free(nodesRead);
 	}
-
 }
 
 void setLabel(CamerasPair *  pair,int label){
