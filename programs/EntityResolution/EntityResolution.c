@@ -150,11 +150,16 @@ int main(int argc,char ** argv){
 	/* ----------------   TRAINING CLIQUES -------------------------- */
 
 
+	/* ----------------   TRAINING CLIQUES -------------------------- */
+
+
 	t1 = (double) times(&tb1);
 	printf("\n-> Training cliques  \n");
 	
+	float learning_rate = 0.01;
+	float threshold = 0.000005;
 
-	// trainCliques(cliqueIndex,numOfCliques);
+	trainCliques(cliqueIndex,numOfCliques,learning_rate,threshold);
 
 
 	printf(" <- End of Training cliques  \n");
@@ -164,12 +169,35 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
+	/* ----------------   TESTING CLIQUES -------------------------- */
+
+
+	t1 = (double) times(&tb1);
+	printf("\n-> Testing cliques  \n");
+	
+	
+	float* accuracyArray =  testCliques(cliqueIndex,numOfCliques);
+
+	for (int i = 0; i < numOfCliques; i++){
+		printf("Clique %d has accuracy %lf %% \n",i,accuracyArray[i] );
+
+	}
+
+
+	printf(" <- End of Testing cliques  \n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of Testing cliques  :\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+
 
 	/* ----------------   FREE OF MEMORY -------------------------- */
 	printf("\n\n-> Restoring memory\n");
 	for(int i=0;i<num_of_cameras;i++)
 		destroyCamSpec(camArray[i]);
 
+	free(accuracyArray);
 	free(DictionaryNodes);
 	free(camArray);
 	HTDestroy(ht);
