@@ -674,6 +674,68 @@ void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 	}
 }
 
+void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold){
+
+	Clique* clique;
+	Xy_Split * train;
+	float ** X_train;
+	int * y_train;
+
+	for(int i=0; i<numOfCliques; i++){
+
+		clique = cliqueIndex[i];
+		train = clique->dataset->train;
+		X_train = train->X;
+		y_train = train->y;
+
+		clique->LRModel = LR_construct(VectorSize);
+
+		for (int j = 0; j < train->size; j++){
+			LR_train(clique->LRModel,X_train[j],y_train[j],learning_rate,threshold);
+		}		
+	}
+
+}
+
+float* testCliques(Clique** cliqueIndex,int numOfCliques){
+
+	Clique* clique;
+	Xy_Split * test;
+	float ** X_test;
+	int * y_test;
+	int prediction;
+
+	int * prediction_labels;
+
+	float acc = 0.0;
+
+	float * accuracyArray = malloc(numOfCliques*sizeof(float));
+
+	for(int i=0; i<numOfCliques; i++){
+
+		clique = cliqueIndex[i];
+		test = clique->dataset->test;
+		X_test = test->X;
+		y_test = test->y;
+
+		prediction_labels =  malloc((test->size)*sizeof(int));
+
+		for (int j = 0; j < test->size; j++){
+			prediction = LR_predict(clique->LRModel,X_test[j]);
+			prediction_labels[j] = prediction;
+		}
+
+		acc =  accuracy(prediction_labels,y_test,test->size);
+
+		accuracyArray = realloc(accuracyArray,(i+1)*sizeof(float));
+		accuracyArray[i] = acc;	
+		
+		free(prediction_labels);	
+	}
+
+	return accuracyArray;	
+}
+
 void setLabel(CamerasPair *  pair,int label){
 	pair->trueLabel = label;
 }
