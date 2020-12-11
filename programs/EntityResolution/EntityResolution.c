@@ -11,6 +11,7 @@
 
 HashTable * Dictionary;
 size_t DictionarySize;
+size_t VectorSize = 1000;  
 
 dictNode ** DictionaryNodes;
 
@@ -72,8 +73,8 @@ int main(int argc,char ** argv){
 	DisJointSet * djSet = DJSConstruct(num_of_cameras,(void**)camArray);
 	List * diffPairsList = createList();
 	make_sets_from_csv(argv[csvFile],ht,djSet,diffPairsList);
-	int numOfsets = 0;
-	cliqueIndex = CreateSets(djSet,&numOfsets);
+	int numOfCliques = 0;
+	cliqueIndex = CreateSets(djSet,&numOfCliques);
 
 	printf("<- End\n");
 	t2 = (double) times(&tb2);
@@ -86,7 +87,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing cliques: \n");
 
-	List * sameCameras = printPairs(cliqueIndex,numOfsets); 
+	List * sameCameras = printPairs(cliqueIndex,numOfCliques); 
 	
 	printf(" <- End of printing cliques\n");
 	t2 = (double) times(&tb2);
@@ -95,25 +96,13 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
-	/*----------------------- Vectorization ----------------------------*/
-
-
-	qsort(DictionaryNodes, DictionarySize, sizeof(dictNode*), cmpfunc);
-
-	// for (int i = DictionarySize-1; i >= DictionarySize-1000; i--){
-	// 	printf("%d - %s\n", DictionaryNodes[i]->num, DictionaryNodes[i]->word ); 
-
-	// }
-
-
-
 
 	/* ----------------   FORMING NEGATIVE CLIQUES -------------------------- */
 	t1 = (double) times(&tb1);
 	printf("\n-> Forming negative cliques: \n");
 	
 	cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
-	List * differentCameras = createNegativePairs(cliqueIndex,numOfsets);
+	List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques);
 
 	printf(" <- End of forming negative cliques\n");
 	t2 = (double) times(&tb2);
@@ -127,9 +116,10 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Forming DATASET \n");
 	
-	int dataset_size=0;
-	CamerasPair ** Dataset =  createDataset(sameCameras,differentCameras, &dataset_size);
-	printDataset(Dataset,dataset_size);
+	// int dataset_size=0;
+	// CamerasPair ** Dataset =  createDataset(sameCameras,differentCameras, &dataset_size);
+	createCliquesDatasets(cliqueIndex,numOfCliques);
+	// printDataset(Dataset,dataset_size);
 
 	printf(" <- End of forming DATASET\n");
 	t2 = (double) times(&tb2);
@@ -139,19 +129,37 @@ int main(int argc,char ** argv){
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
-	/* ----------------   FORMING BoW Vectors -------------------------- */
+	/* ----------------   FORMING Vectors -------------------------- */
 	t1 = (double) times(&tb1);
-	printf("\n-> Forming BoW Vectors  \n");
+	printf("\n-> Forming Vectors  \n");
 	
 
-	// float ** bowVectors = createBoWVectors(camArray,num_of_cameras,DictionarySize);
-	// printBoWVector(bowVectors,num_of_cameras,DictionarySize);
+	createVectors(camArray,num_of_cameras);
+	// printVector(camArray,num_of_cameras);
 
 
-	printf(" <- End of forming BoW Vectors \n");
+	printf(" <- End of forming Vectors \n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	printf("PERFORMANCE of BoW Vectors :\n");
+	printf("PERFORMANCE of Vectors :\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+
+
+	/* ----------------   TRAINING CLIQUES -------------------------- */
+
+
+	t1 = (double) times(&tb1);
+	printf("\n-> Training cliques  \n");
+	
+
+	trainCliques(cliqueIndex,numOfCliques);
+
+
+	printf(" <- End of Training cliques  \n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of Training cliques  :\n");
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
@@ -167,7 +175,7 @@ int main(int argc,char ** argv){
 	HTDestroy(stopwords);
 	DJSDestructor(djSet);
 	destroyDataStructures();
-	destroySets(cliqueIndex,numOfsets);
+	destroySets(cliqueIndex,numOfCliques);
 	printf("<- All frees done\n");
 
 	ft2 = (double) times(&ftb2);

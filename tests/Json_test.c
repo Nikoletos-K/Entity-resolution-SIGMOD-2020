@@ -7,7 +7,7 @@
 
 HashTable * Dictionary;
 size_t DictionarySize;
-
+size_t VectorSize;  
 dictNode ** DictionaryNodes;
 
 void test_jsonInfo(void){

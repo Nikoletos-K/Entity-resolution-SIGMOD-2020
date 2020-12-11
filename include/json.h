@@ -22,6 +22,8 @@ typedef struct CamSpec{
 	Set set;
 	int* dictionaryWords;
 	int numOfWords;
+	float * vector;
+
 }CamSpec;
 
 /* jsonInfo functions */

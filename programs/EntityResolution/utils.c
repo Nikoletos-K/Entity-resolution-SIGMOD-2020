@@ -7,6 +7,7 @@
 #include <sys/times.h>
 #include <unistd.h>
 #include <time.h>
+#include <math.h>
 #include <ctype.h>
 
 #include "./../../include/utils.h"
@@ -41,7 +42,7 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords){
 			while( token != NULL ) {
 			  addWord(token,cs,stopwords);		    
 		      token = strtok(NULL, s);
-		   }
+		    }
 			
 			if(strcmp(value," [")){		// if value is not a list 
 				value = value+2;
@@ -159,8 +160,19 @@ void addWord(char *word, CamSpec* cs,HashTable* stopwords){
 			HTInsert(Dictionary,word,(void *) node,stringComparator);
 		}else{
 			cs->dictionaryWords[cs->numOfWords] = node->index;
+
+			int exists=0;
+			for(int k=0;k<cs->numOfWords;k++){
+				if(cs->dictionaryWords[k] == node->index){
+					exists=1;
+					break;
+				}
+			}
+
+			if(!exists)
+				(node->num)++;
+
 			(cs->numOfWords)++;
-			(node->num)++;
 		}
 	}  
 }
@@ -509,32 +521,63 @@ CamerasPair ** createDataset(List * sameCameras,List * differentCameras,int * da
 
 }
 
-float ** createBoWVectors(CamSpec ** camArray,int num_of_cameras,int vector_size){
+void createVectors(CamSpec ** camArray,int num_of_cameras){
 
-	float ** bowVectors = malloc(num_of_cameras*sizeof(float*));
+	qsort(DictionaryNodes, DictionarySize, sizeof(dictNode*), cmpfunc);
+
+	int * dictionaryMap = calloc(DictionarySize,sizeof(int));
+
+	int mapIndex = 1;
+	for (int i = DictionarySize-1; i >= DictionarySize-1000; i--){
+			int position  = DictionaryNodes[i]->index; 
+			dictionaryMap[position] = mapIndex;
+			mapIndex++;
+			printf("%d  ----  %s\n",mapIndex, DictionaryNodes[i]->word);
+	}
+
+	// float ** bowVectors = malloc(num_of_cameras*sizeof(float*));
 	for(int i=0;i<num_of_cameras;i++){
 
 		int numOfWords       = camArray[i]->numOfWords;
 		int* dictionaryWords = camArray[i]->dictionaryWords;
-		bowVectors[i] = calloc(vector_size,sizeof(float));
+		float * bowVectors   = calloc(VectorSize,sizeof(float));
+		int length = 0;
+
 
 		for(int p=0;p<numOfWords;p++){
+			
 			int vector_position = dictionaryWords[p];
-			if(vector_position<vector_size)
-				bowVectors[i][vector_position]++;
+			int final_vector_position = dictionaryMap[vector_position];
+
+			if(final_vector_position!=0){
+				length++;
+				bowVectors[final_vector_position-1]++;
+			}
 		}
+
+		
+		/*		TF-IDF 		*/
+		for(int p=0;p<VectorSize;p++){
+			int idf = log(num_of_cameras/DictionaryNodes[p]->num);
+			bowVectors[p] /= length;
+			bowVectors[p] *= idf;
+		}
+
+
+
+		camArray[i] -> vector = bowVectors;
 	}
 
-	return bowVectors;
+	// return bowVectors;
 
 }
 
-void printBoWVector(float ** bowVectors,int num_of_cameras,int vector_size){
+void printVector(CamSpec ** camArray,int num_of_cameras){
 
 	for(int i=0;i<num_of_cameras;i++){
 		printf("%03d:  ",i);
-		for(int p=0;p<vector_size;p+=vector_size/10){
-			printf("%.4f ",bowVectors[i][p]);
+		for(int p=0;p<VectorSize;p+=VectorSize/100){
+			printf("%.4f ",camArray[i]->vector[p]);
 		}
 		printf("\n");
 	}	
@@ -550,6 +593,17 @@ void printDataset(CamerasPair ** Dataset,int dataset_size){
 	fclose(dataset_file);
 }
 
+void createCliquesDatasets(Clique ** cliqueIndex,int numOfCliques){
+
+	for(int c=0;c<numOfCliques;c++){
+
+		
+		
+
+
+	}
+
+}
 
 void setLabel(CamerasPair *  pair,int label){
 	pair->trueLabel = label;

@@ -3,11 +3,28 @@
 #include "./json.h"
 #include "./DisJointSet.h"
 #include "./bitArray.h"
+#include "./LogisticRegression.h"
 
 #define BUFFER 1024
 #define SAME_CAMERAS 1
 #define DIFFERENT_CAMERAS 0
 
+typedef struct Dataset {
+
+	Xy_Split *  train;
+	Xy_Split *  validation;
+	Xy_Split *  test;
+	
+} Dataset;
+
+
+typedef struct Xy_Split{
+
+	float ** X;
+	int * y;
+	size_t size;
+		
+} Xy_Split;
 
 typedef struct Clique{
 
@@ -17,6 +34,8 @@ typedef struct Clique{
 	size_t numOfUnique_negativeCliques; 
 	size_t numOfNegativeCliques; 
 	BF* bitArray;
+	Dataset * dataset;
+	LogisticRegression * LRModel;
 
 } Clique;
 
@@ -36,11 +55,12 @@ HashTable * make_sets_from_csv(char * csvfile,HashTable * ht,DisJointSet *djSet,
 void printCameraName(void * data,FILE * output);
 
 
-/*clique*/
+/* Clique */
 List * printPairs(Clique** setsList,int numOfsets );
 void printForward(List * list,FILE * output,void (*printData)(void*,FILE *),List * sameCameras_list);
 Clique** CreateSets(DisJointSet * djSet,int* numOfsets);
 void destroySets(Clique** setsList,int numOfsets);
+
 
 /* utils */
 int stringComparator(const void * str1,const void * str2);
@@ -57,10 +77,13 @@ List * createNegativePairs(Clique ** CliqueIndex,int numOfcliques);
 /* Dataset */
 CamerasPair ** createDataset(List * sameCameras,List * differentCameras,int * dataset_size);
 void printDataset(CamerasPair ** Dataset,int dataset_size);
+void createCliquesDatasets(Clique ** cliqueIndex,int numOfCliques);
+
+
 
 void addWord(char *word, CamSpec* cs, HashTable* stopwords);
 
-/*BoW*/
+/* Vectorization */
 
-float ** createBoWVectors(CamSpec ** camArray,int num_of_cameras,int vector_size);
-void printBoWVector(float ** bowVectors,int num_of_cameras,int vector_size);
+void createVectors(CamSpec ** camArray,int num_of_cameras);
+void printVector(CamSpec ** camArray,int num_of_cameras);
