@@ -10,8 +10,6 @@
 #include "./../../include/LogisticRegression.h"
 
 
-
-
 LogisticRegression* LR_construct(size_t vectorSize){
 
 	srand(time(NULL));
@@ -22,23 +20,25 @@ LogisticRegression* LR_construct(size_t vectorSize){
 
 	for(int w=0;w<model->vectorSize;w++){
 		model->weights[w] = 1/rand();
+		// model->weights[w] = 0.0;
 	}
 
 	model->bias = 1/rand();
+	// model->bias = 0.0;
 	
 	return model;
 }
 
 void LR_train(LogisticRegression* model,float * x_vector,int y,float learning_rate,float threshold){
 
-	int num_epochs = 100000;
+	int max_epochs = 100,epochs=0;
 	float gradient;
 	float * prev_weights = calloc(model->vectorSize,sizeof(float));
-	int converged = TRUE;
+	// int converged = TRUE;
 
-	float p_x = LR_predict(model,x_vector);
+	while(epochs < max_epochs){
 
-	while(num_epochs){
+		float p_x = LR_predict(model,x_vector);
 
 		gradient = CrossEntropy(p_x,x_vector,y,model->vectorSize); 
 		
@@ -49,19 +49,20 @@ void LR_train(LogisticRegression* model,float * x_vector,int y,float learning_ra
 
 		model->bias +=  learning_rate*gradient/model->vectorSize;
 
-		for(int w=0;w<model->vectorSize;w++){
-			converged = TRUE;
-			if(model->weights[w] - prev_weights[w] > threshold){
-				converged=FALSE;
-				break;
-			}
-		}
+		// for(int w=0;w<model->vectorSize;w++){
+		// 	converged = TRUE;
+		// 	if(abs(model->weights[w] - prev_weights[w]) > threshold){
+		// 		converged=FALSE;
+		// 		break;
+		// 	}else
+		// 		printf("Converged in %d epochs\n",epochs );
+		// }
 
-		if(converged)
-			break;
+		// if(converged)
+		// 	break;
 
 
-		num_epochs--;
+		epochs++;
 	}
 
 }
@@ -106,7 +107,7 @@ float accuracy(int * prediction_labels,int * true_labels,int numOfLabels){
 
 	float acc = 0.0;
 	for(int i=0;i<numOfLabels;i++)
-		acc += (prediction_labels[i] == true_labels[i] ? 1.0:0.0 );
+		acc += (prediction_labels[i] == true_labels[i] ? 1:0 );
 	
-	return (acc/(float)numOfLabels)*100;
+	return ((float)(((float)acc)  / ((float)numOfLabels)))*100;
 }

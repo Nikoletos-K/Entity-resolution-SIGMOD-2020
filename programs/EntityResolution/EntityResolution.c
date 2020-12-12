@@ -11,7 +11,7 @@
 
 HashTable * Dictionary;
 size_t DictionarySize;
-size_t VectorSize = 1000;  
+size_t VectorSize = 100;  
 
 dictNode ** DictionaryNodes;
 
@@ -156,8 +156,8 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Training cliques  \n");
 	
-	float learning_rate = 0.01;
-	float threshold = 0.000005;
+	float learning_rate = 0.1;
+	float threshold = 0.00005;
 
 	trainCliques(cliqueIndex,numOfCliques,learning_rate,threshold);
 
@@ -169,6 +169,7 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
+
 	/* ----------------   TESTING CLIQUES -------------------------- */
 
 
@@ -177,11 +178,12 @@ int main(int argc,char ** argv){
 	
 	
 	float* accuracyArray =  testCliques(cliqueIndex,numOfCliques);
-
+	float acc = 0.0;
 	for (int i = 0; i < numOfCliques; i++){
-		printf("Clique %d has accuracy %lf %% \n",i,accuracyArray[i] );
-
+		acc += accuracyArray[i];
+		printf("Clique %3d has accuracy %6.2lf %% \n",i+1,accuracyArray[i] );
 	}
+	printf("\nAverage accuracy %5.2lf %% \n\n",acc/(float)numOfCliques);
 
 
 	printf(" <- End of Testing cliques  \n");

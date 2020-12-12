@@ -528,7 +528,7 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 	int * dictionaryMap = calloc(DictionarySize,sizeof(int));
 
 	int mapIndex = 1;
-	for (int i = DictionarySize-1; i >= DictionarySize-1000; i--){
+	for (int i = DictionarySize-1; i >= DictionarySize-VectorSize; i--){
 		int position  = DictionaryNodes[i]->index; 
 		dictionaryMap[position] = mapIndex;
 		mapIndex++;
@@ -603,8 +603,6 @@ void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 		List * clique    = cliqueIndex[c]->set;
 		int sizeofClique = get_listSize(clique);
 		int numOfNegativeCliques = cliqueIndex[c]->numOfNegativeCliques;
-		printf("numOfNegativeCliques %d\n",numOfNegativeCliques);
-		printf("qlique size %d\n",sizeofClique );
 		int * currdata_inSet    = calloc(numOfNegativeCliques+1,sizeof(int));
 		int * alldata_inSet = calloc(numOfNegativeCliques+1,sizeof(int));
 
@@ -614,7 +612,6 @@ void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 			int negClique_pos = cliqueIndex[c]->negativeCliques[i];
 			nodesRead[i] = cliqueIndex[negClique_pos]->set->firstNode;
 			alldata_inSet[i] = get_listSize(cliqueIndex[negClique_pos]->set);
-			printf("%d. neg qlique size %d\n",negClique_pos,alldata_inSet[i] );
 		}
 
 		nodesRead[numOfNegativeCliques] = clique->firstNode;
@@ -662,10 +659,10 @@ void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 		
 		cliqueIndex[c]->dataset = dataset;
 
-		printf("Clique %d\n",c);
-		printf("Train  %ld\n",cliqueIndex[c]->dataset->train->size);
-		printf("Test  %ld\n",cliqueIndex[c]->dataset->test->size);
-		printf("Validation  %ld\n",cliqueIndex[c]->dataset->validation->size);
+		// printf("Clique %d\n",c);
+		// printf("Train  %ld\n",cliqueIndex[c]->dataset->train->size);
+		// printf("Test  %ld\n",cliqueIndex[c]->dataset->test->size);
+		// printf("Validation  %ld\n",cliqueIndex[c]->dataset->validation->size);
 
 
 		free(currdata_inSet);
@@ -701,14 +698,11 @@ float* testCliques(Clique** cliqueIndex,int numOfCliques){
 
 	Clique* clique;
 	Xy_Split * test;
+	int prediction;
 	float ** X_test;
 	int * y_test;
-	int prediction;
-
 	int * prediction_labels;
-
 	float acc = 0.0;
-
 	float * accuracyArray = malloc(numOfCliques*sizeof(float));
 
 	for(int i=0; i<numOfCliques; i++){
@@ -723,7 +717,10 @@ float* testCliques(Clique** cliqueIndex,int numOfCliques){
 		for (int j = 0; j < test->size; j++){
 			prediction = LR_predict(clique->LRModel,X_test[j]);
 			prediction_labels[j] = prediction;
+			printf("%d | ",prediction);
 		}
+		printf("\n\n");
+		
 
 		acc =  accuracy(prediction_labels,y_test,test->size);
 
