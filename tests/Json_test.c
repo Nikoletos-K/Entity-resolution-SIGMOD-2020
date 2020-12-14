@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "./../include/acutest.h"
-#include "./../include/utils.h"
+#include "./../include/dictionary.h"
 
 HashTable * Dictionary;
 size_t DictionarySize;

@@ -7,7 +7,11 @@
 #include <sys/times.h>
 #include <unistd.h>
 
-#include "./../../include/utils.h"
+#include "./../../include/Dataset.h"
+#include "./../../include/Vectorization.h"
+#include "./../../include/Clique.h"
+#include "./../../include/dictionary.h"
+// #include "./../../include/utils.h"
 
 HashTable * Dictionary;
 size_t DictionarySize;
@@ -87,7 +91,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing cliques: \n");
 
-	printPairs(cliqueIndex,numOfCliques); 
+	// printPairs(cliqueIndex,numOfCliques); 
 	
 	printf(" <- End of printing cliques\n");
 	t2 = (double) times(&tb2);
@@ -101,7 +105,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Forming negative cliques: \n");
 	
-	cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
+	// cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
 	// List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques);
 
 	printf(" <- End of forming negative cliques\n");

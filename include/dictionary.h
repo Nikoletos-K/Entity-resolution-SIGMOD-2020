@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdio.h>
-#include "./HashTable.h"
+#include "./utils.h"
 
 
 typedef struct dictNode{
@@ -18,5 +18,5 @@ extern dictNode ** DictionaryNodes;
 
 
 HashTable * createStopWords(char* file);
-
+void addWord(char *word, CamSpec* cs, HashTable* stopwords);
 int cmpfunc (const void * a, const void * b);

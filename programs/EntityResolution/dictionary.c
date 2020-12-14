@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
-#include "./../../include/utils.h"
+
+#include "./../../include/dictionary.h"
 
 HashTable * createStopWords(char* file){
 
@@ -28,3 +30,78 @@ int cmpfunc (const void * a, const void * b) {
 
    return (nodeA->num - nodeB->num);
 }
+
+
+void addWord(char *word, CamSpec* cs,HashTable* stopwords){
+
+	for (int i = 0, j; word[i] != '\0'; ++i) {
+
+		if(!islower(word[i]))
+			word[i] = tolower(word[i]);
+
+	      // enter the loop if the character is not an alphabet
+	      // and not the null character
+		while (!(word[i] >= 'a' && word[i] <= 'z') && !(word[i] >= 'A' && word[i] <= 'Z') && !(word[i] == '\0')) {
+
+			for (j = i; word[j] != '\0'; ++j) {
+				
+				if(!islower(word[j]))
+					word[i] = tolower(word[j]);
+
+			// if jth element of line is not an alphabet,
+			// assign the value of (j+1)th element to the jth element
+				word[j] = word[j + 1];
+			}
+			word[j] = '\0';
+		}
+	}
+
+
+	if(strlen(word)>1 && strlen(word)<20){
+		if(HTSearch(stopwords,word,stringComparator)!=NULL)
+			return;
+
+
+		cs->dictionaryWords = realloc(cs->dictionaryWords,(cs->numOfWords+1)*sizeof(int));
+
+		dictNode* node;
+
+		node = (dictNode*) HTSearch(Dictionary,word,stringComparator);
+
+		if(node == NULL){
+			int * index = malloc(sizeof(int));
+			*index = DictionarySize;
+
+			DictionarySize++;
+
+			cs->dictionaryWords[cs->numOfWords] = *index;
+
+			node = malloc(sizeof(dictNode));
+			node->num = 1;
+			node->index = *index;
+			node->word = strdup(word);
+			(cs->numOfWords)++;
+
+			DictionaryNodes = realloc(DictionaryNodes,DictionarySize*sizeof(dictNode*));
+			DictionaryNodes[DictionarySize-1] = node;
+			
+			HTInsert(Dictionary,word,(void *) node,stringComparator);
+		}else{
+			cs->dictionaryWords[cs->numOfWords] = node->index;
+
+			int exists=0;
+			for(int k=0;k<cs->numOfWords;k++){
+				if(cs->dictionaryWords[k] == node->index){
+					exists=1;
+					break;
+				}
+			}
+
+			if(!exists)
+				(node->num)++;
+
+			(cs->numOfWords)++;
+		}
+	}  
+}
+
