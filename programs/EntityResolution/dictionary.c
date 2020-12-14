@@ -19,6 +19,9 @@ HashTable * createStopWords(char* file){
 
 		HTInsert(ht,buffer,(void *) buffer,stringComparator);		
 	}
+
+	fclose(fp);
+
 	return ht;
 }
 
@@ -69,19 +72,15 @@ void addWord(char *word, CamSpec* cs,HashTable* stopwords){
 		node = (dictNode*) HTSearch(Dictionary,word,stringComparator);
 
 		if(node == NULL){
-			int * index = malloc(sizeof(int));
-			*index = DictionarySize;
 
-			DictionarySize++;
-
-			cs->dictionaryWords[cs->numOfWords] = *index;
+			cs->dictionaryWords[cs->numOfWords] = DictionarySize;
 
 			node = malloc(sizeof(dictNode));
 			node->num = 1;
-			node->index = *index;
-			node->word = strdup(word);
+			node->index = DictionarySize;
+			node->word = word;
 			(cs->numOfWords)++;
-
+			DictionarySize++;
 			DictionaryNodes = realloc(DictionaryNodes,DictionarySize*sizeof(dictNode*));
 			DictionaryNodes[DictionarySize-1] = node;
 			

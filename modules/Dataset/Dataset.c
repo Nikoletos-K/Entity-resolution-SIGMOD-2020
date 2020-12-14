@@ -67,6 +67,7 @@ Dataset * insert_toDataset(Dataset * dataset,float * X,int y,TrainTestVal type){
 void destroy_XySplit(Xy_Split * Xy){
 
 	free(Xy->X);
+	free(Xy->y);
 	free(Xy);
 }
 

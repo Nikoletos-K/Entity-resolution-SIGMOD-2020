@@ -11,11 +11,14 @@
 #include "./../../include/Vectorization.h"
 #include "./../../include/Clique.h"
 #include "./../../include/dictionary.h"
+#include "./../../include/PairsImplementation.h"
+
+
 // #include "./../../include/utils.h"
 
 HashTable * Dictionary;
 size_t DictionarySize;
-size_t VectorSize = 1000;  
+size_t VectorSize = 5;  
 
 dictNode ** DictionaryNodes;
 
@@ -43,7 +46,7 @@ int main(int argc,char ** argv){
 
 	ft1 = (double) times(&ftb1);
 	initializeDataStructures();
-	HashTable * ht = HTConstruct(HASHTABLE_SIZE);
+	HashTable * CameraHT = HTConstruct(HASHTABLE_SIZE);
 	CamSpec ** camArray = malloc(sizeof(CamSpec *));
 	int num_of_cameras=0;
 	Clique** cliqueIndex;
@@ -58,7 +61,7 @@ int main(int argc,char ** argv){
 	printf("\n-> Starting reading directory (%s)  \n ",argv[jsonDir] );
 	printf("   and informing data structures from given .json files\n ");
 
-	camArray = read_dir(argv[jsonDir],ht,camArray,&num_of_cameras,stopwords);
+	camArray = read_dir(argv[jsonDir],CameraHT,camArray,&num_of_cameras,stopwords);
 
 	printf("<- End of reading directory\n");
 	t2 = (double) times(&tb2);
@@ -76,9 +79,9 @@ int main(int argc,char ** argv){
 
 	DisJointSet * djSet = DJSConstruct(num_of_cameras,(void**)camArray);
 	List * diffPairsList = createList();
-	make_sets_from_csv(argv[csvFile],ht,djSet,diffPairsList);
+	make_sets_from_csv(argv[csvFile],CameraHT,djSet,diffPairsList);
 	int numOfCliques = 0;
-	cliqueIndex = CreateSets(djSet,&numOfCliques);
+	cliqueIndex = CreateCliques(djSet,&numOfCliques);
 
 	printf("<- End\n");
 	t2 = (double) times(&tb2);
@@ -105,7 +108,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Forming negative cliques: \n");
 	
-	// cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
+	cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
 	// List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques);
 
 	printf(" <- End of forming negative cliques\n");
@@ -155,77 +158,78 @@ int main(int argc,char ** argv){
 	/* ----------------   TRAINING CLIQUES -------------------------- */
 
 
-	// t1 = (double) times(&tb1);
-	// printf("\n-> Training cliques  \n");
+	t1 = (double) times(&tb1);
+	printf("\n-> Training cliques  \n");
 	
-	// float learning_rate = 0.1;
-	// float threshold = 0.0005;
+	float learning_rate = 0.1;
+	float threshold = 0.00001;
+	int max_epochs = 15;
 
-	// trainCliques(cliqueIndex,numOfCliques,learning_rate,threshold);
+	trainCliques(cliqueIndex,numOfCliques,learning_rate,threshold,max_epochs);
 
 
-	// printf(" <- End of Training cliques  \n");
-	// t2 = (double) times(&tb2);
-	// cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	// printf("PERFORMANCE of Training cliques  :\n");
-	// printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+	printf(" <- End of Training cliques  \n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of Training cliques  :\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
 	/* ----------------   TESTING CLIQUES -------------------------- */
 
 
-	// t1 = (double) times(&tb1);
-	// printf("\n-> Testing cliques  \n");
+	t1 = (double) times(&tb1);
+	printf("\n-> Testing cliques  \n");
 	
 	
-	// float* accuracyArray =  testCliques(cliqueIndex,numOfCliques);
-	// float acc = 0.0;
-	// for (int i = 0; i < numOfCliques; i++){
-	// 	acc += accuracyArray[i];
-	// 	printf("Clique %3d has accuracy %6.2lf %% \n",i+1,accuracyArray[i] );
-	// }
-	// printf("\nAverage accuracy %5.2lf %% \n\n",acc/(float)numOfCliques);
+	float* accuracyArray =  testCliques(cliqueIndex,numOfCliques);
+	float acc = 0.0;
+	for (int i = 0; i < numOfCliques; i++){
+		acc += accuracyArray[i];
+		printf("Clique %3d has accuracy %6.2lf %% \n",i+1,accuracyArray[i] );
+	}
+	printf("\nAverage accuracy %5.2lf %% \n\n",acc/(float)numOfCliques);
 
 
-	// printf(" <- End of Testing cliques  \n");
-	// t2 = (double) times(&tb2);
-	// cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	// printf("PERFORMANCE of Testing cliques  :\n");
-	// printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+	printf(" <- End of Testing cliques  \n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of Testing cliques  :\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
 	/* ----------------   GRID SEARCH -------------------------- */
 
-	float learning_rates[3] =  {0.1,0.01,0.001};
-	int numofLr = 3;
-	float thresholds[4] = {0.001,0.0001,0.00001,0.000005};
-	int numofthreshold = 4;
-	int max_epochs[4] = {5,10,15,20};
-	int numOfmax_epochs = 4;
+	// float learning_rates[3] =  {0.1,0.01,0.001};
+	// int numofLr = 3;
+	// float thresholds[4] = {0.001,0.0001,0.00001,0.000005};
+	// int numofthreshold = 4;
+	// int max_epochs[4] = {5,10,15,20};
+	// int numOfmax_epochs = 4;
 
-	for(int i=0;i<numOfCliques;i++){
+	// for(int i=0;i<numOfCliques;i++){
 
-		char fileName[30];
-		sprintf(fileName,"%d.GRIDSEARCH.txt",i+1);
-		FILE * GridSearchFile = fopen(fileName,"w+");
+	// 	char fileName[30];
+	// 	sprintf(fileName,"%d.GRIDSEARCH.txt",i+1);
+	// 	FILE * GridSearchFile = fopen(fileName,"w+");
 
-		t1 = (double) times(&tb1);
-		printf("\n-> GRIDSEARCH %d \n",i+1);
+	// 	t1 = (double) times(&tb1);
+	// 	printf("\n-> GRIDSEARCH %d \n",i+1);
 		
 
-		HyperParameters * hp = constructHyperParameters(learning_rates,numofLr,thresholds,numofthreshold,max_epochs,numOfmax_epochs);
-		GridSearch(	cliqueIndex[i]->dataset->train,cliqueIndex[i]->dataset->test,hp,VectorSize,GridSearchFile);
+	// 	HyperParameters * hp = constructHyperParameters(learning_rates,numofLr,thresholds,numofthreshold,max_epochs,numOfmax_epochs);
+	// 	GridSearch(	cliqueIndex[i]->dataset->train,cliqueIndex[i]->dataset->test,hp,VectorSize,GridSearchFile);
 
-		fclose(GridSearchFile);
-		printf(" <- end  \n");
-		t2 = (double) times(&tb2);
-		cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-		printf("PERFORMANCE of GRIDSEARCH - %d:\n",i+1);
-		printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-		printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
-	}
+	// 	fclose(GridSearchFile);
+	// 	printf(" <- end  \n");
+	// 	t2 = (double) times(&tb2);
+	// 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	// 	printf("PERFORMANCE of GRIDSEARCH - %d:\n",i+1);
+	// 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	// 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+	// }
 
 
 	/* ----------------   FREE OF MEMORY -------------------------- */
@@ -233,14 +237,26 @@ int main(int argc,char ** argv){
 	for(int i=0;i<num_of_cameras;i++)
 		destroyCamSpec(camArray[i]);
 
-	// free(accuracyArray);
+	listNode * node = diffPairsList->firstNode;
+	while(node != NULL){
+		deletePair((CamerasPair*)node->data);
+		node = node->nextNode;
+	}
+
+	deleteList(diffPairsList);
+
+	for(int i=0;i<DictionarySize;i++)
+		free(DictionaryNodes[i]);
 	free(DictionaryNodes);
+
+	free(accuracyArray);
 	free(camArray);
-	HTDestroy(ht);
+	HTDestroy(CameraHT);
+	HTDestroy(Dictionary);
 	HTDestroy(stopwords);
 	DJSDestructor(djSet);
+	destroyCliques(cliqueIndex,numOfCliques);
 	destroyDataStructures();
-	destroySets(cliqueIndex,numOfCliques);
 	printf("<- All frees done\n");
 
 	ft2 = (double) times(&ftb2);

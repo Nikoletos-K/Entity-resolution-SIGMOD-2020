@@ -14,7 +14,7 @@
 
 
 
-Clique** CreateSets(DisJointSet * djSet,int* numOfsets){
+Clique** CreateCliques(DisJointSet * djSet,int* numOfsets){
 	int parent;
 	Clique** cliquesArray = malloc(sizeof(Clique*));
 	List* set;
@@ -59,7 +59,16 @@ Clique** CreateSets(DisJointSet * djSet,int* numOfsets){
 	return cliquesArray;
 }
 
-void destroySets(Clique** cliquesArray,int numOfsets){
+void destroyCliques(Clique** cliquesArray,int numOfCliques){
+
+	for (int i = 0; i < numOfCliques; i++){
+		destroy_Dataset(cliquesArray[i]->dataset);
+		destroyBF(cliquesArray[i]->bitArray);
+		LR_destroy(cliquesArray[i]->LRModel);
+		free(cliquesArray[i]->unique_negativeCliques);
+		free(cliquesArray[i]->negativeCliques);
+		free(cliquesArray[i]);
+	}
 	free(cliquesArray);
 }
 
@@ -136,12 +145,11 @@ void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 }
 
 
-
-void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold){
+void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs){
 
 	Clique* clique;
 	Xy_Split * train;
-	int max_epochs =10;
+
 	for(int i=0; i<numOfCliques; i++){
 
 		clique = cliqueIndex[i];
@@ -168,7 +176,7 @@ float* testCliques(Clique** cliqueIndex,int numOfCliques){
 	for(int i=0; i<numOfCliques; i++){
 
 		clique = cliqueIndex[i];
-		test = clique->dataset->test;
+		test   = clique->dataset->test;
 		X_test = test->X;
 		y_test = test->y;
 
@@ -185,7 +193,6 @@ float* testCliques(Clique** cliqueIndex,int numOfCliques){
 
 		acc =  accuracy(prediction_labels,y_test,test->size);
 
-		accuracyArray = realloc(accuracyArray,(i+1)*sizeof(float));
 		accuracyArray[i] = acc;	
 		
 		free(prediction_labels);	

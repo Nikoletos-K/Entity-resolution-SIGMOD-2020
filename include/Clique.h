@@ -15,10 +15,10 @@ typedef struct Clique{
 
 } Clique;
 
-Clique** CreateSets(DisJointSet * djSet,int* numOfsets);
-void destroySets(Clique** setsList,int numOfsets);
+Clique** CreateCliques(DisJointSet * djSet,int* numOfsets);
+void destroyCliques(Clique** setsList,int numOfsets);
 
-void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold);
+void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs);
 float* testCliques(Clique** cliqueIndex,int numOfCliques);
 void GridSearchCliques(Clique * clique,int numOfCliques,FILE * file);
 void train_test_split(Clique ** cliqueIndex,int numOfCliques);
