@@ -567,9 +567,6 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 
 		camArray[i] -> vector = bowVectors;
 	}
-
-	// return bowVectors;
-
 }
 
 void printVector(CamSpec ** camArray,int num_of_cameras){
@@ -599,9 +596,8 @@ void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 	for(int c=0;c<numOfCliques;c++){
 
 		Dataset * dataset = createDataset();
-
 		List * clique    = cliqueIndex[c]->set;
-		int sizeofClique = get_listSize(clique);
+		int sizeofClique = get_listSize(clique);		
 		int numOfNegativeCliques = cliqueIndex[c]->numOfNegativeCliques;
 		int * currdata_inSet    = calloc(numOfNegativeCliques+1,sizeof(int));
 		int * alldata_inSet = calloc(numOfNegativeCliques+1,sizeof(int));
@@ -659,40 +655,30 @@ void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 		
 		cliqueIndex[c]->dataset = dataset;
 
-		// printf("Clique %d\n",c);
-		// printf("Train  %ld\n",cliqueIndex[c]->dataset->train->size);
-		// printf("Test  %ld\n",cliqueIndex[c]->dataset->test->size);
-		// printf("Validation  %ld\n",cliqueIndex[c]->dataset->validation->size);
-
-
 		free(currdata_inSet);
 		free(alldata_inSet);
 		free(nodesRead);
 	}
 }
 
+
+
 void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold){
 
 	Clique* clique;
 	Xy_Split * train;
-	float ** X_train;
-	int * y_train;
-
+	int max_epochs =10;
 	for(int i=0; i<numOfCliques; i++){
 
 		clique = cliqueIndex[i];
 		train = clique->dataset->train;
-		X_train = train->X;
-		y_train = train->y;
 
-		clique->LRModel = LR_construct(VectorSize);
-
-		for (int j = 0; j < train->size; j++){
-			LR_train(clique->LRModel,X_train[j],y_train[j],learning_rate,threshold);
-		}		
+		clique->LRModel = LR_construct(VectorSize,learning_rate,threshold,max_epochs);
+		LR_fit(clique->LRModel,train);
 	}
-
 }
+
+
 
 float* testCliques(Clique** cliqueIndex,int numOfCliques){
 
@@ -715,9 +701,10 @@ float* testCliques(Clique** cliqueIndex,int numOfCliques){
 		prediction_labels =  malloc((test->size)*sizeof(int));
 
 		for (int j = 0; j < test->size; j++){
-			prediction = LR_predict(clique->LRModel,X_test[j]);
+			printf("True label: %d | ",y_test[j]);
+			prediction = LR_predict(clique->LRModel,X_test[j],1);
 			prediction_labels[j] = prediction;
-			printf("%d | ",prediction);
+			printf("|  prediction:  %d \n ",prediction);
 		}
 		printf("\n\n");
 		

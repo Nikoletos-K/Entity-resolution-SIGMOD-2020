@@ -4,7 +4,7 @@
 #include "./DisJointSet.h"
 #include "./bitArray.h"
 #include "./LogisticRegression.h"
-#include "./Dataset.h"
+
 
 #define BUFFER 1024
 #define SAME_CAMERAS 1
@@ -75,3 +75,4 @@ void printVector(CamSpec ** camArray,int num_of_cameras);
 
 void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold);
 float* testCliques(Clique** cliqueIndex,int numOfCliques);
+void GridSearchCliques(Clique * clique,int numOfCliques,FILE * file);
