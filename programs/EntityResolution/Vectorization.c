@@ -59,6 +59,8 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 
 		camArray[i] -> vector = bowVectors;
 	}
+
+	free(dictionaryMap);
 }
 
 void printVector(CamSpec ** camArray,int num_of_cameras){

@@ -15,7 +15,7 @@
 
 HashTable * Dictionary;
 size_t DictionarySize;
-size_t VectorSize = 1000;  
+size_t VectorSize = 5;  
 
 dictNode ** DictionaryNodes;
 
@@ -43,7 +43,7 @@ int main(int argc,char ** argv){
 
 	ft1 = (double) times(&ftb1);
 	initializeDataStructures();
-	HashTable * ht = HTConstruct(HASHTABLE_SIZE);
+	HashTable * CameraHT = HTConstruct(HASHTABLE_SIZE);
 	CamSpec ** camArray = malloc(sizeof(CamSpec *));
 	int num_of_cameras=0;
 	Clique** cliqueIndex;
@@ -58,7 +58,7 @@ int main(int argc,char ** argv){
 	printf("\n-> Starting reading directory (%s)  \n ",argv[jsonDir] );
 	printf("   and informing data structures from given .json files\n ");
 
-	camArray = read_dir(argv[jsonDir],ht,camArray,&num_of_cameras,stopwords);
+	camArray = read_dir(argv[jsonDir],CameraHT,camArray,&num_of_cameras,stopwords);
 
 	printf("<- End of reading directory\n");
 	t2 = (double) times(&tb2);
@@ -76,9 +76,9 @@ int main(int argc,char ** argv){
 
 	DisJointSet * djSet = DJSConstruct(num_of_cameras,(void**)camArray);
 	List * diffPairsList = createList();
-	make_sets_from_csv(argv[csvFile],ht,djSet,diffPairsList);
+	make_sets_from_csv(argv[csvFile],CameraHT,djSet,diffPairsList);
 	int numOfCliques = 0;
-	cliqueIndex = CreateSets(djSet,&numOfCliques);
+	cliqueIndex = CreateCliques(djSet,&numOfCliques);
 
 	printf("<- End\n");
 	t2 = (double) times(&tb2);
@@ -157,9 +157,10 @@ int main(int argc,char ** argv){
 	printf("\n-> Training cliques  \n");
 	
 	float learning_rate = 0.1;
-	float threshold = 0.0005;
+	float threshold = 0.00001;
+	int max_epochs = 15;
 
-	trainCliques(cliqueIndex,numOfCliques,learning_rate,threshold);
+	trainCliques(cliqueIndex,numOfCliques,learning_rate,threshold,max_epochs);
 
 
 	printf(" <- End of Training cliques  \n");
@@ -255,13 +256,26 @@ int main(int argc,char ** argv){
 	for(int i=0;i<num_of_cameras;i++)
 		destroyCamSpec(camArray[i]);
 
+	listNode * node = diffPairsList->firstNode;
+	while(node != NULL){
+		deletePair((CamerasPair*)node->data);
+		node = node->nextNode;
+	}
+
+	deleteList(diffPairsList);
+
+	for(int i=0;i<DictionarySize;i++)
+		free(DictionaryNodes[i]);
 	free(DictionaryNodes);
+
+	free(accuracyArray);
 	free(camArray);
-	HTDestroy(ht);
+	HTDestroy(CameraHT);
+	HTDestroy(Dictionary);
 	HTDestroy(stopwords);
 	DJSDestructor(djSet);
+	destroyCliques(cliqueIndex,numOfCliques);
 	destroyDataStructures();
-	destroySets(cliqueIndex,numOfCliques);
 	printf("<- All frees done\n");
 
 	ft2 = (double) times(&ftb2);

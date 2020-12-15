@@ -40,10 +40,10 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 	int epochs=0;
 	float loss;
 	float * prev_weights = calloc(model->vectorSize,sizeof(float));
-	int converged = FALSE;
+	int converged    = FALSE;
 	float ** X_train = Xy_train->X;
-	int *  y_train = Xy_train->y;
-	int N = Xy_train->size; 
+	int *  y_train   = Xy_train->y;
+	int N            = Xy_train->size; 
 
 	while(!converged && epochs < model->max_epochs){
 
@@ -93,12 +93,15 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 		
 		if(fabs(norm(model->weights,model->vectorSize) - norm(prev_weights,model->vectorSize))<model->threshold){
 			printf("\nConverged in %d epochs\n",epochs );
+			free(gradient);
 			break;
 		}
 
-
+		free(gradient);
 		epochs++;
 	}
+
+	free(prev_weights);
 	printf("\n\n");
 }
 
@@ -121,8 +124,8 @@ int LR_predict(LogisticRegression* model,float * x_vector,int f){
 
 	p_x += model->bias;
 
-	// if(f==1)
-		// printf("(%.5lf) - ",sigmoid(p_x));
+	if(f==1)
+		printf("(%.5lf) - ",sigmoid(p_x));
 	return decision_boundary(sigmoid(p_x));
 }
 
@@ -191,7 +194,7 @@ HyperParameters * constructHyperParameters(
 	hp->threshold        = threshold;
 	hp->numofthreshold   = numofthreshold;
 	hp->max_epochs       = max_epochs;
-	hp->numOfmax_epochs   = numOfmax_epochs;
+	hp->numOfmax_epochs  = numOfmax_epochs;
 
 
 	return hp;
