@@ -12,8 +12,6 @@
 
 #include "./../../include/Clique.h"
 
-
-
 Clique** CreateSets(DisJointSet * djSet,int* numOfsets){
 	int parent;
 	Clique** cliquesArray = malloc(sizeof(Clique*));
@@ -63,8 +61,6 @@ void destroySets(Clique** cliquesArray,int numOfsets){
 	free(cliquesArray);
 }
 
-
-
 void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 
 	for(int c=0;c<numOfCliques;c++){
@@ -110,7 +106,7 @@ void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 				else if(currdata_inSet[l] > 0.6*alldata_inSet[l] && currdata_inSet[l] <= 0.8*alldata_inSet[l])
 					dataset = insert_toDataset(dataset,X,y,Test);
 				else
-					dataset = insert_toDataset(dataset,X,y,Validation);
+					dataset = insert_toDataset(dataset,X,camera->arrayPosition,Validation);
 
 
 				currdata_inSet[l]++;
@@ -158,37 +154,66 @@ float* testCliques(Clique** cliqueIndex,int numOfCliques){
 
 	Clique* clique;
 	Xy_Split * test;
-	int prediction;
-	float ** X_test;
-	int * y_test;
 	int * prediction_labels;
-	float acc = 0.0;
 	float * accuracyArray = malloc(numOfCliques*sizeof(float));
 
 	for(int i=0; i<numOfCliques; i++){
 
 		clique = cliqueIndex[i];
 		test = clique->dataset->test;
-		X_test = test->X;
-		y_test = test->y;
 
 		prediction_labels =  malloc((test->size)*sizeof(int));
 
 		for (int j = 0; j < test->size; j++){
-			printf("True label: %d | ",y_test[j]);
-			prediction = LR_predict(clique->LRModel,X_test[j],1);
-			prediction_labels[j] = prediction;
-			printf("|  prediction:  %d \n ",prediction);
+			printf("True label: %d | ",test->y[j]);
+			prediction_labels[j] = LR_predict(clique->LRModel,test->X[j],1);
+			printf("|  prediction:  %d \n ",prediction_labels[j]);
 		}
 		printf("\n\n");
 		
-
-		acc =  accuracy(prediction_labels,y_test,test->size);
-
-		accuracyArray = realloc(accuracyArray,(i+1)*sizeof(float));
-		accuracyArray[i] = acc;	
+		accuracyArray[i] =  accuracy(prediction_labels,test->y,test->size);
 		
 		free(prediction_labels);	
+	}
+
+	return accuracyArray;	
+}
+
+
+float* validateCliques(Clique** cliqueIndex,int numOfCliques){
+
+	Clique* clique;
+	Xy_Split * validation;
+	float prediction;
+	float * accuracyArray = malloc(numOfCliques*sizeof(float));
+	float max_prediction;
+	int max_clique;
+	int numOfCorrectPred;
+
+	for(int i=0; i<numOfCliques; i++){
+
+		clique = cliqueIndex[i];
+		validation = clique->dataset->validation;
+		numOfCorrectPred = 0;
+		
+		for (int j = 0; j < validation->size; j++){
+			max_prediction = 0.0;
+			for(int k=0; k<numOfCliques; k++){
+				clique = cliqueIndex[k];
+				prediction =  LR_predict_proba(clique->LRModel,validation->X[j]);
+				printf("clique: %d | prediction: %lf \n ",k,prediction );
+				if(prediction > max_prediction){
+					max_prediction = prediction;
+					max_clique = k;
+				}
+			}
+			if(max_clique == validation->y[j]){
+				numOfCorrectPred++;
+			}
+			printf("---> correct:  %d | predict:  %d \n",validation->y[j],max_clique );
+		}
+
+		accuracyArray[i] = numOfCorrectPred/ (float) validation->size;		
 	}
 
 	return accuracyArray;	

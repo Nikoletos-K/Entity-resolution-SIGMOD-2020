@@ -39,6 +39,7 @@ void LR_destroy(LogisticRegression* model);
 void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file);
 float CrossEntropy(float prediction,float x,float y, size_t vectorSize);
 
+float LR_predict_proba(LogisticRegression* model,float * x_vector);
 int decision_boundary(float probability);
 float sigmoid(float x);
 float accuracy(int * prediction_labels,int * true_labels,int numOfLabels);

@@ -22,3 +22,4 @@ void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,floa
 float* testCliques(Clique** cliqueIndex,int numOfCliques);
 void GridSearchCliques(Clique * clique,int numOfCliques,FILE * file);
 void train_test_split(Clique ** cliqueIndex,int numOfCliques);
+float* validateCliques(Clique** cliqueIndex,int numOfCliques);

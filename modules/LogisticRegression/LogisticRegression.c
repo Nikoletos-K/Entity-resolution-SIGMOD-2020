@@ -22,7 +22,7 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 	model->max_epochs = max_epochs;
 
 	for(int w=0;w<model->vectorSize;w++){
-		model->weights[w] = (rand()%2 == 0 ? -0.1:0.1)*1/rand();
+		// model->weights[w] = (rand()%2 == 0 ? -0.1:0.1)*1/rand();
 		model->weights[w] = (float) 1/(float)rand();		
 		// model->weights[w] = 0.0;
 	}
@@ -124,6 +124,18 @@ int LR_predict(LogisticRegression* model,float * x_vector,int f){
 	// if(f==1)
 		// printf("(%.5lf) - ",sigmoid(p_x));
 	return decision_boundary(sigmoid(p_x));
+}
+
+float LR_predict_proba(LogisticRegression* model,float * x_vector){
+
+	float p_x = 0.0;
+
+	for(int w=0;w<model->vectorSize;w++)
+		p_x += model->weights[w]*x_vector[w];
+
+	p_x += model->bias;
+
+	return sigmoid(p_x);
 }
 
 void LR_destroy(LogisticRegression* model){
