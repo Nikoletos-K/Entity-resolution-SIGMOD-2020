@@ -36,7 +36,10 @@ Clique** CreateCliques(DisJointSet * djSet,int* numOfsets){
 			cliquesArray[*numOfsets]->numOfNegativeCliques = 0;
 			cliquesArray[*numOfsets]->negativeCliques = NULL;
 			cliquesArray[*numOfsets]->numOfUnique_negativeCliques = 0;
-			cliquesArray[*numOfsets]->unique_negativeCliques = NULL;			
+			cliquesArray[*numOfsets]->unique_negativeCliques = NULL;
+						
+			cliquesArray[*numOfsets]->LRModel = NULL;
+			cliquesArray[*numOfsets]->dataset = NULL;
 
 			(*numOfsets)++;
 
@@ -62,9 +65,11 @@ Clique** CreateCliques(DisJointSet * djSet,int* numOfsets){
 void destroyCliques(Clique** cliquesArray,int numOfCliques){
 
 	for (int i = 0; i < numOfCliques; i++){
-		destroy_Dataset(cliquesArray[i]->dataset);
+		if(cliquesArray[i]->dataset != NULL)
+			destroy_Dataset(cliquesArray[i]->dataset);
 		destroyBF(cliquesArray[i]->bitArray);
-		LR_destroy(cliquesArray[i]->LRModel);
+		if(cliquesArray[i]->LRModel!=NULL)
+			LR_destroy(cliquesArray[i]->LRModel);
 		free(cliquesArray[i]->unique_negativeCliques);
 		free(cliquesArray[i]->negativeCliques);
 		free(cliquesArray[i]);

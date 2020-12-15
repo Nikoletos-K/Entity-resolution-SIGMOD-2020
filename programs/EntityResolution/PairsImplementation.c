@@ -133,7 +133,7 @@ CamerasPair * createPair(CamSpec * c1, CamSpec * c2){
 
 }
 
-List * createNegativePairs(Clique ** cliqueIndex,int numOfcliques){
+List * createNegativePairs(Clique ** cliqueIndex,int numOfcliques,FILE * file){
 
 	List * differentCameras = createList();
 	int negativeClique_position=-1;
@@ -158,6 +158,7 @@ List * createNegativePairs(Clique ** cliqueIndex,int numOfcliques){
 
 					insert_toList(differentCameras ,(void*)pair);
 					negclique_node = negclique_node->nextNode;
+					fprintf(file,"%s, %s \n",pair->camera1->name,pair->camera2->name);
 				}
 			}
 			clique_node = clique_node->nextNode;
@@ -169,16 +170,13 @@ List * createNegativePairs(Clique ** cliqueIndex,int numOfcliques){
 
 /* ---------------------- Dataset ---------------------- */
 
-CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,int * dataset_size){
+CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,int * Labels,int dataset_size,int stratify){
 
 	srand(time(NULL));
-	int same = get_listSize(sameCameras),different = get_listSize(differentCameras);
-	printf("Same Cameras:      %d\n", same);
-	printf("Different Cameras: %d\n", different);
-	*dataset_size = same+different;
-	printf("Dataset size: %d\n",* dataset_size);
 
-	CamerasPair ** Dataset = malloc(*dataset_size*sizeof(CamerasPair *));
+
+	CamerasPair ** Dataset = malloc(dataset_size*sizeof(CamerasPair *));
+
 	int i=0;
 
 	listNode * samePair_node = sameCameras->firstNode;
@@ -188,13 +186,14 @@ CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,in
 	while(difPair_node!=NULL || samePair_node!=NULL){
 
 		if(difPair_node!=NULL)	
-			setLabel(difPair_node->data,DIFFERENT_CAMERAS);
+			setLabel(difPair_node->data,0);
 
 		if(samePair_node!=NULL)	
-			setLabel(samePair_node->data,SAME_CAMERAS);
+			setLabel(samePair_node->data,1);
 
-		if((rand()%20 == 0 && samePair_node!=NULL) || (difPair_node == NULL && samePair_node !=NULL)){
+		if(((i%stratify == 0)  && samePair_node!=NULL) || (difPair_node == NULL && samePair_node !=NULL)){
 			Dataset[i] = (CamerasPair*)samePair_node->data;
+			Labels[i] = 1;
 			i++;
 			if(samePair_node!=NULL)	
 				samePair_node = samePair_node->nextNode;
@@ -202,6 +201,7 @@ CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,in
 
 		if(difPair_node!=NULL){
 			Dataset[i] = (CamerasPair*) difPair_node->data;
+			Labels[i] = 0;
 			i++;	
 		}
 		
@@ -211,6 +211,33 @@ CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,in
 
 
 	return Dataset;
+
+}
+
+Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int datasetSize){
+
+	Dataset * dataset = createDataset();
+
+
+	for(int i=0;i<datasetSize;i++){
+
+		float * concatedVectors = concatVectors(pairsArray[i]->camera1->vector,pairsArray[i]->camera1->vector,VectorSize);
+
+		if(i < 0.6*datasetSize)
+
+			dataset = insert_toDataset(dataset,concatedVectors,Labels[i],Train);
+
+		else if(i >= 0.6*datasetSize && i < 0.8*datasetSize )
+
+			dataset = insert_toDataset(dataset,concatedVectors,Labels[i],Test);
+
+		else
+			dataset = insert_toDataset(dataset,concatedVectors,Labels[i],Validation);
+
+
+	}
+
+	return dataset;
 
 }
 

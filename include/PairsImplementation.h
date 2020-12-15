@@ -1,6 +1,9 @@
 #pragma once
 
 #include "./Clique.h"
+#include "./Vectorization.h"
+
+
 
 typedef struct CamerasPair{
 	
@@ -9,9 +12,6 @@ typedef struct CamerasPair{
 	int trueLabel;
 
 } CamerasPair;
-
-
-
 
 
 List * printPairs(Clique** setsList,int numOfsets );
@@ -23,8 +23,9 @@ void setLabel(CamerasPair *  pair,int label);
 Clique** createNegConnections(List * diffPairsList,Clique ** CliqueIndex);
 Clique * insert_uniqueNegConnection(Clique * cl,int arrayPosition);
 Clique * insert_NegConnection(Clique * ql,int arrayPosition);
-List * createNegativePairs(Clique ** CliqueIndex,int numOfcliques);
+List * createNegativePairs(Clique ** CliqueIndex,int numOfcliques,FILE * file);
 
-CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,int * dataset_size);
+CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,int * Labels,int dataset_size,int stratify);
 void printDataset(CamerasPair ** Dataset,int dataset_size);
 void printNegativePairs(List * diffPairs);
+Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int datasetSize);

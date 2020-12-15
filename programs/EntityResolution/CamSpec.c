@@ -45,6 +45,7 @@ CamSpec* createCamSpec(char * name,int arrayPosition){
 	cs->set = createList();
 	insert_toList(cs->set,cs);
 
+
 	cs->dictionaryWords = malloc(sizeof(int*));
 	cs->numOfWords = 0;
 	return cs;

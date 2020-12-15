@@ -63,6 +63,19 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 	free(dictionaryMap);
 }
 
+float* concatVectors(float * vector1,float * vector2,int vectorSize){
+
+	float * newVector = malloc(2*vectorSize*sizeof(float));
+	memcpy(newVector,vector1,sizeof(float)*vectorSize);
+	memcpy(newVector+vectorSize,vector2,sizeof(float)*vectorSize);
+
+	// free(vector1);
+	// free(vector2);
+
+
+	return newVector;
+}
+
 void printVector(CamSpec ** camArray,int num_of_cameras){
 
 	for(int i=0;i<num_of_cameras;i++){

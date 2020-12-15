@@ -23,12 +23,12 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 
 	for(int w=0;w<model->vectorSize;w++){
 		// model->weights[w] = (rand()%2 == 0 ? -0.1:0.1)*1/rand();
-		model->weights[w] = (float) 1/(float)rand();		
-		// model->weights[w] = 0.0;
+		// model->weights[w] = (float) 1/(float)rand();		
+		model->weights[w] = 0.0;
 	}
 
-	model->bias = 1/rand();
-	// model->bias = 0.0;
+	// model->bias = 1/rand();
+	model->bias = 0.0;
 	// model->bias = 1.0;
 
 	
@@ -149,7 +149,7 @@ void LR_destroy(LogisticRegression* model){
 
 int decision_boundary(float propability){
 	//printf("(%.5lf) - ",propability);
-	return (propability<=0.5 ? 0:1);
+	return (propability<=0.65 ? 0:1);
 }
 
 float sigmoid(float x){
@@ -226,9 +226,9 @@ void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file){
 
 
 	for (int j = 0; j < eval_set->size; j++){
-		// printf("True label: %d | ",eval_set->y[j]);
+		printf("True label: %d | ",eval_set->y[j]);
 		prediction_labels[j]  = LR_predict(model,eval_set->X[j],1);
-		// printf("|  prediction:  %d \n ",prediction_labels[j]);
+		printf("|  prediction:  %d \n ",prediction_labels[j]);
 	}
 
 

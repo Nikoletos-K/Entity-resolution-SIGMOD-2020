@@ -6,6 +6,7 @@
 #include <libgen.h>
 #include <sys/times.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "./../../include/Dataset.h"
 #include "./../../include/Vectorization.h"
@@ -15,7 +16,7 @@
 
 HashTable * Dictionary;
 size_t DictionarySize;
-size_t VectorSize = 5;  
+size_t VectorSize = 100;  
 
 dictNode ** DictionaryNodes;
 
@@ -103,28 +104,15 @@ int main(int argc,char ** argv){
 	/* ----------------   FORMING NEGATIVE CLIQUES -------------------------- */
 	t1 = (double) times(&tb1);
 	printf("\n-> Forming negative cliques: \n");
-	
+	FILE * output = fopen("NEGATIVE_PAIRS.csv","w+");
+	fprintf(output, "left_spec_id, right_spec_id,\n");
 	cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
-	List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques);
-
+	List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques,output);
+	fclose(output);
 	printf(" <- End of forming negative cliques\n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
 	printf("PERFORMANCE of forming negative cliques:\n");
-	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
-
-
-	/* ----------------   PRINTING NEGATIVE CLIQUES -------------------------- */
-	t1 = (double) times(&tb1);
-	printf("\n-> Printing different cameras to DIFFERENT_PAIRS.csv \n");
-
-	printNegativePairs(differentCameras); 
-	
-	printf(" <- End of printing different cameras\n");
-	t2 = (double) times(&tb2);
-	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	printf("PERFORMANCE of printing different cameras:\n");
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
@@ -149,9 +137,16 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Forming DATASET \n");
 	
-	int dataset_size=0;
-	CamerasPair ** Dataset =  create_PairsDataset(sameCameras,differentCameras, &dataset_size);
-	printDataset(Dataset,dataset_size);
+	int same = get_listSize(sameCameras),different = get_listSize(differentCameras);
+	printf("Same Cameras:      %d\n", same);
+	printf("Different Cameras: %d\n", different);
+	int dataset_size = same+different;
+	printf("Dataset size: %d\n",dataset_size);
+	int stratify = floor((float)dataset_size/(float)same);
+	printf("Stratified factor: %d\n",stratify );
+	int * Labels = malloc(sizeof(int)*(dataset_size));;
+	CamerasPair ** pairDataset =  create_PairsDataset(sameCameras,differentCameras,Labels, dataset_size,stratify);
+	printDataset(pairDataset,dataset_size);
 
 	printf(" <- End of forming DATASET\n");
 	t2 = (double) times(&tb2);
@@ -165,7 +160,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing dataset to DATASET.csv \n");
 	
-	printDataset(Dataset,dataset_size);
+	printDataset(pairDataset,dataset_size);
 
 	printf(" <- End of printing dataset\n");
 	t2 = (double) times(&tb2);
@@ -174,51 +169,55 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
+	/* ----------------   TRAIN_TEST_VALIDATION -------------------------- */
+	t1 = (double) times(&tb1);
+	printf("\n-> Forming train,test and validation sets \n");
+	
+	Dataset * vectorizedDataset =  train_test_split_pairs(pairDataset,Labels,dataset_size);
+
+	printf(" <- End of forming train,test and validation sets\n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of forming train,test and validation sets:\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 	/* ----------------   TRAINING CLIQUES -------------------------- */
 
 
-	// t1 = (double) times(&tb1);
-	// printf("\n-> Training cliques  \n");
+	t1 = (double) times(&tb1);
+	printf("\n-> Creating - Training model  \n");
 	
-	// float learning_rate = 0.1;
-	// float threshold = 0.00001;
-	// int max_epochs = 15;
+	float learning_rate = 0.1;
+	float threshold = 0.00001;
+	int max_epochs = 15;
 
-	// trainCliques(cliqueIndex,numOfCliques,learning_rate,threshold,max_epochs);
+	LogisticRegression* LR_Model = LR_construct(VectorSize*2,learning_rate,threshold,max_epochs);
+	LR_fit(LR_Model,vectorizedDataset->train);
 
-
-	// printf(" <- End of Training cliques  \n");
-	// t2 = (double) times(&tb2);
-	// cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	// printf("PERFORMANCE of Training cliques  :\n");
-	// printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+	printf(" <- End of Creating - Training model \n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of Creating - Training model  :\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
 	/* ----------------   TESTING CLIQUES -------------------------- */
 
 
-	// t1 = (double) times(&tb1);
-	// printf("\n-> Testing cliques  \n");
+	t1 = (double) times(&tb1);
+	printf("\n-> Testing model  \n");
 	
-	
-	// float* accuracyArray =  testCliques(cliqueIndex,numOfCliques);
-	// float acc = 0.0;
-	// for (int i = 0; i < numOfCliques; i++){
-	// 	acc += accuracyArray[i];
-	// 	printf("Clique %3d has accuracy %6.2lf %% \n",i+1,accuracyArray[i] );
-	// }
-	// printf("\nAverage accuracy %5.2lf %% \n\n",acc/(float)numOfCliques);
+	LR_Evaluation(LR_Model,vectorizedDataset->test,stdout);
 
+	printf(" <- End of Testing model  \n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of Testing model  :\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
-	// printf(" <- End of Testing cliques  \n");
-	// t2 = (double) times(&tb2);
-	// cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	// printf("PERFORMANCE of Testing cliques  :\n");
-	// printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
-	// free(accuracyArray);
 
 	/* ----------------   VALIDATION OF CLIQUES -------------------------- */
 
@@ -289,6 +288,7 @@ int main(int argc,char ** argv){
 
 	deleteList(diffPairsList);
 
+	
 	for(int i=0;i<DictionarySize;i++)
 		free(DictionaryNodes[i]);
 	free(DictionaryNodes);
@@ -299,7 +299,7 @@ int main(int argc,char ** argv){
 	HTDestroy(Dictionary);
 	HTDestroy(stopwords);
 	DJSDestructor(djSet);
-	destroyCliques(cliqueIndex,numOfCliques);
+	// destroyCliques(cliqueIndex,numOfCliques);
 	destroyDataStructures();
 	printf("<- All frees done\n");
 
