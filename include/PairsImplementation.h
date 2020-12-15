@@ -27,3 +27,4 @@ List * createNegativePairs(Clique ** CliqueIndex,int numOfcliques);
 
 CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,int * dataset_size);
 void printDataset(CamerasPair ** Dataset,int dataset_size);
+void printNegativePairs(List * diffPairs);

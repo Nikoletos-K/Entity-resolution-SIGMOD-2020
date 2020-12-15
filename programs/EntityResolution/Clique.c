@@ -171,8 +171,6 @@ float* testCliques(Clique** cliqueIndex,int numOfCliques){
 
 		clique = cliqueIndex[i];
 		test   = clique->dataset->test;
-		X_test = test->X;
-		y_test = test->y;
 
 		prediction_labels =  malloc((test->size)*sizeof(int));
 

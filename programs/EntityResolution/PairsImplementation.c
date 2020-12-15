@@ -18,13 +18,24 @@ List * printPairs(Clique** cliquesArray,int numOfsets ){
 	List * sameCameras_list = createList();
 
 	output = fopen("PAIRS.csv","w+");		// or in file
-	fprintf(output, "left_spec_id, right_spec_id, label\n");
+	fprintf(output, "left_spec_id, right_spec_id\n");
 	for(int i=0;i<numOfsets;i++)	// for every spec
 		printForward(cliquesArray[i]->set,output,printCameraName,sameCameras_list);	// print every pair in the list
 	
 	fclose(output);
 
 	return sameCameras_list;
+}
+
+void printNegativePairs(List * diffPairs){
+
+	FILE * output;
+
+	output = fopen("NEGATIVE_PAIRS.csv","w+");		// or in file
+	fprintf(output, "left_spec_id, right_spec_id\n");
+	printForward(diffPairs,output,printCameraName,NULL);	// print every pair in the list
+	
+	fclose(output);
 }
 
 void printForward(List * list,FILE * output,void (*printData)(void*,FILE *),List * sameCameras_list){
@@ -41,8 +52,10 @@ void printForward(List * list,FILE * output,void (*printData)(void*,FILE *),List
 			printData(rightNode->data,output);
 			fprintf(output,"\n");
 
-			CamerasPair * pair = createPair((CamSpec *) leftNode->data, (CamSpec *) rightNode->data);
-			insert_toList(sameCameras_list,(void*) pair);
+			if(sameCameras_list!=NULL){	
+				CamerasPair * pair = createPair((CamSpec *) leftNode->data, (CamSpec *) rightNode->data);
+				insert_toList(sameCameras_list,(void*) pair);
+			}
 			rightNode = rightNode->nextNode;
 		}
 		leftNode = leftNode->nextNode;
@@ -209,7 +222,6 @@ void printDataset(CamerasPair ** Dataset,int dataset_size){
 
 	fclose(dataset_file);
 }
-
 
 void setLabel(CamerasPair *  pair,int label){
 	pair->trueLabel = label;
