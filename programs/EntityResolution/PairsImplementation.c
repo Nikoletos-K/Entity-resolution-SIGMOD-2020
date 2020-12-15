@@ -180,35 +180,57 @@ CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,in
 	int i=0;
 
 	listNode * samePair_node = sameCameras->firstNode;
-	listNode * difPair_node = differentCameras->firstNode;
+	listNode * first_difPair_node = differentCameras->firstNode;
+	listNode * last_difPair_node = differentCameras->lastNode;
+
 	
 
-	while(difPair_node!=NULL || samePair_node!=NULL){
+	while(first_difPair_node!=last_difPair_node || samePair_node!=NULL){
 
-		if(difPair_node!=NULL)	
-			setLabel(difPair_node->data,0);
+		if(first_difPair_node!=last_difPair_node){
+			setLabel(first_difPair_node->data,0);
+			setLabel(last_difPair_node->data,0);
+		}
 
 		if(samePair_node!=NULL)	
 			setLabel(samePair_node->data,1);
 
-		if(((i%stratify == 0)  && samePair_node!=NULL) || (difPair_node == NULL && samePair_node !=NULL)){
+		if(((i%stratify == 0)  && samePair_node!=NULL) || (first_difPair_node==last_difPair_node && samePair_node !=NULL)){
+
 			Dataset[i] = (CamerasPair*)samePair_node->data;
 			Labels[i] = 1;
 			i++;
-			if(samePair_node!=NULL)	
+
+			if(samePair_node!=NULL)
 				samePair_node = samePair_node->nextNode;
+		
 		}
 
-		if(difPair_node!=NULL){
-			Dataset[i] = (CamerasPair*) difPair_node->data;
+		if(first_difPair_node!=last_difPair_node){
+			Dataset[i] = (CamerasPair*) first_difPair_node->data;
 			Labels[i] = 0;
 			i++;	
-		}
+			first_difPair_node = first_difPair_node->nextNode;
 		
-		if(difPair_node!=NULL)	
-			difPair_node = difPair_node->nextNode;
-	}
+			if(first_difPair_node == last_difPair_node){
+				Dataset[i] = (CamerasPair*) first_difPair_node->data;
+				Labels[i] = 0;
+				i++;					
+			}
+		}
 
+		if(first_difPair_node!=last_difPair_node){
+			Dataset[i] = (CamerasPair*) last_difPair_node->data;
+			Labels[i] = 0;
+			i++;	
+			last_difPair_node = last_difPair_node->prevNode;
+			if(first_difPair_node == last_difPair_node){
+				Dataset[i] = (CamerasPair*) last_difPair_node->data;
+				Labels[i] = 0;
+				i++;					
+			}
+		}
+	}
 
 	return Dataset;
 
@@ -221,7 +243,7 @@ Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int data
 
 	for(int i=0;i<datasetSize;i++){
 
-		float * concatedVectors = concatVectors(pairsArray[i]->camera1->vector,pairsArray[i]->camera1->vector,VectorSize);
+		float * concatedVectors = concatVectors(pairsArray[i]->camera1->vector,pairsArray[i]->camera2->vector,VectorSize);
 
 		if(i < 0.6*datasetSize)
 

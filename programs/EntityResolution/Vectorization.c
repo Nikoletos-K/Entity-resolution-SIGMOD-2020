@@ -56,7 +56,6 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 		}
 
 
-
 		camArray[i] -> vector = bowVectors;
 	}
 
@@ -79,11 +78,11 @@ float* concatVectors(float * vector1,float * vector2,int vectorSize){
 void printVector(CamSpec ** camArray,int num_of_cameras){
 
 	for(int i=0;i<num_of_cameras;i++){
-		printf("%03d:  ",i);
-		for(int p=0;p<VectorSize;p+=VectorSize/100){
+		printf("\n%03d:  ",i);
+		for(int p=0;p<VectorSize;p++){
 			printf("%.4f ",camArray[i]->vector[p]);
 		}
-		printf("\n");
+		printf("\n\n");
 	}	
 
 }

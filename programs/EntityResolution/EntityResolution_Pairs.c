@@ -124,7 +124,6 @@ int main(int argc,char ** argv){
 	createVectors(camArray,num_of_cameras);
 	// printVector(camArray,num_of_cameras);
 
-
 	printf(" <- End of forming Vectors \n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
@@ -141,7 +140,7 @@ int main(int argc,char ** argv){
 	printf("Same Cameras:      %d\n", same);
 	printf("Different Cameras: %d\n", different);
 	int dataset_size = same+different;
-	printf("Dataset size: %d\n",dataset_size);
+	printf("Dataset size:      %d\n",dataset_size);
 	int stratify = floor((float)dataset_size/(float)same);
 	printf("Stratified factor: %d\n",stratify );
 	int * Labels = malloc(sizeof(int)*(dataset_size));;
@@ -189,8 +188,11 @@ int main(int argc,char ** argv){
 	printf("\n-> Creating - Training model  \n");
 	
 	float learning_rate = 0.1;
-	float threshold = 0.00001;
-	int max_epochs = 15;
+	float threshold = 0.001;
+	int max_epochs = 50;
+	printf("Learning rate: %lf\n", learning_rate);
+	printf("Threshold:     %lf\n", threshold);
+	printf("Max epochs:    %d\n", max_epochs);
 
 	LogisticRegression* LR_Model = LR_construct(VectorSize*2,learning_rate,threshold,max_epochs);
 	LR_fit(LR_Model,vectorizedDataset->train);
@@ -244,35 +246,26 @@ int main(int argc,char ** argv){
 	// free(accuracyArray);
 
 	/* ----------------   GRID SEARCH -------------------------- */
+	t1 = (double) times(&tb1);
+	printf("\n-> GRIDSEARCH %d \n",i+1);
 
-	// float learning_rates[3] =  {0.1,0.01,0.001};
-	// int numofLr = 3;
-	// float thresholds[4] = {0.001,0.0001,0.00001,0.000005};
-	// int numofthreshold = 4;
-	// int max_epochs[4] = {5,10,15,20};
-	// int numOfmax_epochs = 4;
+	float learning_rates[3] =  {0.1,0.01,0.001};
+	int numofLr = 3;
+	float thresholds[4] = {0.001,0.0001,0.00001,0.000005};
+	int numofthreshold = 4;
+	int max_epochs[4] = {5,10,20,30};
+	int numOfmax_epochs = 4;
 
-	// for(int i=0;i<numOfCliques;i++){
 
-	// 	char fileName[30];
-	// 	sprintf(fileName,"%d.GRIDSEARCH.txt",i+1);
-	// 	FILE * GridSearchFile = fopen(fileName,"w+");
+	HyperParameters * hp = constructHyperParameters(learning_rates,numofLr,thresholds,numofthreshold,max_epochs,numOfmax_epochs);
+	GridSearch(	cliqueIndex[i]->dataset->train,cliqueIndex[i]->dataset->test,hp,VectorSize,NULL);
 
-	// 	t1 = (double) times(&tb1);
-	// 	printf("\n-> GRIDSEARCH %d \n",i+1);
-		
-
-	// 	HyperParameters * hp = constructHyperParameters(learning_rates,numofLr,thresholds,numofthreshold,max_epochs,numOfmax_epochs);
-	// 	GridSearch(	cliqueIndex[i]->dataset->train,cliqueIndex[i]->dataset->test,hp,VectorSize,GridSearchFile);
-
-	// 	fclose(GridSearchFile);
-	// 	printf(" <- end  \n");
-	// 	t2 = (double) times(&tb2);
-	// 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	// 	printf("PERFORMANCE of GRIDSEARCH - %d:\n",i+1);
-	// 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	// 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
-	// }
+	printf(" <- end  \n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of GRIDSEARCH - %d:\n",i+1);
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
 	/* ----------------   FREE OF MEMORY -------------------------- */

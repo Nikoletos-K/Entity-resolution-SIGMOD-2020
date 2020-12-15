@@ -50,6 +50,7 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 
 		/*  Comptute Loss  */
 		float * gradient = calloc(model->vectorSize,sizeof(float));
+		float avg_gradient = 0.0;
 		
 		for(int w=0; w<model->vectorSize; w++){
 
@@ -61,36 +62,21 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 				gradient[w] += loss;
 			}
 			gradient[w] /= -N;
-		}
 
-
-		/*  Update weights  */
-
-		float avg_gradient = 0.0;
-		
-		for(int w=0; w<model->vectorSize; w++){
+			/*  Update weights  */
 
 			prev_weights[w]    = model->weights[w];
 			model->weights[w] -= model->learning_rate*gradient[w];
 			avg_gradient += gradient[w];
+
 		}
 
-		model->bias       += model->learning_rate*(avg_gradient/model->vectorSize);
-
-
-		/*    Convergence   */
-		// for(int w=0;w<model->vectorSize;w++){
-		// 	converged = TRUE;
-		// 	if(abs(model->weights[w] - prev_weights[w]) > model->threshold){
-		// 		converged=FALSE;
-		// 		break;
-		// 	}
-		// }
+		model->bias += model->learning_rate*(avg_gradient/model->vectorSize);
 
 		// printf("Norm1. %lf\n", norm(model->weights,model->vectorSize) );
 		// printf("Norm2. %lf\n", norm(prev_weights,model->vectorSize) );
 		printf("| %lf | ", fabs(norm(model->weights,model->vectorSize) - norm(prev_weights,model->vectorSize)) );
-		
+		fflush(stdout);
 		if(fabs(norm(model->weights,model->vectorSize) - norm(prev_weights,model->vectorSize))<model->threshold){
 			printf("\nConverged in %d epochs\n",epochs );
 			free(gradient);
@@ -149,7 +135,7 @@ void LR_destroy(LogisticRegression* model){
 
 int decision_boundary(float propability){
 	//printf("(%.5lf) - ",propability);
-	return (propability<=0.65 ? 0:1);
+	return (propability<=0.8 ? 0:1);
 }
 
 float sigmoid(float x){
@@ -208,7 +194,8 @@ void GridSearch(Xy_Split * train,Xy_Split * test,HyperParameters * hp,size_t vec
 		for(int lr=0;lr<hp->numofLr;lr++){
 			for(int t=0;t<hp->numofthreshold;t++){
 
-				fprintf(GridSearchFile, "\n ------ Lr %lf   |    threshold %lf  | max_epochs %d \n",hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me] );
+				if(GridSearchFile!=NULL) 
+					fprintf(GridSearchFile, "\n ------ Lr %lf   |    threshold %lf  | max_epochs %d \n",hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me] );
 				model = LR_construct(vectorSize,hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me]);
 				LR_fit(model,train);
 				LR_Evaluation(model,test,GridSearchFile);

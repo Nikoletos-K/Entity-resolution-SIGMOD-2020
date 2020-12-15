@@ -18,6 +18,7 @@ listNode * create_listNode(void * data){
 	listNode * node = malloc(sizeof(listNode));
 	node->data = data;
 	node->nextNode = NULL;
+	node->prevNode = NULL;
 	return node;
 }
 
@@ -30,7 +31,9 @@ int insert_toList(List * list,void * data){		// insertion is done at the end of 
 		list->lastNode = newNode;
 	}else{
 		list->lastNode->nextNode = newNode;
+		newNode->prevNode = list->lastNode;
 		list->lastNode = newNode;
+
 	}
 
 	list->numOfNodes++;

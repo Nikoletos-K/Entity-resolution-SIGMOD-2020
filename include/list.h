@@ -11,6 +11,7 @@ typedef struct listNode{
 	
 	void * data;
 	listNode * nextNode;
+	listNode * prevNode;
 		
 }listNode;
 

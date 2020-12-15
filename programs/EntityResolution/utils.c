@@ -35,15 +35,15 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords){
 
 			char * value = strtok(NULL,"");	
 
-			token = strtok(key, s);
+			// token = strtok(key, s);
 
-			if(token==NULL)
-				addWord(key,cs,stopwords);
+			// if(token==NULL)
+			// 	addWord(key,cs,stopwords);
 
-			while( token != NULL ) {
-			  addWord(token,cs,stopwords);		    
-		      token = strtok(NULL, s);
-		    }
+			// while( token != NULL ) {
+			//   addWord(token,cs,stopwords);		    
+		 //      token = strtok(NULL, s);
+		 //    }
 			
 			if(strcmp(value," [")){		// if value is not a list 
 				value = value+2;
