@@ -56,7 +56,7 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 		for(int i=0; i<N; i++){
 
 			loss =  LR_predict_proba(model,X_train[i]) - y_train[i];
-			// printf("%lf / ",loss );
+
 			for(int w=0; w<model->vectorSize; w++){
 
 				/*  Update weights  */
@@ -65,7 +65,6 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 				model->weights[w] -= model->learning_rate*gradient;
 				avg_gradient      += gradient;
 
-				
 			}
 
 			model->bias -= model->learning_rate*(avg_gradient/N); 
