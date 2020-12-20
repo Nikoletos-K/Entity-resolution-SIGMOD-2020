@@ -22,7 +22,7 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 	model->max_epochs = max_epochs;
 
 	for(int w=0;w<model->vectorSize;w++){
-		// model->weights[w] = (rand()%2 == 0 ? -0.1:0.1)*1/rand();
+		model->weights[w] = (rand()%2 == 0 ? -1:1)*1/rand();
 		// model->weights[w] = (float) 1/(float)rand();		
 		model->weights[w] = 0.0;
 	}
@@ -49,41 +49,40 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 
 
 		/*  Comptute Loss  */
-		float * gradient = calloc(model->vectorSize,sizeof(float));
-		float avg_gradient = 0.0;
+		float gradient,avg_gradient;
 		
-		for(int w=0; w<model->vectorSize; w++){
+		float prev_norm = euclid_norm(model->weights,model->vectorSize);
 
-			for(int i=0; i<N; i++){
+		for(int i=0; i<N; i++){
 
-				loss =  y_train[i] - LR_predict(model,X_train[i],0);
-				loss *= X_train[i][w];
+			loss =  LR_predict_proba(model,X_train[i]) - y_train[i];
+			// printf("%lf / ",loss );
+			for(int w=0; w<model->vectorSize; w++){
 
-				gradient[w] += loss;
+				/*  Update weights  */
+				gradient           = loss*X_train[i][w];
+				prev_weights[w]    = model->weights[w];
+				model->weights[w] -= model->learning_rate*gradient;
+				avg_gradient      += gradient;
+
+				
 			}
-			gradient[w] /= -N;
 
-			/*  Update weights  */
-
-			prev_weights[w]    = model->weights[w];
-			model->weights[w] -= model->learning_rate*gradient[w];
-			avg_gradient += gradient[w];
+			model->bias -= model->learning_rate*(avg_gradient/N); 
 
 		}
 
-		model->bias += model->learning_rate*(avg_gradient/model->vectorSize);
+		float new_norm = euclid_norm(model->weights,model->vectorSize);
 
-		// printf("Norm1. %lf\n", norm(model->weights,model->vectorSize) );
-		// printf("Norm2. %lf\n", norm(prev_weights,model->vectorSize) );
-		printf("| %lf | ", fabs(norm(model->weights,model->vectorSize) - norm(prev_weights,model->vectorSize)) );
+		printf("| %lf | ", fabs(new_norm - prev_norm) );
 		fflush(stdout);
-		if(fabs(norm(model->weights,model->vectorSize) - norm(prev_weights,model->vectorSize))<model->threshold){
+		if(fabs(new_norm - prev_norm) < model->threshold){
 			printf("\nConverged in %d epochs\n",epochs );
-			free(gradient);
+			// free(gradient);
 			break;
 		}
 
-		free(gradient);
+		// free(gradient);
 		epochs++;
 	}
 
@@ -135,7 +134,7 @@ void LR_destroy(LogisticRegression* model){
 
 int decision_boundary(float propability){
 	//printf("(%.5lf) - ",propability);
-	return (propability<=0.8 ? 0:1);
+	return (propability<=0.5 ? 0:1);
 }
 
 float sigmoid(float x){
@@ -153,7 +152,7 @@ float accuracy(int * prediction_labels,int * true_labels,int numOfLabels){
 	return ((float)(((float)acc)  / ((float)numOfLabels)))*100;
 }
 
-float norm(float * x, int size){
+float euclid_norm(float * x, int size){
 	float norm = 0.0;
 
 	for (int i = 0; i < size; i++)	{
@@ -163,6 +162,16 @@ float norm(float * x, int size){
 	return sqrt(norm);
 }
 
+
+float manhattan_norm(float * x, int size){
+	float norm = 0.0;
+
+	for (int i = 0; i < size; i++)	{
+		norm+=x[i];
+	}
+
+	return norm;
+}
 
 HyperParameters * constructHyperParameters(
 	float * learning_rates,

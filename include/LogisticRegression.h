@@ -43,7 +43,7 @@ float LR_predict_proba(LogisticRegression* model,float * x_vector);
 int decision_boundary(float probability);
 float sigmoid(float x);
 float accuracy(int * prediction_labels,int * true_labels,int numOfLabels);
-float norm(float * x, int size);
+float euclid_norm(float * x, int size);
 
 
 HyperParameters * constructHyperParameters(

@@ -177,7 +177,7 @@ CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,in
 
 	CamerasPair ** Dataset = malloc(dataset_size*sizeof(CamerasPair *));
 
-	int i=0;
+	int i=0,isertAlteranety=TRUE;
 
 	listNode * samePair_node = sameCameras->firstNode;
 	listNode * first_difPair_node = differentCameras->firstNode;
@@ -192,10 +192,11 @@ CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,in
 			setLabel(last_difPair_node->data,0);
 		}
 
-		if(samePair_node!=NULL)	
-			setLabel(samePair_node->data,1);
 
-		if(((i%stratify == 0)  && samePair_node!=NULL) || (first_difPair_node==last_difPair_node && samePair_node !=NULL)){
+		if( (i%stratify == 0 && samePair_node!=NULL) || (first_difPair_node==last_difPair_node && samePair_node !=NULL)){
+		
+			if(samePair_node!=NULL)	
+				setLabel(samePair_node->data,1);
 
 			Dataset[i] = (CamerasPair*)samePair_node->data;
 			Labels[i] = 1;
@@ -204,31 +205,37 @@ CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,in
 			if(samePair_node!=NULL)
 				samePair_node = samePair_node->nextNode;
 		
-		}
 
-		if(first_difPair_node!=last_difPair_node){
-			Dataset[i] = (CamerasPair*) first_difPair_node->data;
-			Labels[i] = 0;
-			i++;	
-			first_difPair_node = first_difPair_node->nextNode;
-		
-			if(first_difPair_node == last_difPair_node){
+		}else if(first_difPair_node!=last_difPair_node){
+
+			if(isertAlteranety){
+
 				Dataset[i] = (CamerasPair*) first_difPair_node->data;
 				Labels[i] = 0;
-				i++;					
-			}
-		}
+				i++;	
 
-		if(first_difPair_node!=last_difPair_node){
-			Dataset[i] = (CamerasPair*) last_difPair_node->data;
-			Labels[i] = 0;
-			i++;	
-			last_difPair_node = last_difPair_node->prevNode;
-			if(first_difPair_node == last_difPair_node){
+				first_difPair_node = first_difPair_node->nextNode;
+			
+				if(first_difPair_node == last_difPair_node){
+					Dataset[i] = (CamerasPair*) first_difPair_node->data;
+					Labels[i] = 0;
+					i++;	
+				}
+				isertAlteranety = FALSE;
+			
+			}else{
+		
 				Dataset[i] = (CamerasPair*) last_difPair_node->data;
 				Labels[i] = 0;
-				i++;					
+				i++;	
+				last_difPair_node = last_difPair_node->prevNode;
+				if(first_difPair_node == last_difPair_node){
+					Dataset[i] = (CamerasPair*) last_difPair_node->data;
+					Labels[i] = 0;
+					i++;					
+				}
 			}
+			isertAlteranety = TRUE;
 		}
 	}
 

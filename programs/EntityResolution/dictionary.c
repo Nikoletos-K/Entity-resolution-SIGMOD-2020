@@ -26,12 +26,18 @@ HashTable * createStopWords(char* file){
 }
 
 
-int cmpfunc (const void * a, const void * b) {
+int compareAverageTfIdf (const void * a, const void * b) {
 
 	dictNode * nodeA = *(dictNode**) a;
 	dictNode * nodeB = *(dictNode**) b;
 
-   return (nodeA->num - nodeB->num);
+	float diff = (((float)nodeA->averageTfIdf - (float)nodeB->averageTfIdf));
+   	
+   	if(diff>0.0) diff=1;
+   	else if(diff== 0.0) diff=0;
+   	else diff = -1;
+
+   return diff;
 }
 
 
@@ -78,7 +84,8 @@ void addWord(char *word, CamSpec* cs,HashTable* stopwords){
 			node = malloc(sizeof(dictNode));
 			node->num = 1;
 			node->index = DictionarySize;
-			node->word = word;
+			node->word = strdup(word);
+			node->averageTfIdf = 0.0;
 			(cs->numOfWords)++;
 			DictionarySize++;
 			DictionaryNodes = realloc(DictionaryNodes,DictionarySize*sizeof(dictNode*));

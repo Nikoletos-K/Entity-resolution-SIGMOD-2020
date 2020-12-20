@@ -13,21 +13,93 @@
 #include "./../../include/Vectorization.h"
 
 
+// void createVectors(CamSpec ** camArray,int num_of_cameras){
+
+// 	qsort(DictionaryNodes, DictionarySize, sizeof(dictNode*), cmpfunc);
+
+// 	int * dictionaryMap = calloc(DictionarySize,sizeof(int));
+
+// 	int mapIndex = 1;
+// 	for (int i = DictionarySize-1; i >= DictionarySize-VectorSize; i--){
+// 		int position  = DictionaryNodes[i]->index; 
+// 		dictionaryMap[position] = mapIndex;
+// 		mapIndex++;
+// 			// printf("%d  ----  %s\n",mapIndex, DictionaryNodes[i]->word);
+// 	}
+
+// 	// float ** bowVectors = malloc(num_of_cameras*sizeof(float*));
+// 	for(int i=0;i<num_of_cameras;i++){
+
+// 		int numOfWords       = camArray[i]->numOfWords;
+// 		int* dictionaryWords = camArray[i]->dictionaryWords;
+// 		float * bowVectors   = calloc(VectorSize,sizeof(float));
+// 		int length = 0;
+
+
+// 		for(int p=0;p<numOfWords;p++){
+			
+// 			int vector_position = dictionaryWords[p];
+// 			int final_vector_position = dictionaryMap[vector_position];
+
+// 			if(final_vector_position!=0){
+// 				length++;
+// 				bowVectors[final_vector_position-1]++;
+// 			}
+// 		}
+
+		
+// 		/*		TF-IDF 		*/
+// 		for(int p=0;p<VectorSize;p++){
+// 			int idf = log(num_of_cameras/DictionaryNodes[p]->num);
+// 			bowVectors[p] /= length;
+// 			bowVectors[p] *= idf;
+// 		}
+
+
+// 		camArray[i] -> vector = bowVectors;
+// 	}
+
+// 	free(dictionaryMap);
+// }
+
 void createVectors(CamSpec ** camArray,int num_of_cameras){
 
-	qsort(DictionaryNodes, DictionarySize, sizeof(dictNode*), cmpfunc);
+	printf("Dictionary size: %lu\n",DictionarySize );
+	for(int i=0;i<num_of_cameras;i++){
+
+		int numOfWords       = camArray[i]->numOfWords;
+		int* dictionaryWords = camArray[i]->dictionaryWords;
+		float * bowVectors   = calloc(DictionarySize,sizeof(float));
+
+
+		for(int p=0;p<numOfWords;p++){
+			int final_vector_position = dictionaryWords[p];
+			bowVectors[final_vector_position]++;
+		}
+
+		
+		/*		TF-IDF 		*/
+		for(int p=0;p<DictionarySize;p++){
+			int idf = log(num_of_cameras/DictionaryNodes[p]->num);
+			bowVectors[p] /= numOfWords;
+			bowVectors[p] *= idf;
+			DictionaryNodes[p]->averageTfIdf += bowVectors[p]/(float)num_of_cameras;
+		}
+	}
+
+	qsort(DictionaryNodes, DictionarySize, sizeof(dictNode*), compareAverageTfIdf);
+
 
 	int * dictionaryMap = calloc(DictionarySize,sizeof(int));
 
 	int mapIndex = 1;
 	for (int i = DictionarySize-1; i >= DictionarySize-VectorSize; i--){
 		int position  = DictionaryNodes[i]->index; 
+		printf("%lf %d %s\n",DictionaryNodes[i]->averageTfIdf,DictionaryNodes[i]->num,DictionaryNodes[i]->word );
 		dictionaryMap[position] = mapIndex;
 		mapIndex++;
-			// printf("%d  ----  %s\n",mapIndex, DictionaryNodes[i]->word);
 	}
 
-	// float ** bowVectors = malloc(num_of_cameras*sizeof(float*));
 	for(int i=0;i<num_of_cameras;i++){
 
 		int numOfWords       = camArray[i]->numOfWords;
@@ -58,7 +130,6 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 
 		camArray[i] -> vector = bowVectors;
 	}
-
 	free(dictionaryMap);
 }
 

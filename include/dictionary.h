@@ -8,6 +8,8 @@ typedef struct dictNode{
 	int num;
 	int index;
 	char * word;
+	float averageTfIdf;
+
 }dictNode;
 
 extern HashTable * Dictionary;
@@ -19,4 +21,4 @@ extern dictNode ** DictionaryNodes;
 
 HashTable * createStopWords(char* file);
 void addWord(char *word, CamSpec* cs, HashTable* stopwords);
-int cmpfunc (const void * a, const void * b);
+int compareAverageTfIdf (const void * a, const void * b);
