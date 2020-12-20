@@ -66,12 +66,9 @@ void addWord(char *word, CamSpec* cs,HashTable* stopwords){
 	}
 
 
-	if(strlen(word)>1 && strlen(word)<20){
+	if(strlen(word)>2 && strlen(word)<11){
 		if(HTSearch(stopwords,word,stringComparator)!=NULL)
 			return;
-
-
-		cs->dictionaryWords = realloc(cs->dictionaryWords,(cs->numOfWords+1)*sizeof(int));
 
 		dictNode* node;
 
@@ -79,35 +76,66 @@ void addWord(char *word, CamSpec* cs,HashTable* stopwords){
 
 		if(node == NULL){
 
-			cs->dictionaryWords[cs->numOfWords] = DictionarySize;
+			cs->dictionaryWords = realloc(cs->dictionaryWords,(cs->numOfWords+1)*sizeof(int));
+			cs->wordCounters = realloc(cs->wordCounters,(cs->numOfWords+1)*sizeof(int));
 
-			node = malloc(sizeof(dictNode));
-			node->num = 1;
-			node->index = DictionarySize;
-			node->word = strdup(word);
-			node->averageTfIdf = 0.0;
+
+			cs->dictionaryWords[cs->numOfWords] = DictionarySize;
+			cs->wordCounters[cs->numOfWords] = 1;
+
 			(cs->numOfWords)++;
+
+			node = dictNodeConstruct(DictionarySize, word);
+			
 			DictionarySize++;
 			DictionaryNodes = realloc(DictionaryNodes,DictionarySize*sizeof(dictNode*));
 			DictionaryNodes[DictionarySize-1] = node;
 			
 			HTInsert(Dictionary,word,(void *) node,stringComparator);
 		}else{
-			cs->dictionaryWords[cs->numOfWords] = node->index;
-
+			
 			int exists=0;
+
 			for(int k=0;k<cs->numOfWords;k++){
-				if(cs->dictionaryWords[k] == node->index){
+				if(cs->dictionaryWords[k] == node->wordID){
+					(cs->wordCounters[k])++;
 					exists=1;
 					break;
 				}
 			}
 
-			if(!exists)
-				(node->num)++;
+			if(!exists){
 
-			(cs->numOfWords)++;
+				cs->dictionaryWords = realloc(cs->dictionaryWords,(cs->numOfWords+1)*sizeof(int));
+				cs->wordCounters = realloc(cs->wordCounters,(cs->numOfWords+1)*sizeof(int));
+
+
+				cs->dictionaryWords[cs->numOfWords] = node->wordID;
+				cs->wordCounters[cs->numOfWords] = 1;
+				
+				(cs->numOfWords)++;
+
+				(node->jsonsIn)++;
+			}
 		}
 	}  
 }
 
+dictNode * dictNodeConstruct(int wordID, char* word){
+	dictNode* node = malloc(sizeof(dictNode));
+	node->jsonsIn = 1;
+	node->wordID = wordID;
+	node->word = strdup(word);
+	node->averageTfIdf = 0.0;
+	node->sumOfTfs = 0.0;
+
+	return node;
+}
+
+void addTfToDict( CamSpec* cs,dictNode ** DictionaryNodes){
+
+	for (int i = 0; i < cs->numOfWords; i++){
+		int wordPosition = cs->dictionaryWords[i];
+		DictionaryNodes[wordPosition]->sumOfTfs += (float) (( (float) cs->wordCounters[i])/ ((float) cs->numOfWords));
+	}
+}

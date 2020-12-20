@@ -145,6 +145,7 @@ CamSpec ** read_dir(char* nameOfDir,HashTable * ht,CamSpec ** camArray,int *arra
 			camArray[*array_position] = cs;		// add it to the array for the disjointtest
 			(*array_position)++;
 			cs = read_jsonSpecs(filename,cs,stopwords);		// read the file and save the json info
+			addTfToDict(cs,DictionaryNodes);
 		}
 	}
 

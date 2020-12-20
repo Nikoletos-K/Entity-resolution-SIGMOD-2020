@@ -47,6 +47,7 @@ CamSpec* createCamSpec(char * name,int arrayPosition){
 
 
 	cs->dictionaryWords = malloc(sizeof(int*));
+	cs->wordCounters = malloc(sizeof(int*));
 	cs->numOfWords = 0;
 	return cs;
 }
@@ -75,6 +76,7 @@ void destroyCamSpec(CamSpec * cs){
 	deleteList(cs->set);
 	free(cs->vector);
 	free(cs->dictionaryWords);
+	free(cs->wordCounters);
 	free(cs->infoArray);
 	free(cs);
 }

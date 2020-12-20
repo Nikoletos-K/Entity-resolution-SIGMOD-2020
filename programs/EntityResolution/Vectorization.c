@@ -65,27 +65,14 @@
 void createVectors(CamSpec ** camArray,int num_of_cameras){
 
 	printf("Dictionary size: %lu\n",DictionarySize );
-	for(int i=0;i<num_of_cameras;i++){
-
-		int numOfWords       = camArray[i]->numOfWords;
-		int* dictionaryWords = camArray[i]->dictionaryWords;
-		float * bowVectors   = calloc(DictionarySize,sizeof(float));
 
 
-		for(int p=0;p<numOfWords;p++){
-			int final_vector_position = dictionaryWords[p];
-			bowVectors[final_vector_position]++;
-		}
-
-		
-		/*		TF-IDF 		*/
-		for(int p=0;p<DictionarySize;p++){
-			int idf = log(num_of_cameras/DictionaryNodes[p]->num);
-			bowVectors[p] /= numOfWords;
-			bowVectors[p] *= idf;
-			DictionaryNodes[p]->averageTfIdf += bowVectors[p]/(float)num_of_cameras;
-		}
+	for(int p=0;p<DictionarySize;p++){
+		float idf = log(num_of_cameras/DictionaryNodes[p]->jsonsIn);
+		float tfs = DictionaryNodes[p]->sumOfTfs;
+		DictionaryNodes[p]->averageTfIdf = (tfs * idf)/(float) num_of_cameras;
 	}
+	
 
 	qsort(DictionaryNodes, DictionarySize, sizeof(dictNode*), compareAverageTfIdf);
 
@@ -94,8 +81,8 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 
 	int mapIndex = 1;
 	for (int i = DictionarySize-1; i >= DictionarySize-VectorSize; i--){
-		int position  = DictionaryNodes[i]->index; 
-		printf("%lf %d %s\n",DictionaryNodes[i]->averageTfIdf,DictionaryNodes[i]->num,DictionaryNodes[i]->word );
+		int position  = DictionaryNodes[i]->wordID; 
+		printf("%lf %d %s\n",DictionaryNodes[i]->averageTfIdf,DictionaryNodes[i]->jsonsIn,DictionaryNodes[i]->word );
 		dictionaryMap[position] = mapIndex;
 		mapIndex++;
 	}
@@ -104,29 +91,25 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 
 		int numOfWords       = camArray[i]->numOfWords;
 		int* dictionaryWords = camArray[i]->dictionaryWords;
+		int* wordCounters = camArray[i]->wordCounters;
 		float * bowVectors   = calloc(VectorSize,sizeof(float));
-		int length = 0;
-
-
+		
 		for(int p=0;p<numOfWords;p++){
 			
 			int vector_position = dictionaryWords[p];
 			int final_vector_position = dictionaryMap[vector_position];
 
-			if(final_vector_position!=0){
-				length++;
-				bowVectors[final_vector_position-1]++;
-			}
+			if(final_vector_position!=0)
+				bowVectors[final_vector_position-1] = wordCounters[p];
 		}
 
 		
 		/*		TF-IDF 		*/
 		for(int p=0;p<VectorSize;p++){
-			int idf = log(num_of_cameras/DictionaryNodes[p]->num);
-			bowVectors[p] /= length;
+			int idf = log(num_of_cameras/DictionaryNodes[p]->jsonsIn);
+			bowVectors[p] /= numOfWords;
 			bowVectors[p] *= idf;
 		}
-
 
 		camArray[i] -> vector = bowVectors;
 	}

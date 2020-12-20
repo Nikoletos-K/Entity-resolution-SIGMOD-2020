@@ -19,6 +19,7 @@ typedef struct CamSpec{
 	int arrayPosition;
 	Set set;
 	int* dictionaryWords;
+	int * wordCounters;
 	int numOfWords;
 	float * vector;
 
