@@ -1,6 +1,8 @@
 #pragma once
 
 #include "./list.h"
+// #include "./Vectorization.h"
+#include "./LogisticRegression.h"
 
 typedef List * Set;
 
@@ -22,6 +24,7 @@ typedef struct CamSpec{
 	int * wordCounters;
 	int numOfWords;
 	float * vector;
+	DenseMatrix * DenseVector;
 
 }CamSpec;
 

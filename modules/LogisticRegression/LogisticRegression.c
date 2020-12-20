@@ -9,7 +9,6 @@
 
 #include "./../../include/LogisticRegression.h"
 
-
 LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs){
 
 	srand(time(NULL));
@@ -22,13 +21,13 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 	model->max_epochs = max_epochs;
 
 	for(int w=0;w<model->vectorSize;w++){
-		// model->weights[w] = (rand()%2 == 0 ? -1:1)*1/rand();
+		model->weights[w] = (rand()%2 == 0 ? -1:1)*1/rand();
 		// model->weights[w] = (float) 1/(float)rand();		
-		model->weights[w] = 0.0;
+		// model->weights[w] = 0.0;
 	}
 
-	// model->bias = 1/rand();
-	model->bias = 0.0;
+	model->bias = 1/rand();
+	// model->bias = 0.0;
 	// model->bias = 1.0;
 
 	
@@ -37,13 +36,13 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 
 void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 
-	int epochs=0;
-	float loss;
+	int epochs=0,weight_position;
+	float loss,value;
 	float * prev_weights = calloc(model->vectorSize,sizeof(float));
 	int converged    = FALSE;
-	void ** X_train  = Xy_train->X;
-	int *  y_train   = Xy_train->y;
-	int N            = Xy_train->size; 
+	DenseMatrix ** X_train  = (DenseMatrix **) Xy_train->X;
+	int *  y_train          = Xy_train->y;
+	int N                   = Xy_train->size; 
 
 	while(!converged && epochs < model->max_epochs){
 
@@ -55,19 +54,29 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 
 		for(int i=0; i<N; i++){
 
-			loss =  LR_predict_proba(model,X_train[i]) - y_train[i];
+			DenseMatrix * denseX = X_train[i];
+			int denseX_size = denseX->matrixSize;
 
-			for(int w=0; w<model->vectorSize; w++){
+			if(denseX_size)
+				loss =  LR_predict_proba(model,denseX) - y_train[i];
+
+			for(int p=0; p<denseX_size; p++){
 
 				/*  Update weights  */
-				gradient           = loss*X_train[i][w];
-				prev_weights[w]    = model->weights[w];
-				model->weights[w] -= model->learning_rate*gradient;
+				weight_position = denseX->matrix[p]->position;
+				value           = denseX->matrix[p]->value;
+
+
+				gradient           = loss*value;
 				avg_gradient      += gradient;
+
+				model->weights[weight_position] -= model->learning_rate*gradient;
+
 
 			}
 
-			model->bias -= model->learning_rate*(avg_gradient/N); 
+			if(denseX_size)
+				model->bias -= model->learning_rate*(avg_gradient/N); 
 
 		}
 
@@ -99,12 +108,18 @@ float CrossEntropy(float prediction,float x,float y, size_t vectorSize){
 	return gradient;
 }
 
-int LR_predict(LogisticRegression* model,float * x_vector,int f){
+int LR_predict(LogisticRegression* model,DenseMatrix * denseX,int f){
 
-	float p_x = 0.0;
+	int denseX_size = denseX->matrixSize,weight_position;
+	float p_x = 0.0,value;
 
-	for(int w=0;w<model->vectorSize;w++)
-		p_x += model->weights[w]*x_vector[w];
+	for(int p=0;p<denseX_size;p++){
+
+		weight_position = denseX->matrix[p]->position;
+		value           = denseX->matrix[p]->value;
+
+		p_x += model->weights[weight_position]*value;
+	}
 
 	p_x += model->bias;
 
@@ -113,12 +128,18 @@ int LR_predict(LogisticRegression* model,float * x_vector,int f){
 	return decision_boundary(sigmoid(p_x));
 }
 
-float LR_predict_proba(LogisticRegression* model,float * x_vector){
+float LR_predict_proba(LogisticRegression* model,DenseMatrix * denseX){
 
-	float p_x = 0.0;
+	int denseX_size = denseX->matrixSize,weight_position;
+	float p_x = 0.0,value;
 
-	for(int w=0;w<model->vectorSize;w++)
-		p_x += model->weights[w]*x_vector[w];
+	for(int p=0;p<denseX_size;p++){
+
+		weight_position = denseX->matrix[p]->position;
+		value           = denseX->matrix[p]->value;
+
+		p_x += model->weights[weight_position]*value;
+	}
 
 	p_x += model->bias;
 
@@ -146,7 +167,7 @@ float accuracy(int * prediction_labels,int * true_labels,int numOfLabels){
 
 	float acc = 0.0;
 	for(int i=0;i<numOfLabels;i++)
-		acc += (prediction_labels[i] == true_labels[i] ? 1:0 );
+		acc += (prediction_labels[i] == true_labels[i] ? 1.0:0.0 );
 	
 	return ((float)(((float)acc)  / ((float)numOfLabels)))*100;
 }
@@ -222,7 +243,7 @@ void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file){
 
 	for (int j = 0; j < eval_set->size; j++){
 		printf("True label: %d | ",eval_set->y[j]);
-		prediction_labels[j]  = LR_predict(model,eval_set->X[j],1);
+		prediction_labels[j]  = LR_predict(model,eval_set->X[j],0);
 		printf("|  prediction:  %d \n ",prediction_labels[j]);
 	}
 

@@ -3,7 +3,6 @@
 #include "./CamSpec.h"
 #include "./DisJointSet.h"
 #include "./bitArray.h"
-#include "./LogisticRegression.h"
 #include "./HashTable.h"
 
 #define BUFFER 1024

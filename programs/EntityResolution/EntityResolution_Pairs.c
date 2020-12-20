@@ -16,7 +16,7 @@
 
 HashTable * Dictionary;
 size_t DictionarySize;
-size_t VectorSize = 1000;  
+size_t VectorSize = 18000;  
 
 dictNode ** DictionaryNodes;
 
@@ -59,6 +59,7 @@ int main(int argc,char ** argv){
 	printf("   and informing data structures from given .json files\n ");
 
 	camArray = read_dir(argv[jsonDir],CameraHT,camArray,&num_of_cameras,stopwords);
+	HTDestroy(Dictionary);
 
 	printf("<- End of reading directory\n");
 	t2 = (double) times(&tb2);
@@ -187,9 +188,9 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Creating - Training model  \n");
 	
-	float learning_rate = 0.01;
+	float learning_rate = 0.1;
 	float threshold = 0.001;
-	int epochs = 10;
+	int epochs = 50;
 	printf("Learning rate: %lf\n", learning_rate);
 	printf("Threshold:     %lf\n", threshold);
 	printf("Max epochs:    %d\n", epochs);
@@ -289,7 +290,7 @@ int main(int argc,char ** argv){
 	// free(accuracyArray);
 	free(camArray);
 	HTDestroy(CameraHT);
-	HTDestroy(Dictionary);
+
 	HTDestroy(stopwords);
 	DJSDestructor(djSet);
 	// destroyCliques(cliqueIndex,numOfCliques);

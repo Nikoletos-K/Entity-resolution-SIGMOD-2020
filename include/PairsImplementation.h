@@ -29,3 +29,5 @@ CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,in
 void printDataset(CamerasPair ** Dataset,int dataset_size);
 void printNegativePairs(List * diffPairs);
 Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int datasetSize);
+void createVectors(CamSpec ** camArray,int num_of_cameras);
+void printVector(CamSpec ** camArray,int num_of_cameras);

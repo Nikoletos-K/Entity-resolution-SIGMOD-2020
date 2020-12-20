@@ -247,23 +247,29 @@ Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int data
 
 	Dataset * dataset = createDataset();
 
+	srand(time(NULL));
 
-	for(int i=0;i<datasetSize;i++){
+	int i=0;
+	while(i<datasetSize){
 
 		// float * concatedVectors = concatVectors(pairsArray[i]->camera1->vector,pairsArray[i]->camera2->vector,VectorSize);
-		DenseMatrix * concatedDenseVector = concatDenseMatrices(pairsArray[i]->camera1->DenseVector,pairsArray[i]->camera1->DenseVector,VectorSize)
+		DenseMatrix * concatedDenseVector = concatDenseMatrices(pairsArray[i]->camera1->DenseVector,pairsArray[i]->camera2->DenseVector,VectorSize);
+		int random = rand()%4;
 
-
-		if(i < 0.6*datasetSize)
-
+		if((random == 0 || random==1) && i < 0.6*datasetSize){
 			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Train);
+			i++;
+		}
 
-		else if(i >= 0.6*datasetSize && i < 0.8*datasetSize )
-
+		else if(random==2 && i >= 0.6*datasetSize && i < 0.8*datasetSize ){
 			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Test);
+			i++;
+		}
 
-		else
+		else if(random==3){
 			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Validation);
+			i++;
+		}
 
 
 	}
@@ -287,4 +293,53 @@ void setLabel(CamerasPair *  pair,int label){
 
 void deletePair(CamerasPair * pair){
 	free(pair);
+}
+
+void createVectors(CamSpec ** camArray,int num_of_cameras){
+
+	printf("Dictionary size: %lu\n",DictionarySize );
+
+
+	for(int p=0;p<DictionarySize;p++){
+		float idf = log(num_of_cameras/DictionaryNodes[p]->jsonsIn);
+		float tfs = DictionaryNodes[p]->sumOfTfs;
+		DictionaryNodes[p]->averageTfIdf = (tfs * idf)/(float) num_of_cameras;
+	}
+	
+
+	qsort(DictionaryNodes, DictionarySize, sizeof(dictNode*), compareAverageTfIdf);
+
+
+	int * dictionaryMap = calloc(DictionarySize,sizeof(int));
+	float tf,idf;
+	int mapIndex = 1;
+	for (int i = DictionarySize-1; i >= DictionarySize-VectorSize; i--){
+		int position  = DictionaryNodes[i]->wordID; 
+		printf("%lf %d %s\n",DictionaryNodes[i]->averageTfIdf,DictionaryNodes[i]->jsonsIn,DictionaryNodes[i]->word );
+		dictionaryMap[position] = mapIndex;
+		mapIndex++;
+	}
+
+	for(int i=0;i<num_of_cameras;i++){
+
+		int numOfWords       = camArray[i]->numOfWords;
+		int* dictionaryWords = camArray[i]->dictionaryWords;
+		int* wordCounters = camArray[i]->wordCounters;
+		camArray[i] -> DenseVector = createDenseMatrix();
+
+
+		for(int p=0;p<numOfWords;p++){
+			
+			int vector_position = dictionaryWords[p];
+			int final_vector_position = dictionaryMap[vector_position];
+
+			if(final_vector_position!=0){
+				tf = wordCounters[p]/(float)numOfWords;
+				idf = log(num_of_cameras/DictionaryNodes[vector_position]->jsonsIn);
+				camArray[i] -> DenseVector = DenseMatrix_insert(camArray[i] -> DenseVector,tf*idf,final_vector_position-1);
+				// printf("## %d\n", final_vector_position-1);			
+			}
+		}
+	}
+	free(dictionaryMap);
 }

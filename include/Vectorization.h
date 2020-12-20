@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./dictionary.h"
+#include <stdio.h>
 
 typedef float DMValuetype;
 
@@ -15,14 +15,13 @@ typedef struct DenseMatrixNode {
 typedef struct DenseMatrix {
 
 	size_t matrixSize;
-	size_t current_matrixSize;
 	DenseMatrixNode ** matrix;
 
 } DenseMatrix;
 
 
 DenseMatrixNode * createDenseMatrixNode(DMValuetype value,int position);
-DenseMatrix * createDenseMatrix(size_t matrixSize);
+DenseMatrix * createDenseMatrix();
 
 DenseMatrix * DenseMatrix_insert(DenseMatrix *  DMatrix,DMValuetype value,int position);
 
@@ -31,7 +30,6 @@ void destroyDenseMatrixNode(DenseMatrixNode * matrixNode);
 void destroyDenseMatrix(DenseMatrix * matrix);
 
 
-void createVectors(CamSpec ** camArray,int num_of_cameras);
-void printVector(CamSpec ** camArray,int num_of_cameras);
+DenseMatrix * concatDenseMatrices(DenseMatrix * DMatrix1,DenseMatrix * DMatrix2,size_t vectorSize);
 float* concatVectors(float * vector1,float * vector2,int vectorSize);
 
