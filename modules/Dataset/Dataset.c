@@ -25,17 +25,17 @@ Xy_Split * createXy_Split(){
 
 	Xy_Split * Xy = malloc(sizeof(Xy_Split));
 	Xy->size = 0;
-	Xy->X = malloc(sizeof(float*));
+	Xy->X = malloc(sizeof(void*));
 	Xy->y = malloc(sizeof(int));
 
 	return Xy;
 }
 
-Dataset * insert_toDataset(Dataset * dataset,float * X,int y,TrainTestVal type){
+Dataset * insert_toDataset(Dataset * dataset,void * X,int y,TrainTestVal type){
 
 	switch(type){
 		case Train:
-			dataset->train->X = realloc(dataset->train->X,(dataset->train->size+1)*sizeof(float*));
+			dataset->train->X = realloc(dataset->train->X,(dataset->train->size+1)*sizeof(void*));
 			dataset->train->X[dataset->train->size] = X;
 			dataset->train->y = realloc(dataset->train->y ,(dataset->train->size+1)*sizeof(int));
 			dataset->train->y[dataset->train->size] = y;
@@ -44,7 +44,7 @@ Dataset * insert_toDataset(Dataset * dataset,float * X,int y,TrainTestVal type){
 		
 
 		case Test:
-			dataset->test->X = realloc(dataset->test->X,(dataset->test->size+1)*sizeof(float*));
+			dataset->test->X = realloc(dataset->test->X,(dataset->test->size+1)*sizeof(void*));
 			dataset->test->X[dataset->test->size] = X;
 			dataset->test->y = realloc(dataset->test->y ,(dataset->test->size+1)*sizeof(int));
 			dataset->test->y[dataset->test->size] = y;
@@ -53,7 +53,7 @@ Dataset * insert_toDataset(Dataset * dataset,float * X,int y,TrainTestVal type){
 		
 
 		case Validation:
-			dataset->validation->X = realloc(dataset->validation->X,(dataset->validation->size+1)*sizeof(float*));
+			dataset->validation->X = realloc(dataset->validation->X,(dataset->validation->size+1)*sizeof(void*));
 			dataset->validation->X[dataset->validation->size] = X;
 			dataset->validation->y = realloc(dataset->validation->y ,(dataset->validation->size+1)*sizeof(int));
 			dataset->validation->y[dataset->validation->size] = y;

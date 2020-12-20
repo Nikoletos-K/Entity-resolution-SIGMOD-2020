@@ -11,7 +11,7 @@ typedef enum TrainTestVal{
 
 typedef struct Xy_Split{
 
-	float ** X;
+	void ** X;
 	int * y;
 	size_t size;
 		
@@ -28,6 +28,6 @@ typedef struct Dataset {
 
 Dataset * createDataset();
 Xy_Split * createXy_Split();
-Dataset * insert_toDataset(Dataset * dataset,float * X,int y,TrainTestVal type);
+Dataset * insert_toDataset(Dataset * dataset,void * X,int y,TrainTestVal type);
 void destroy_XySplit(Xy_Split * Xy);
 void destroy_Dataset(Dataset * dataset);

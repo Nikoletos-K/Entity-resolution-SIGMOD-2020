@@ -250,18 +250,20 @@ Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int data
 
 	for(int i=0;i<datasetSize;i++){
 
-		float * concatedVectors = concatVectors(pairsArray[i]->camera1->vector,pairsArray[i]->camera2->vector,VectorSize);
+		// float * concatedVectors = concatVectors(pairsArray[i]->camera1->vector,pairsArray[i]->camera2->vector,VectorSize);
+		DenseMatrix * concatedDenseVector = concatDenseMatrices(pairsArray[i]->camera1->DenseVector,pairsArray[i]->camera1->DenseVector,VectorSize)
+
 
 		if(i < 0.6*datasetSize)
 
-			dataset = insert_toDataset(dataset,concatedVectors,Labels[i],Train);
+			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Train);
 
 		else if(i >= 0.6*datasetSize && i < 0.8*datasetSize )
 
-			dataset = insert_toDataset(dataset,concatedVectors,Labels[i],Test);
+			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Test);
 
 		else
-			dataset = insert_toDataset(dataset,concatedVectors,Labels[i],Validation);
+			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Validation);
 
 
 	}

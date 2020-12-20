@@ -140,3 +140,63 @@ void printVector(CamSpec ** camArray,int num_of_cameras){
 	}	
 
 }
+
+DenseMatrixNode * createDenseMatrixNode(DMValuetype value,int position){
+
+	DenseMatrixNode * node = malloc(sizeof(DenseMatrixNode));
+	node-> value = value;
+	node->position = position;
+
+	return node;
+}
+
+
+DenseMatrix * createDenseMatrix(size_t matrixSize){
+
+	DenseMatrix * newMatrix = malloc(sizeof(DenseMatrix));
+	newMatrix->matrix = malloc(matrixSize*sizeof(DenseMatrixNode*));
+	newMatrix->matrixSize = matrixSize;
+	newMatrix->current_matrixSize = 0;
+
+	return newMatrix;
+}
+
+void destroyDenseMatrixNode(DenseMatrixNode * matrixNode){
+	free(matrixNode);
+}
+
+void destroyDenseMatrix(DenseMatrix * matrix){
+	free(matrix->matrix);
+	free(matrix);
+}
+
+
+DenseMatrix * DenseMatrix_insert(DenseMatrix *  DMatrix,DMValuetype value,int position){
+
+
+	DMatrix->matrix[DMatrix->current_matrixSize] = createDenseMatrixNode(value,position);
+
+	return DMatrix;
+}
+
+DenseMatrix * concatDenseMatrices(DenseMatrix * DMatrix1,DenseMatrix * DMatrix2,size_t vectorSize){
+
+	size_t newSize = DMatrix1->matrixSize + DMatrix2->matrixSize;
+
+
+	DenseMatrix * DMatrix = createDenseMatrix(newSize);
+	DMatrix->current_matrixSize = newSize;
+	memcpy(DMatrix->matrix,DMatrix1->matrix,sizeof(DenseMatrixNode*)*DMatrix1->matrixSize);
+	memcpy(DMatrix->matrix+DMatrix1->matrixSize,DMatrix2->matrix,sizeof(DenseMatrixNode*)*DMatrix2->matrixSize);
+
+	for(int i=DMatrix1->matrixSize;i<newSize;i++)
+		DMatrix->matrix[i]->position += vectorSize; 
+
+	// free(vector1);
+	// free(vector2);
+
+
+	return DMatrix;	
+
+
+}
