@@ -225,7 +225,7 @@ void GridSearch(Xy_Split * train,Xy_Split * test,HyperParameters * hp,size_t vec
 
 				if(GridSearchFile!=NULL) 
 					fprintf(GridSearchFile, "\n ------ Lr %lf   |    threshold %lf  | max_epochs %d \n",hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me] );
-				model = LR_construct(vectorSize,hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me]);
+				model  = LR_construct(vectorSize*2,hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me] );
 				LR_fit(model,train);
 				LR_Evaluation(model,test,GridSearchFile);
 				LR_destroy(model);
@@ -242,9 +242,9 @@ void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file){
 
 
 	for (int j = 0; j < eval_set->size; j++){
-		printf("True label: %d | ",eval_set->y[j]);
+		// printf("True label: %d | ",eval_set->y[j]);
 		prediction_labels[j]  = LR_predict(model,eval_set->X[j],0);
-		printf("|  prediction:  %d \n ",prediction_labels[j]);
+		// printf("|  prediction:  %d \n ",prediction_labels[j]);
 	}
 
 
