@@ -8,7 +8,7 @@
 #include <time.h>
 
 #include "./../../include/Dataset.h"
-
+#include "./../../include/Vectorization.h"
 
 Dataset * createDataset(){
 	
@@ -66,7 +66,7 @@ Dataset * insert_toDataset(Dataset * dataset,void * X,int y,TrainTestVal type){
 
 void destroy_XySplit(Xy_Split * Xy){
 
-	free(Xy->X);
+	destroyDenseMatrix((DenseMatrix*)Xy->X);
 	free(Xy->y);
 	free(Xy);
 }

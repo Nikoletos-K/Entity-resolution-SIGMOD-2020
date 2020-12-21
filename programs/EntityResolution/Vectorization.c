@@ -112,6 +112,10 @@ void destroyDenseMatrixNode(DenseMatrixNode * matrixNode){
 }
 
 void destroyDenseMatrix(DenseMatrix * matrix){
+
+	for(int i=0;i<matrix->matrixSize;i++)
+		destroyDenseMatrixNode(matrix->matrix[i]);
+
 	free(matrix->matrix);
 	free(matrix);
 }

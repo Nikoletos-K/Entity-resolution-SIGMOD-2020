@@ -243,35 +243,68 @@ CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,in
 
 }
 
-Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int datasetSize){
+Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int datasetSize,int stratify){
 
 	Dataset * dataset = createDataset();
 
 	srand(time(NULL));
+	// int random_seed = rand();
 
-	int i=0;
-	while(i<datasetSize){
+	int validationItems = 0;
+	int trainItems      = 0;
+	int testItems       = 0;
+	int allItems        = 0,i=0,insertAlternatelly=0,stratifyCounter=0;
 
-		// float * concatedVectors = concatVectors(pairsArray[i]->camera1->vector,pairsArray[i]->camera2->vector,VectorSize);
+	while(allItems < datasetSize){
+
 		DenseMatrix * concatedDenseVector = concatDenseMatrices(pairsArray[i]->camera1->DenseVector,pairsArray[i]->camera2->DenseVector,VectorSize);
-		int random = rand()%4;
 
-		if((random == 0 || random==1) && i < 0.6*datasetSize){
+		if( insertAlternatelly == 0 && trainItems<0.6*datasetSize) {
+		
 			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Train);
+			trainItems++;
+			if(trainItems == 0.6*datasetSize)
+				printf("- Train set READY \n");
 			i++;
-		}
+			stratifyCounter++;
 
-		else if(random==2 && i >= 0.6*datasetSize && i < 0.8*datasetSize ){
+		}else if( insertAlternatelly == 1 && testItems<0.2*datasetSize) {
+		
 			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Test);
+			testItems++;
 			i++;
-		}
+			stratifyCounter++;
 
-		else if(random==3){
+			if(testItems == 0.2*datasetSize)
+				printf("- Test set READY \n");
+
+		}else if( insertAlternatelly==2  && validationItems<0.2*datasetSize ) {
 			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Validation);
+			validationItems++;
 			i++;
+			stratifyCounter++;
+		
+			if(validationItems == 0.2*datasetSize)
+				printf("- Validation set READY \n");
+
+		}else{
+
+			insertAlternatelly = (insertAlternatelly+1)%3;
+			stratifyCounter=0;
 		}
 
 
+		if(stratifyCounter == stratify){
+			
+			if(validationItems == 0.2*datasetSize && testItems == 0.2*datasetSize)
+				insertAlternatelly = 0;
+			else
+				insertAlternatelly = (insertAlternatelly+1)%3;
+
+
+			stratifyCounter=0; 
+		}
+		allItems = trainItems+ testItems + validationItems;
 	}
 
 	return dataset;
@@ -315,7 +348,7 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 	int mapIndex = 1;
 	for (int i = DictionarySize-1; i >= DictionarySize-VectorSize; i--){
 		int position  = DictionaryNodes[i]->wordID; 
-		printf("%lf %d %s\n",DictionaryNodes[i]->averageTfIdf,DictionaryNodes[i]->jsonsIn,DictionaryNodes[i]->word );
+		// printf("%lf %d %s\n",DictionaryNodes[i]->averageTfIdf,DictionaryNodes[i]->jsonsIn,DictionaryNodes[i]->word );
 		dictionaryMap[position] = mapIndex;
 		mapIndex++;
 	}

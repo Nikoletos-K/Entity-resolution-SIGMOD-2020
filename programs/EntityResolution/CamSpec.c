@@ -74,7 +74,8 @@ void destroyCamSpec(CamSpec * cs){
 	for(int i=0;i<cs->numOfSpecs;i++)
 		deleteJsonInfo(cs->infoArray[i]);
 	deleteList(cs->set);
-	free(cs->vector);
+	destroyDenseMatrix(cs->DenseVector);
+	// free(cs->vector);
 	free(cs->dictionaryWords);
 	free(cs->wordCounters);
 	free(cs->infoArray);
