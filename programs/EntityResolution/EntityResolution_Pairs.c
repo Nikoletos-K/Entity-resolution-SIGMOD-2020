@@ -16,7 +16,7 @@
 
 HashTable * Dictionary;
 size_t DictionarySize;
-size_t VectorSize = 18000;  
+size_t VectorSize = 100;  
 
 dictNode ** DictionaryNodes;
 
@@ -173,7 +173,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Forming train,test and validation sets \n");
 	
-	Dataset * vectorizedDataset =  train_test_split_pairs(pairDataset,Labels,dataset_size);
+	Dataset * vectorizedDataset =  train_test_split_pairs(pairDataset,Labels,dataset_size,stratify+1);
 
 	printf(" <- End of forming train,test and validation sets\n");
 	t2 = (double) times(&tb2);
@@ -188,9 +188,9 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Creating - Training model  \n");
 	
-	float learning_rate = 0.1;
+	float learning_rate = 0.001;
 	float threshold = 0.001;
-	int epochs = 50;
+	int epochs = 1;
 	printf("Learning rate: %lf\n", learning_rate);
 	printf("Threshold:     %lf\n", threshold);
 	printf("Max epochs:    %d\n", epochs);
@@ -293,7 +293,10 @@ int main(int argc,char ** argv){
 
 	HTDestroy(stopwords);
 	DJSDestructor(djSet);
-	// destroyCliques(cliqueIndex,numOfCliques);
+	destroyCliques(cliqueIndex,numOfCliques);
+	
+	destroy_Dataset(vectorizedDataset);	
+
 	destroyDataStructures();
 	printf("<- All frees done\n");
 

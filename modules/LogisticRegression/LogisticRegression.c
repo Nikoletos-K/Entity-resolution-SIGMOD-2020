@@ -21,13 +21,13 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 	model->max_epochs = max_epochs;
 
 	for(int w=0;w<model->vectorSize;w++){
-		model->weights[w] = (rand()%2 == 0 ? -1:1)*1/rand();
-		// model->weights[w] = (float) 1/(float)rand();		
-		// model->weights[w] = 0.0;
+		// model->weights[w] = (rand()%2 == 0 ? -1:1)*1/rand();
+		// model->weights[w] = (float) 1/(float)rand();
+		model->weights[w] = 0.0;
 	}
 
-	model->bias = 1/rand();
-	// model->bias = 0.0;
+	// model->bias = 1/rand();
+	model->bias = 0.0;
 	// model->bias = 1.0;
 
 	
