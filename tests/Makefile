@@ -5,6 +5,9 @@ RBTree_test_OBJS = RBTree_test.o $(MODULES)/RBTree/RBTree.o
 HashTable_test_OBJS = HashTable_test.o $(MODULES)/HashTable/HashTable.o $(MODULES)/RBTree/RBTree.o
 DisJointSet_test_OBJS = DisJointSet_test.o $(MODULES)/DisJointSet/DisJointSet.o
 List_test_OBJS = List_test.o $(MODULES)/List/list.o
+bitArray_test_OBJS  = bitArray_test.o $(MODULES)/BitArray/bitArray.o
+Dataset_test_OBJS  = Dataset_test.o $(MODULES)/Dataset/Dataset.o
+
 Json_test_OBJS = 																									\
 	Json_test.o ./../programs/EntityResolution/CamSpec.o 											\
 	./../programs/EntityResolution/Clique.o 							\
@@ -13,12 +16,10 @@ Json_test_OBJS = 																									\
 	./../programs/EntityResolution/dictionary.o 										\
 	./../programs/EntityResolution/utils.o 		  		 									\
 	$(MODULES)/LogisticRegression/LogisticRegression.o 								  					\
-	$(MODULES)/BitArray/bitArray.o 				 															\
 	$(MODULES)/List/list.o 		 																		\
 	$(MODULES)/DisJointSet/DisJointSet.o 																			\
 	$(MODULES)/HashTable/HashTable.o  																		\
-	$(MODULES)/RBTree/RBTree.o 																				\
-	$(MODULES)/Dataset/Dataset.o 					
+	$(MODULES)/RBTree/RBTree.o 																								
 
 
 # Ο βασικός κορμός του Makefile
