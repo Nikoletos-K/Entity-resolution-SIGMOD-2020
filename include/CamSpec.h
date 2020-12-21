@@ -6,18 +6,10 @@
 
 typedef List * Set;
 
-/* struct of json specs */
-typedef struct jsonInfo{
-	char* key;
-	char** value;
-	int numOfvalues;
-}jsonInfo;
 
 /* Struct that stores every usefull information of a camera */
 typedef struct CamSpec{
 	char* name;
-	jsonInfo** infoArray; 
-	int numOfSpecs;
 	int arrayPosition;
 	Set set;
 	int* dictionaryWords;
@@ -27,12 +19,6 @@ typedef struct CamSpec{
 	DenseMatrix * DenseVector;
 
 }CamSpec;
-
-/* jsonInfo functions */
-jsonInfo * initializeJsonInfo(char* key);
-void deleteJsonInfo(jsonInfo* js);
-char** addValue(jsonInfo* js, char* value);
-CamSpec * addValuetoCS(CamSpec* cs, char* value);
 
 /* CamSpec functions */
 CamSpec * createCamSpec(char * name,int arrayPosition);
