@@ -31,20 +31,9 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords){
 			char * key = strtok(line,":");		// split the line to key and value
 			key++;		// remove the first "
 			key[strlen(key)-1] = '\0';		 // remove the last " 
-			cs = addJsonInfo(cs,key);			// create the json pair and initialize it with the key  
 
 			char * value = strtok(NULL,"");	
-
-			// token = strtok(key, s);
-
-			// if(token==NULL)
-			// 	addWord(key,cs,stopwords);
-
-			// while( token != NULL ) {
-			//   addWord(token,cs,stopwords);		    
-		 //      token = strtok(NULL, s);
-		 //    }
-			
+		
 			if(strcmp(value," [")){		// if value is not a list 
 				value = value+2;
 
@@ -52,8 +41,7 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords){
 					value[strlen(value)-2] = '\0';
 				else 
 					value[strlen(value)-1] = '\0';
-				cs = addValuetoCS(cs, value);			// add the value
-
+				
 				token = strtok(value, s);
 
 				if(token==NULL)
@@ -75,8 +63,6 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords){
 					else 
 						value[strlen(value)-1] = '\0';
 					
-					cs = addValuetoCS(cs, value);		// add every value of the list
-
 					token = strtok(value, s);
 
 					if(token==NULL)
