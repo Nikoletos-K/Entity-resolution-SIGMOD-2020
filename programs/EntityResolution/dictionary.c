@@ -125,7 +125,6 @@ dictNode * dictNodeConstruct(int wordID, char* word){
 	dictNode* node = malloc(sizeof(dictNode));
 	node->jsonsIn = 1;
 	node->wordID = wordID;
-	node->word = strdup(word);
 	node->averageTfIdf = 0.0;
 	node->sumOfTfs = 0.0;
 

@@ -259,6 +259,10 @@ Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int data
 
 		DenseMatrix * concatedDenseVector = concatDenseMatrices(pairsArray[i]->camera1->DenseVector,pairsArray[i]->camera2->DenseVector,VectorSize);
 
+		if (concatedDenseVector==NULL){
+			i++;
+			continue;
+		}
 		if( insertAlternatelly == 0 && trainItems<0.6*datasetSize) {
 		
 			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Train);
@@ -358,20 +362,26 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 		int numOfWords       = camArray[i]->numOfWords;
 		int* dictionaryWords = camArray[i]->dictionaryWords;
 		int* wordCounters = camArray[i]->wordCounters;
-		camArray[i] -> DenseVector = createDenseMatrix();
+
+		if (numOfWords>0){
+		
+			camArray[i] -> DenseVector = createDenseMatrix();
 
 
-		for(int p=0;p<numOfWords;p++){
-			
-			int vector_position = dictionaryWords[p];
-			int final_vector_position = dictionaryMap[vector_position];
+			for(int p=0;p<numOfWords;p++){
+				
+				int vector_position = dictionaryWords[p];
+				int final_vector_position = dictionaryMap[vector_position];
 
-			if(final_vector_position!=0){
-				tf = wordCounters[p]/(float)numOfWords;
-				idf = log(num_of_cameras/DictionaryNodes[vector_position]->jsonsIn);
-				camArray[i] -> DenseVector = DenseMatrix_insert(camArray[i] -> DenseVector,tf*idf,final_vector_position-1);
-				// printf("## %d\n", final_vector_position-1);			
+				if(final_vector_position!=0){
+					tf = wordCounters[p]/(float)numOfWords;
+					idf = log(num_of_cameras/DictionaryNodes[vector_position]->jsonsIn);
+					camArray[i] -> DenseVector = DenseMatrix_insert(camArray[i] -> DenseVector,tf*idf,final_vector_position-1);
+					// printf("## %d\n", final_vector_position-1);			
+				}
 			}
+		}else{
+			camArray[i] -> DenseVector = NULL;
 		}
 	}
 	free(dictionaryMap);

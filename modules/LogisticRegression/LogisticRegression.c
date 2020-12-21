@@ -76,7 +76,7 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 			}
 
 			if(denseX_size)
-				model->bias -= model->learning_rate*(avg_gradient/N); 
+				model->bias -= model->learning_rate*( (float)((float) avg_gradient)/ ((float) N)); 
 
 		}
 
@@ -96,6 +96,24 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 
 	free(prev_weights);
 	printf("\n\n");
+}
+
+float LR_predict_proba(LogisticRegression* model,DenseMatrix * denseX){
+
+	int denseX_size = denseX->matrixSize,weight_position;
+	float p_x = 0.0,value;
+
+	for(int p=0;p<denseX_size;p++){
+
+		weight_position = denseX->matrix[p]->position;
+		value           = denseX->matrix[p]->value;
+
+		p_x += model->weights[weight_position]*value;
+	}
+
+	p_x += model->bias;
+
+	return sigmoid(p_x);
 }
 
 float CrossEntropy(float prediction,float x,float y, size_t vectorSize){
@@ -126,24 +144,6 @@ int LR_predict(LogisticRegression* model,DenseMatrix * denseX,int f){
 	if(f==1)
 		printf("(%.5lf) - ",sigmoid(p_x));
 	return decision_boundary(sigmoid(p_x));
-}
-
-float LR_predict_proba(LogisticRegression* model,DenseMatrix * denseX){
-
-	int denseX_size = denseX->matrixSize,weight_position;
-	float p_x = 0.0,value;
-
-	for(int p=0;p<denseX_size;p++){
-
-		weight_position = denseX->matrix[p]->position;
-		value           = denseX->matrix[p]->value;
-
-		p_x += model->weights[weight_position]*value;
-	}
-
-	p_x += model->bias;
-
-	return sigmoid(p_x);
 }
 
 void LR_destroy(LogisticRegression* model){

@@ -145,8 +145,8 @@ int main(int argc,char ** argv){
 	int stratify = (int) floor((float)dataset_size/(float)same);
 	printf("Stratified factor: %d\n",stratify );
 	int * Labels = malloc(sizeof(int)*(dataset_size));
+
 	CamerasPair ** pairDataset =  create_PairsDataset(sameCameras,differentCameras,Labels, dataset_size,stratify);
-	printDataset(pairDataset,dataset_size);
 
 	printf(" <- End of forming DATASET\n");
 	t2 = (double) times(&tb2);
@@ -155,6 +155,7 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
+	HTDestroy(stopwords);
 
 	/* ----------------   PRINTING DATASET -------------------------- */
 	t1 = (double) times(&tb1);
@@ -181,6 +182,17 @@ int main(int argc,char ** argv){
 	printf("PERFORMANCE of forming train,test and validation sets:\n");
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+
+	listNode * node = diffPairsList->firstNode;
+	while(node != NULL){
+		deletePair((CamerasPair*)node->data);
+		node = node->nextNode;
+	}
+
+	deleteList(diffPairsList);
+
+	DJSDestructor(djSet);
+	destroyCliques(cliqueIndex,numOfCliques);
 
 	/* ----------------   TRAINING CLIQUES -------------------------- */
 
@@ -222,40 +234,16 @@ int main(int argc,char ** argv){
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
-	/* ----------------   VALIDATION OF CLIQUES -------------------------- */
-
-
-	// t1 = (double) times(&tb1);
-	// printf("\n-> Validation of cliques  \n");
-	
-	
-	// accuracyArray =  validateCliques(cliqueIndex,numOfCliques);
-	// acc = 0.0;
-	// for (int i = 0; i < numOfCliques; i++){
-	// 	acc += accuracyArray[i];
-	// 	printf("Clique %3d has accuracy %6.2lf %% \n",i+1,accuracyArray[i] );
-	// }
-	// printf("\nAverage accuracy %5.2lf %% \n\n",acc/(float)numOfCliques);
-
-
-	// printf(" <- End of Validation of cliques  \n");
-	// t2 = (double) times(&tb2);
-	// cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	// printf("PERFORMANCE of cliques' Validation  :\n");
-	// printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
-	// free(accuracyArray);
-
 	/* ----------------   GRID SEARCH -------------------------- */
 	// t1 = (double) times(&tb1);
 	// printf("\n-> GRIDSEARCH %d \n",i+1);
 
-	// float learning_rates[3] =  {0.1,0.01,0.001};
-	// int numofLr = 3;
-	// float thresholds[4] = {0.001,0.0001,0.00001,0.000005};
-	// int numofthreshold = 4;
-	// int max_epochs[4] = {5,10,20,30};
-	// int numOfmax_epochs = 4;
+	// float learning_rates[4] =  {1,0.1,0.01,0.001};
+	// int numofLr = 4;
+	// float thresholds[5] = {1, 0.1 ,0.001,0.0001,0.00001};
+	// int numofthreshold = 5;
+	// int max_epochs[5] = {5,10,20,50,100};
+	// int numOfmax_epochs = 5;
 
 
 	// HyperParameters * hp = constructHyperParameters(learning_rates,numofLr,thresholds,numofthreshold,max_epochs,numOfmax_epochs);
@@ -274,27 +262,14 @@ int main(int argc,char ** argv){
 	for(int i=0;i<num_of_cameras;i++)
 		destroyCamSpec(camArray[i]);
 
-	listNode * node = diffPairsList->firstNode;
-	while(node != NULL){
-		deletePair((CamerasPair*)node->data);
-		node = node->nextNode;
-	}
-
-	deleteList(diffPairsList);
-
 	
 	for(int i=0;i<DictionarySize;i++)
 		free(DictionaryNodes[i]);
 	free(DictionaryNodes);
 
-	// free(accuracyArray);
 	free(camArray);
 	HTDestroy(CameraHT);
 
-	HTDestroy(stopwords);
-	DJSDestructor(djSet);
-	destroyCliques(cliqueIndex,numOfCliques);
-	
 	destroy_Dataset(vectorizedDataset);	
 
 	destroyDataStructures();

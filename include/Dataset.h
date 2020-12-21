@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdio.h>
+#include "./Vectorization.h"
 
 typedef enum TrainTestVal{
 
@@ -28,6 +29,6 @@ typedef struct Dataset {
 
 Dataset * createDataset();
 Xy_Split * createXy_Split();
-Dataset * insert_toDataset(Dataset * dataset,void * X,int y,TrainTestVal type);
+Dataset * insert_toDataset(Dataset * dataset,DenseMatrix* X,int y,TrainTestVal type);
 void destroy_XySplit(Xy_Split * Xy);
 void destroy_Dataset(Dataset * dataset);

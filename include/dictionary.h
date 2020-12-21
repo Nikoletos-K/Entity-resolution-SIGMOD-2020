@@ -7,7 +7,6 @@
 typedef struct dictNode{
 	int jsonsIn;
 	int wordID;
-	char * word;
 	float averageTfIdf;
 	float sumOfTfs;
 
