@@ -245,9 +245,11 @@ int main(int argc,char ** argv){
 	// int max_epochs[5] = {5,10,20,50,100};
 	// int numOfmax_epochs = 5;
 
+	// FILE* fp = fopen("small.txt","w");
+
 
 	// HyperParameters * hp = constructHyperParameters(learning_rates,numofLr,thresholds,numofthreshold,max_epochs,numOfmax_epochs);
-	// GridSearch(	cliqueIndex[i]->dataset->train,cliqueIndex[i]->dataset->test,hp,VectorSize,NULL);
+	// GridSearch(	vectorizedDataset->train,vectorizedDataset->test,hp,VectorSize,fp);
 
 	// printf(" <- end  \n");
 	// t2 = (double) times(&tb2);
