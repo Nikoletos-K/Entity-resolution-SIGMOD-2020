@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include "./Dataset.h"
-#include "./Vectorization.h"
 
 
 typedef struct LogisticRegression LogisticRegression;

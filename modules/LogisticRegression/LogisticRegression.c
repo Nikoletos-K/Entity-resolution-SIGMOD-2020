@@ -14,7 +14,7 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 	srand(time(NULL));
 
 	LogisticRegression* model = malloc(sizeof(LogisticRegression));
-	model->weights    = calloc(vectorSize,sizeof(float));
+	model->weights    = malloc(vectorSize*sizeof(float));
 	model->vectorSize = vectorSize;
 	model->learning_rate = learning_rate;
 	model->threshold = threshold;
@@ -45,11 +45,7 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 	int N                   = Xy_train->size; 
 
 	while(!converged && epochs < model->max_epochs){
-
-
-		/*  Comptute Loss  */
-		float gradient,avg_gradient;
-		
+	
 		float prev_norm = euclid_norm(model->weights,model->vectorSize);
 
 		for(int i=0; i<N; i++){
@@ -57,6 +53,9 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 			DenseMatrix * denseX = X_train[i];
 			int denseX_size = denseX->matrixSize;
 
+			float gradient,avg_gradient=0.0;
+
+			/*  Comptute Loss  */
 			if(denseX_size)
 				loss =  LR_predict_proba(model,denseX) - y_train[i];
 

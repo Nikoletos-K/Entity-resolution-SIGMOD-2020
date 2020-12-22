@@ -15,6 +15,7 @@ CamSpec* createCamSpec(char * name,int arrayPosition){
 	cs->arrayPosition = arrayPosition;
 	cs->set = createList();
 	insert_toList(cs->set,cs);
+	cs->DenseVector=NULL;
 
 
 	cs->dictionaryWords = malloc(sizeof(int*));

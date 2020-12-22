@@ -111,7 +111,7 @@ void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 
 
 				CamSpec* camera = (CamSpec*)nodesRead[l]->data;
-				float * X       = camera->vector;
+				DenseMatrix * X       = camera->DenseVector;
 
 				if(l == numOfNegativeCliques) y=1;
 				else y=0;

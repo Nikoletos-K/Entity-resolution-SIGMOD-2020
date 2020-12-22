@@ -12,7 +12,7 @@ typedef enum TrainTestVal{
 
 typedef struct Xy_Split{
 
-	void ** X;
+	DenseMatrix ** X;
 	int * y;
 	size_t size;
 		
