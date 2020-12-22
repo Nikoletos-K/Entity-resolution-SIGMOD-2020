@@ -6,7 +6,7 @@ HashTable_test_OBJS = HashTable_test.o $(MODULES)/HashTable/HashTable.o $(MODULE
 DisJointSet_test_OBJS = DisJointSet_test.o $(MODULES)/DisJointSet/DisJointSet.o
 List_test_OBJS = List_test.o $(MODULES)/List/list.o
 bitArray_test_OBJS  = bitArray_test.o $(MODULES)/BitArray/bitArray.o
-Dataset_test_OBJS  = Dataset_test.o $(MODULES)/Dataset/Dataset.o
+Dataset_test_OBJS  = Dataset_test.o ./../programs/EntityResolution/Vectorization.o  $(MODULES)/Dataset/Dataset.o
 
 Json_test_OBJS = 																									\
 	Json_test.o ./../programs/EntityResolution/CamSpec.o 											\
@@ -19,8 +19,9 @@ Json_test_OBJS = 																									\
 	$(MODULES)/List/list.o 		 																		\
 	$(MODULES)/DisJointSet/DisJointSet.o 																			\
 	$(MODULES)/HashTable/HashTable.o  																		\
-	$(MODULES)/RBTree/RBTree.o 																								
-
+	$(MODULES)/RBTree/RBTree.o 																			\
+	$(MODULES)/BitArray/bitArray.o  																		\
+	$(MODULES)/Dataset/Dataset.o 		
 
 # Ο βασικός κορμός του Makefile
 include ../common.mk
