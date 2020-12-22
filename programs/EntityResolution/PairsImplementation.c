@@ -263,6 +263,7 @@ Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int data
 			i++;
 			continue;
 		}
+		
 		if( insertAlternatelly == 0 && trainItems<0.6*datasetSize) {
 		
 			dataset = insert_toDataset(dataset,concatedDenseVector,Labels[i],Train);
@@ -380,9 +381,10 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 					// printf("## %d\n", final_vector_position-1);			
 				}
 			}
-		}else{
+		
+		}else
 			camArray[i] -> DenseVector = NULL;
-		}
+		
 	}
 	free(dictionaryMap);
 }

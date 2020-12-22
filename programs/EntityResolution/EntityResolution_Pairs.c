@@ -123,7 +123,6 @@ int main(int argc,char ** argv){
 	
 
 	createVectors(camArray,num_of_cameras);
-	// printVector(camArray,num_of_cameras);
 
 	printf(" <- End of forming Vectors \n");
 	t2 = (double) times(&tb2);
@@ -158,6 +157,7 @@ int main(int argc,char ** argv){
 	HTDestroy(stopwords);
 
 	/* ----------------   PRINTING DATASET -------------------------- */
+	
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing dataset to DATASET.csv \n");
 	
@@ -170,7 +170,9 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
+	
 	/* ----------------   TRAIN_TEST_VALIDATION -------------------------- */
+	
 	t1 = (double) times(&tb1);
 	printf("\n-> Forming train,test and validation sets \n");
 	
@@ -260,10 +262,21 @@ int main(int argc,char ** argv){
 
 
 	/* ----------------   FREE OF MEMORY -------------------------- */
-	printf("\n\n-> Restoring memory\n");
-	for(int i=0;i<num_of_cameras;i++)
-		destroyCamSpec(camArray[i]);
 
+
+	printf("\n\n-> Restoring memory\n");
+	
+	for(int i=0;i<dataset_size;i++)
+		deletePair(pairDataset[i]);
+	free(pairDataset);
+
+	free(Labels);
+	LR_destroy(LR_Model);
+
+
+
+	deleteList(sameCameras);
+	deleteList(differentCameras);	
 	
 	for(int i=0;i<DictionarySize;i++)
 		free(DictionaryNodes[i]);
@@ -274,6 +287,8 @@ int main(int argc,char ** argv){
 
 	destroy_Dataset(vectorizedDataset);	
 
+	for(int i=0;i<num_of_cameras;i++)
+		destroyCamSpec(camArray[i]);
 	destroyDataStructures();
 	printf("<- All frees done\n");
 

@@ -11,7 +11,7 @@
 #include <ctype.h>
 
 #include "./../../include/Clique.h"
-
+#include "./Vectorization.h"
 
 
 Clique** CreateCliques(DisJointSet * djSet,int* numOfsets){
@@ -77,7 +77,7 @@ void destroyCliques(Clique** cliquesArray,int numOfCliques){
 	free(cliquesArray);
 }
 
-void train_test_split(Clique ** cliqueIndex,int numOfCliques){
+void train_test_split_Cliques(Clique ** cliqueIndex,int numOfCliques){
 
 	for(int c=0;c<numOfCliques;c++){
 
@@ -111,7 +111,11 @@ void train_test_split(Clique ** cliqueIndex,int numOfCliques){
 
 
 				CamSpec* camera = (CamSpec*)nodesRead[l]->data;
+<<<<<<< Updated upstream
 				DenseMatrix * X       = camera->DenseVector;
+=======
+				DenseMatrix * X = camera->DenseVector;
+>>>>>>> Stashed changes
 
 				if(l == numOfNegativeCliques) y=1;
 				else y=0;

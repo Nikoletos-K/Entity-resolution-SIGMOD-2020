@@ -58,16 +58,26 @@ DenseMatrix * createDenseMatrix(){
 }
 
 void destroyDenseMatrixNode(DenseMatrixNode * matrixNode){
+
+	if(matrixNode==NULL) return;
 	free(matrixNode);
+	matrixNode=NULL;
 }
 
 void destroyDenseMatrix(DenseMatrix * matrix){
 
+	if(matrix == NULL)
+		return;
+
 	for(int i=0;i<matrix->matrixSize;i++)
 		destroyDenseMatrixNode(matrix->matrix[i]);
 
-	free(matrix->matrix);
+	if(matrix->matrix != NULL){
+		free(matrix->matrix);
+		matrix->matrix=NULL;
+	}
 	free(matrix);
+	matrix=NULL;
 }
 
 
@@ -82,11 +92,14 @@ DenseMatrix * DenseMatrix_insert(DenseMatrix *  DMatrix,DMValuetype value,int po
 
 DenseMatrix * concatDenseMatrices(DenseMatrix * DMatrix1,DenseMatrix * DMatrix2,size_t vectorSize){
 
-	DenseMatrix * DMatrix = createDenseMatrix();
-
 	if(DMatrix1==NULL || DMatrix2==NULL)
 		return NULL;
 
+	DenseMatrix * DMatrix = createDenseMatrix();
+
+	// DMatrix->matrix = realloc(DMatrix->matrix,(DMatrix1->matrixSize)*sizeof(DenseMatrixNode*));
+	// memcpy(DMatrix->matrix,DMatrix1->matrix,(DMatrix1->matrixSize)*sizeof(DenseMatrixNode*));
+	// DMatrix->matrixSize += DMatrix1->matrixSize;
 	for(int i=0;i<DMatrix1->matrixSize;i++){
 		// printf("--%d %lf %d\n",i,DMatrix1->matrix[i]->value ,DMatrix1->matrix[i]->position );
 		DMatrix = DenseMatrix_insert(DMatrix,DMatrix1->matrix[i]->value ,DMatrix1->matrix[i]->position );

@@ -65,9 +65,10 @@ Dataset * insert_toDataset(Dataset * dataset,DenseMatrix* X,int y,TrainTestVal t
 
 void destroy_XySplit(Xy_Split * Xy){
 
-	for (int i = 0; i < Xy->size; i++){
-		destroyDenseMatrix((DenseMatrix*) Xy->X[i]);	
-	}
+	for (int i = 0; i < Xy->size; i++)
+		if(Xy->X[i]!=NULL)
+			destroyDenseMatrix( Xy->X[i] );	
+	
 	free(Xy->X);
 	free(Xy->y);
 	free(Xy);

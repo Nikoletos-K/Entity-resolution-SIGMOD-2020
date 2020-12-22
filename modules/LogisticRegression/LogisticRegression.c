@@ -52,10 +52,15 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 
 			DenseMatrix * denseX = X_train[i];
 			int denseX_size = denseX->matrixSize;
+<<<<<<< Updated upstream
 
 			float gradient,avg_gradient=0.0;
 
 			/*  Comptute Loss  */
+=======
+			avg_gradient=0.0;
+			
+>>>>>>> Stashed changes
 			if(denseX_size)
 				loss =  LR_predict_proba(model,denseX) - y_train[i];
 

@@ -91,7 +91,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing cliques: \n");
 
-	// printPairs(cliqueIndex,numOfCliques); 
+	printPairs(cliqueIndex,numOfCliques); 
 	
 	printf(" <- End of printing cliques\n");
 	t2 = (double) times(&tb2);
@@ -105,8 +105,12 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Forming negative cliques: \n");
 	
+	FILE * output = fopen("NEGATIVE_PAIRS.csv","w+");
+	fprintf(output, "left_spec_id, right_spec_id,\n");
 	cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
-	// List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques);
+	List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques,output);
+	fclose(output);
+
 
 	printf(" <- End of forming negative cliques\n");
 	t2 = (double) times(&tb2);
@@ -122,7 +126,6 @@ int main(int argc,char ** argv){
 	
 
 	createVectors(camArray,num_of_cameras);
-	// printVector(camArray,num_of_cameras);
 
 
 	printf(" <- End of forming Vectors \n");
@@ -139,7 +142,7 @@ int main(int argc,char ** argv){
 	
 	// int dataset_size=0;
 	// CamerasPair ** Dataset =  createDataset(sameCameras,differentCameras, &dataset_size);
-	train_test_split(cliqueIndex,numOfCliques);
+	train_test_split_Cliques(cliqueIndex,numOfCliques);
 	// printDataset(Dataset,dataset_size);
 
 	printf(" <- End of forming DATASET\n");
