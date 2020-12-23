@@ -15,10 +15,9 @@
 
 HashTable * Dictionary;
 size_t DictionarySize;
-size_t VectorSize = 5;  
+size_t VectorSize = 10000;  
 
 dictNode ** DictionaryNodes;
-
 
 
 int main(int argc,char ** argv){
@@ -91,7 +90,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing cliques: \n");
 
-	printPairs(cliqueIndex,numOfCliques); 
+	List * sameCameras = printPairs(cliqueIndex,numOfCliques); 
 	
 	printf(" <- End of printing cliques\n");
 	t2 = (double) times(&tb2);
@@ -109,6 +108,7 @@ int main(int argc,char ** argv){
 	fprintf(output, "left_spec_id, right_spec_id,\n");
 	cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
 	List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques,output);
+	// deleteList(differentCameras);
 	fclose(output);
 
 
@@ -264,14 +264,26 @@ int main(int argc,char ** argv){
 		deletePair((CamerasPair*)node->data);
 		node = node->nextNode;
 	}
-
 	deleteList(diffPairsList);
+
+	node = sameCameras->firstNode;
+	while(node != NULL){
+		deletePair((CamerasPair*)node->data);
+		node = node->nextNode;
+	}
+	deleteList(sameCameras);
+
+	node = differentCameras->firstNode;
+	while(node != NULL){
+		deletePair((CamerasPair*)node->data);
+		node = node->nextNode;
+	}
+	deleteList(differentCameras);
 
 	for(int i=0;i<DictionarySize;i++)
 		free(DictionaryNodes[i]);
 	free(DictionaryNodes);
-
-	free(accuracyArray);
+		
 	free(camArray);
 	HTDestroy(CameraHT);
 	HTDestroy(Dictionary);

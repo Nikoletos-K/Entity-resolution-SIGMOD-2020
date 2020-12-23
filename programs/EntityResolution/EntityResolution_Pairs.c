@@ -16,7 +16,7 @@
 
 HashTable * Dictionary;
 size_t DictionarySize;
-size_t VectorSize = 100;  
+size_t VectorSize = 10000;  
 
 dictNode ** DictionaryNodes;
 
@@ -98,7 +98,7 @@ int main(int argc,char ** argv){
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
 	printf("PERFORMANCE of printing same cameras:\n");
-	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- CPU_TIME:  %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
@@ -114,7 +114,7 @@ int main(int argc,char ** argv){
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
 	printf("PERFORMANCE of forming negative cliques:\n");
-	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- CPU_TIME:  %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 	/* ----------------   FORMING Vectors -------------------------- */
@@ -128,7 +128,7 @@ int main(int argc,char ** argv){
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
 	printf("PERFORMANCE of Vectors :\n");
-	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- CPU_TIME:  %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
@@ -151,7 +151,7 @@ int main(int argc,char ** argv){
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
 	printf("PERFORMANCE of DATASET:\n");
-	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- CPU_TIME:  %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 	HTDestroy(stopwords);
@@ -177,12 +177,17 @@ int main(int argc,char ** argv){
 	printf("\n-> Forming train,test and validation sets \n");
 	
 	Dataset * vectorizedDataset =  train_test_split_pairs(pairDataset,Labels,dataset_size,stratify+1);
+	printf("Train      size: %ld\n",vectorizedDataset->train->size );
+	printf("Test       size: %ld\n",vectorizedDataset->test->size );
+	printf("Validation size: %ld\n",vectorizedDataset->validation->size );
+
+
 
 	printf(" <- End of forming train,test and validation sets\n");
 	t2 = (double) times(&tb2);
 	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
 	printf("PERFORMANCE of forming train,test and validation sets:\n");
-	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- CPU_TIME:  %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 	listNode * node = diffPairsList->firstNode;
@@ -282,13 +287,15 @@ int main(int argc,char ** argv){
 		free(DictionaryNodes[i]);
 	free(DictionaryNodes);
 
-	free(camArray);
-	HTDestroy(CameraHT);
-
-	destroy_Dataset(vectorizedDataset);	
 
 	for(int i=0;i<num_of_cameras;i++)
 		destroyCamSpec(camArray[i]);
+	free(camArray);
+
+	HTDestroy(CameraHT);
+
+	destroy_Dataset(vectorizedDataset,1);	
+
 	destroyDataStructures();
 	printf("<- All frees done\n");
 

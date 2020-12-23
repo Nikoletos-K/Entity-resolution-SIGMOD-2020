@@ -16,7 +16,7 @@ void test_create(void) {
 	TEST_ASSERT(dataset->test != NULL);
 	TEST_ASSERT(dataset->validation != NULL);
 	
-	destroy_Dataset(dataset);
+	destroy_Dataset(dataset,1);
 }
 
 void test_insert(void){
@@ -31,7 +31,7 @@ void test_insert(void){
 	TEST_ASSERT(dataset->train->y[0] == 0);
 	TEST_ASSERT(dataset->train->X[0] != NULL);
 	
-	destroy_Dataset(dataset);
+	destroy_Dataset(dataset,1);
 }
 
 

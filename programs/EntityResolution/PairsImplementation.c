@@ -293,7 +293,7 @@ Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int data
 				printf("- Validation set READY \n");
 
 		}else{
-
+			destroyDenseMatrix(concatedDenseVector);
 			insertAlternatelly = (insertAlternatelly+1)%3;
 			stratifyCounter=0;
 		}

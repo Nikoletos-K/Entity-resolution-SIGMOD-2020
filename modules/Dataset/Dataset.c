@@ -63,21 +63,23 @@ Dataset * insert_toDataset(Dataset * dataset,DenseMatrix* X,int y,TrainTestVal t
 	return dataset;
 }
 
-void destroy_XySplit(Xy_Split * Xy){
+void destroy_XySplit(Xy_Split * Xy,int deleteContent){
 
-	for (int i = 0; i < Xy->size; i++)
-		if(Xy->X[i]!=NULL)
-			destroyDenseMatrix( Xy->X[i] );	
-	
+	if(deleteContent){
+		for (int i = 0; i < Xy->size; i++)
+			if(Xy->X[i]!=NULL)
+				destroyDenseMatrix( Xy->X[i] );	
+	}
+		
 	free(Xy->X);
 	free(Xy->y);
 	free(Xy);
 }
 
-void destroy_Dataset(Dataset * dataset){
+void destroy_Dataset(Dataset * dataset,int deleteContent){
 	
-	destroy_XySplit(dataset-> train);
-	destroy_XySplit(dataset-> test);
-	destroy_XySplit(dataset-> validation);
+	destroy_XySplit(dataset-> train,deleteContent);
+	destroy_XySplit(dataset-> test,deleteContent);
+	destroy_XySplit(dataset-> validation,deleteContent);
 	free(dataset);
 }

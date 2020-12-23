@@ -37,7 +37,6 @@ Clique** CreateCliques(DisJointSet * djSet,int* numOfsets){
 			cliquesArray[*numOfsets]->negativeCliques = NULL;
 			cliquesArray[*numOfsets]->numOfUnique_negativeCliques = 0;
 			cliquesArray[*numOfsets]->unique_negativeCliques = NULL;
-						
 			cliquesArray[*numOfsets]->LRModel = NULL;
 			cliquesArray[*numOfsets]->dataset = NULL;
 
@@ -66,12 +65,15 @@ void destroyCliques(Clique** cliquesArray,int numOfCliques){
 
 	for (int i = 0; i < numOfCliques; i++){
 		if(cliquesArray[i]->dataset != NULL)
-			destroy_Dataset(cliquesArray[i]->dataset);
-		destroyBF(cliquesArray[i]->bitArray);
+			destroy_Dataset(cliquesArray[i]->dataset,0);
+		if(cliquesArray[i]->bitArray!=NULL)
+			destroyBF(cliquesArray[i]->bitArray);
 		if(cliquesArray[i]->LRModel!=NULL)
 			LR_destroy(cliquesArray[i]->LRModel);
-		free(cliquesArray[i]->unique_negativeCliques);
-		free(cliquesArray[i]->negativeCliques);
+		if(cliquesArray[i]->unique_negativeCliques!=NULL)
+			free(cliquesArray[i]->unique_negativeCliques);
+		if(cliquesArray[i]->negativeCliques!=NULL)
+			free(cliquesArray[i]->negativeCliques);
 		free(cliquesArray[i]);
 	}
 	free(cliquesArray);
@@ -111,11 +113,8 @@ void train_test_split_Cliques(Clique ** cliqueIndex,int numOfCliques){
 
 
 				CamSpec* camera = (CamSpec*)nodesRead[l]->data;
-<<<<<<< Updated upstream
-				DenseMatrix * X       = camera->DenseVector;
-=======
+
 				DenseMatrix * X = camera->DenseVector;
->>>>>>> Stashed changes
 
 				if(l == numOfNegativeCliques) y=1;
 				else y=0;
@@ -184,11 +183,11 @@ float* testCliques(Clique** cliqueIndex,int numOfCliques){
 		prediction_labels =  malloc((test->size)*sizeof(int));
 
 		for (int j = 0; j < test->size; j++){
-			printf("True label: %d | ",test->y[j]);
-			prediction_labels[j] = LR_predict(clique->LRModel,test->X[j],1);
-			printf("|  prediction:  %d \n ",prediction_labels[j]);
+			// printf("True label: %d | ",test->y[j]);
+			prediction_labels[j] = LR_predict(clique->LRModel,test->X[j],0);
+			// printf("|  prediction:  %d \n ",prediction_labels[j]);
 		}
-		printf("\n\n");
+		// printf("\n\n");
 		
 		accuracyArray[i] =  accuracy(prediction_labels,test->y,test->size);
 		
@@ -220,7 +219,7 @@ float* validateCliques(Clique** cliqueIndex,int numOfCliques){
 			for(int k=0; k<numOfCliques; k++){
 				clique = cliqueIndex[k];
 				prediction =  LR_predict_proba(clique->LRModel,validation->X[j]);
-				printf("clique: %d | prediction: %lf \n ",k,prediction );
+				// printf("clique: %d | prediction: %lf \n ",k,prediction );
 				if(prediction > max_prediction){
 					max_prediction = prediction;
 					max_clique = k;
@@ -229,7 +228,7 @@ float* validateCliques(Clique** cliqueIndex,int numOfCliques){
 			if(max_clique == validation->y[j]){
 				numOfCorrectPred++;
 			}
-			printf("---> correct:  %d | predict:  %d \n",validation->y[j],max_clique );
+			// printf("---> correct:  %d | predict:  %d \n",validation->y[j],max_clique );
 		}
 
 		accuracyArray[i] = numOfCorrectPred/ (float) validation->size;		

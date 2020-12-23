@@ -30,5 +30,5 @@ typedef struct Dataset {
 Dataset * createDataset();
 Xy_Split * createXy_Split();
 Dataset * insert_toDataset(Dataset * dataset,DenseMatrix* X,int y,TrainTestVal type);
-void destroy_XySplit(Xy_Split * Xy);
-void destroy_Dataset(Dataset * dataset);
+void destroy_XySplit(Xy_Split * Xy,int deleteContent);
+void destroy_Dataset(Dataset * dataset,int deleteContent);
