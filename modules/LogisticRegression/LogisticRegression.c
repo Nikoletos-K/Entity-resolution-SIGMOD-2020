@@ -85,7 +85,7 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 		// printf("| %lf | ", fabs(new_norm - prev_norm) );
 		fflush(stdout);
 		if(fabs(new_norm - prev_norm) < model->threshold){
-			printf("\nConverged in %d epochs\n",epochs );
+			printf("Converged in %d epochs\n",epochs );
 			// free(gradient);
 			break;
 		}
@@ -95,7 +95,7 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 	}
 
 	free(prev_weights);
-	printf("\n\n");
+	// printf("\n\n");
 }
 
 float LR_predict_proba(LogisticRegression* model,DenseMatrix * denseX){

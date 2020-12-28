@@ -16,7 +16,7 @@
 
 HashTable * Dictionary;
 size_t DictionarySize;
-size_t VectorSize = 10000;  
+size_t VectorSize = 1000;  
 
 dictNode ** DictionaryNodes;
 
@@ -206,10 +206,20 @@ int main(int argc,char ** argv){
 
 	t1 = (double) times(&tb1);
 	printf("\n-> Creating - Training model  \n");
-	
-	float learning_rate = 0.001;
-	float threshold = 0.001;
-	int epochs = 1;
+	float learning_rate,threshold;
+	int epochs;
+
+	if(!strcmp("./../../data/sigmod_medium_labelled_dataset.csv",argv[csvFile])){
+		learning_rate = 0.001;
+		threshold = 1;
+		epochs = 20;
+
+	}else{
+		learning_rate = 0.001;
+		threshold = 0.1;
+		epochs = 50;
+
+	}
 	printf("Learning rate: %lf\n", learning_rate);
 	printf("Threshold:     %lf\n", threshold);
 	printf("Max epochs:    %d\n", epochs);
@@ -243,7 +253,7 @@ int main(int argc,char ** argv){
 
 	/* ----------------   GRID SEARCH -------------------------- */
 	// t1 = (double) times(&tb1);
-	// printf("\n-> GRIDSEARCH %d \n",i+1);
+	// printf("\n-> GRIDSEARCH-%s \n",argv[csvFile]);
 
 	// float learning_rates[4] =  {1,0.1,0.01,0.001};
 	// int numofLr = 4;
@@ -252,7 +262,7 @@ int main(int argc,char ** argv){
 	// int max_epochs[5] = {5,10,20,50,100};
 	// int numOfmax_epochs = 5;
 
-	// FILE* fp = fopen("small.txt","w");
+	// FILE* fp = fopen("PAIRS_GRIDSEARCH-Medium.txt","w");
 
 
 	// HyperParameters * hp = constructHyperParameters(learning_rates,numofLr,thresholds,numofthreshold,max_epochs,numOfmax_epochs);
@@ -261,7 +271,7 @@ int main(int argc,char ** argv){
 	// printf(" <- end  \n");
 	// t2 = (double) times(&tb2);
 	// cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	// printf("PERFORMANCE of GRIDSEARCH - %d:\n",i+1);
+	// printf("PERFORMANCE of GRIDSEARCH \n");
 	// printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 

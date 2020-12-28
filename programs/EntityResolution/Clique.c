@@ -231,7 +231,7 @@ float* validateCliques(Clique** cliqueIndex,int numOfCliques){
 			// printf("---> correct:  %d | predict:  %d \n",validation->y[j],max_clique );
 		}
 
-		accuracyArray[i] = numOfCorrectPred/ (float) validation->size;		
+		accuracyArray[i] = (float)((float)numOfCorrectPred/ (float) validation->size)*100.0;		
 	}
 
 	return accuracyArray;	
