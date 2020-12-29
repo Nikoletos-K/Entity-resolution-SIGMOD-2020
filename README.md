@@ -1,3 +1,5 @@
+![run-tests](../../workflows/run-tests/badge.svg)
+
 # Project
 
 |    |      Όνομα      |  ΑΜ |
