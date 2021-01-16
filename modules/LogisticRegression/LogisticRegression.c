@@ -9,7 +9,7 @@
 
 #include "./../../include/LogisticRegression.h"
 
-LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs){
+LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs,int batch_size){
 
 	srand(time(NULL));
 
@@ -19,7 +19,8 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 	model->learning_rate = learning_rate;
 	model->threshold = threshold;
 	model->max_epochs = max_epochs;
-
+	model->batch_size = batch_size;
+	
 	for(int w=0;w<model->vectorSize;w++){
 		// model->weights[w] = (rand()%2 == 0 ? -1:1)*1/rand();
 		// model->weights[w] = (float) 1/(float)rand();
@@ -43,40 +44,78 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 	DenseMatrix ** X_train  = (DenseMatrix **) Xy_train->X;
 	int *  y_train          = Xy_train->y;
 	int N                   = Xy_train->size; 
+	int num_of_batches = N/batch_size;
+	int last_batch_size = N%batch_size;
 
 	while(!converged && epochs < model->max_epochs){
 	
 		float prev_norm = euclid_norm(model->weights,model->vectorSize);
+		int batch_first_element = 0;
+		int batch_last_element = batch_first_element + batch_size;
+		int current_batch = 0; 
 
-		for(int i=0; i<N; i++){
+		while(current_batch < num_of_batches+1){
 
-			DenseMatrix * denseX = X_train[i];
-			int denseX_size = denseX->matrixSize;
+			float avg_gradient = 0.0;
+			float gradients_array[model->vectorSize];
+			for (int i = 0; i < model->vectorSize; i++){
+				gradients_array[i] = 0.0;
+			}
 
-			float gradient,avg_gradient=0.0;
+			for(int i=batch_first_element; i<batch_last_element; i++){
 
-			/*  Comptute Loss  */
-			
-			if(denseX_size)
-				loss =  LR_predict_proba(model,denseX) - y_train[i];
+				DenseMatrix * denseX = X_train[i];
+				int denseX_size = denseX->matrixSize;
 
-			for(int p=0; p<denseX_size; p++){
+				float gradient,sum_gradient=0.0;
 
-				/*  Update weights  */
-				weight_position = denseX->matrix[p]->position;
-				value           = denseX->matrix[p]->value;
+				/*  Comptute Loss  */
+				
+				if(denseX_size)
+					loss =  LR_predict_proba(model,denseX) - y_train[i];
+
+				for(int p=0; p<denseX_size; p++){
+
+					/*  Update weights  */
+					weight_position = denseX->matrix[p]->position;
+					value           = denseX->matrix[p]->value;
 
 
-				gradient           = loss*value;
-				avg_gradient      += gradient;
-
-				model->weights[weight_position] -= model->learning_rate*gradient;
-
+					gradients_array[weight_position] += loss*value;
+				}
 
 			}
 
-			if(denseX_size)
-				model->bias -= model->learning_rate*( (float)((float) avg_gradient)/ ((float) N)); 
+			for (int i = 0; i < model->vectorSize; i++){
+				gradients_array[i] /= batch_size;
+			}
+
+			// for(int p=0; p<denseX_size; p++){
+
+			// 	/*  Update weights  */
+			// 	weight_position = denseX->matrix[p]->position;
+			// 	value           = denseX->matrix[p]->value;
+
+
+			// 	gradient           = loss*value;
+			// 	sum_gradient      += gradient;
+
+			// 	model->weights[weight_position] -= model->learning_rate*gradient;
+			// }
+
+			// if(denseX_size)
+			// 	model->bias -= model->learning_rate*( (float)((float) sum_gradient)/ ((float) N)); 
+
+			current_batch++;
+
+			if(current_batch!= num_of_batches+1){
+				batch_first_element += batch_size;
+				batch_last_element = batch_first_element + batch_size;
+			}else{
+				batch_first_element += batch_size;
+				batch_last_element += last_batch_size;
+				batch_size = last_batch_size;
+			}
 
 		}
 

@@ -17,6 +17,7 @@ typedef struct LogisticRegression {
 	float learning_rate;
 	float threshold;
 	float max_epochs;
+	int batch_size;
 
 } LogisticRegression;
 
@@ -33,7 +34,7 @@ typedef struct HyperParameters {
 } HyperParameters;
 
 
-LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs);
+LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs,int batch_size);
 void LR_fit(LogisticRegression* model,Xy_Split * Xy_train);
 int LR_predict(LogisticRegression* model,DenseMatrix * denseX,int f);
 void LR_destroy(LogisticRegression* model);

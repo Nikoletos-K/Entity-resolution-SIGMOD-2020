@@ -234,21 +234,33 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
+	// while(threshold<0.5){
+
+	// 	LR_fit(LR_Model,vectorizedDataset->train);
+	// }
+
+	printf(" <- End of Creating - Training model \n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of Creating - Training model  :\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+
 
 	/* ----------------   TESTING CLIQUES -------------------------- */
 
 
-	t1 = (double) times(&tb1);
-	printf("\n-> Testing model  \n");
+	// t1 = (double) times(&tb1);
+	// printf("\n-> Testing model  \n");
 	
-	LR_Evaluation(LR_Model,vectorizedDataset->test,stdout);
+	// LR_Evaluation(LR_Model,vectorizedDataset->test,stdout);
 
-	printf(" <- End of Testing model  \n");
-	t2 = (double) times(&tb2);
-	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	printf("PERFORMANCE of Testing model  :\n");
-	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+	// printf(" <- End of Testing model  \n");
+	// t2 = (double) times(&tb2);
+	// cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	// printf("PERFORMANCE of Testing model  :\n");
+	// printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
 	/* ----------------   GRID SEARCH -------------------------- */
