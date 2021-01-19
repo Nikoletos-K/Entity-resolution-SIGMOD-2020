@@ -151,7 +151,7 @@ void train_test_split_Cliques(Clique ** cliqueIndex,int numOfCliques){
 }
 
 
-void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs){
+void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs,int batch_size,int numThreads){
 
 	Clique* clique;
 	Xy_Split * train;
@@ -161,7 +161,7 @@ void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,floa
 		clique = cliqueIndex[i];
 		train = clique->dataset->train;
 
-		clique->LRModel = LR_construct(VectorSize,learning_rate,threshold,max_epochs);
+		clique->LRModel = LR_construct(VectorSize,learning_rate,threshold,max_epochs,batch_size,numThreads);
 		LR_fit(clique->LRModel,train);
 	}
 }
