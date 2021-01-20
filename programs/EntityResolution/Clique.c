@@ -59,7 +59,7 @@ Clique** CreateCliques(DisJointSet * djSet,int* numOfsets){
 	return cliquesArray;
 }
 
-Clique * constructClique(){
+Clique * constructClique(int* numOfCliques){
 	Clique* myClique = malloc(sizeof(Clique));
 	myClique->set = createList();
 	myClique->numOfNegativeCliques = 0;
@@ -67,6 +67,8 @@ Clique * constructClique(){
 	myClique->numOfUnique_negativeCliques = 0;
 	myClique->unique_negativeCliques = NULL;
 	myClique->dataset = NULL;
+	(*numOfCliques)++;
+	myClique->bitArray = createBF(*numOfCliques);
 
 	return myClique;
 }

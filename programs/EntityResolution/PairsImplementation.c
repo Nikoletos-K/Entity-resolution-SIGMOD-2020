@@ -633,13 +633,28 @@ Xy_Split * resolve_transitivity_issues(Xy_Split * Xy_train,Clique*** cliqueIndex
 			}
 		}else if(camera1->myClique == -1 &&  camera2->myClique == -1){
 			if(retrained_pair->prediction > (1-threshold)){
-				Clique * newClique =  constructClique();
+				Clique * newClique =  constructClique(numOfCliques);
 				newClique = addToClique(newClique, camera1);
 				newClique = addToClique(newClique, camera2);
 
-				*cliqueIndex = realloc(*cliqueIndex,(*numOfCliques+1)*sizeof(Clique*));
-				(*cliqueIndex)[*numOfCliques] = newClique;
-				(*numOfCliques)++;
+				camera1->myClique = *numOfCliques -1;
+				camera2->myClique = *numOfCliques -1;
+
+				*cliqueIndex = realloc(*cliqueIndex,(*numOfCliques)*sizeof(Clique*));
+				(*cliqueIndex)[*numOfCliques-1] = newClique;
+
+				if(camera1->bitArray!=NULL && camera2->bitArray!=NULL){
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}else if(camera1->bitArray==NULL && camera2->bitArray!=NULL){
+					camera1->bitArray = createBF(num_of_cameras);
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}else if(camera2->bitArray==NULL && camera1->bitArray!=NULL){
+					camera2->bitArray = createBF(num_of_cameras);
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}
 
 				Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,1);
 				retrained_pair->concatedVector = NULL;	

@@ -19,7 +19,7 @@ typedef struct Clique{
 
 } Clique;
 
-Clique* constructClique();
+Clique* constructClique(int* numOfCliques);
 Clique* addToClique(Clique* myClique, CamSpec* newCamera);
 Clique** CreateCliques(DisJointSet * djSet,int* numOfsets);
 void destroyCliques(Clique** setsList,int numOfsets);
