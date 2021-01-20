@@ -9,9 +9,8 @@
 
 #include "./../../include/LogisticRegression.h"
 
-<<<<<<< Updated upstream
+
 LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs,int batch_size){
-=======
 
 LogisticRegression* trainingModel;
 
@@ -23,9 +22,11 @@ JobScheduler * scheduler;
 
 void batchThread(void * args){
 
+
 	int batch_first_element = ((threadArgs*)  args)->batch_first_element;
 	int batch_last_element  = ((threadArgs*)  args)->batch_last_element;
 	int gradient_position   =  ((threadArgs*)  args)->gradient_position;
+
 	float loss,value;
 	int weight_position;
 
@@ -57,7 +58,6 @@ void batchThread(void * args){
 
 
 LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs,int batch_size,int numThreads){
->>>>>>> Stashed changes
 
 	srand(time(NULL));
 
@@ -68,6 +68,7 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 	model->threshold = threshold;
 	model->max_epochs = max_epochs;
 	model->batch_size = batch_size;
+	model->numThreads = numThreads;
 	
 	for(int w=0;w<model->vectorSize;w++){
 		// model->weights[w] = (rand()%2 == 0 ? -1:1)*1/rand();
@@ -85,85 +86,45 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 
 void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 
-	int epochs=0,weight_position;
-	float loss,value;
+	trainingModel = model;
+	scheduler = initialize_scheduler(model->numThreads);
+	int epochs=0;
+	
 	float * prev_weights = calloc(model->vectorSize,sizeof(float));
 	int converged    = FALSE;
-	DenseMatrix ** X_train  = (DenseMatrix **) Xy_train->X;
-	int *  y_train          = Xy_train->y;
+	X_train  = (DenseMatrix **) Xy_train->X;
+	y_train          		= Xy_train->y;
 	int N                   = Xy_train->size; 
-<<<<<<< Updated upstream
-	int num_of_batches = N/batch_size;
-	int last_batch_size = N%batch_size;
 
-	while(!converged && epochs < model->max_epochs){
-	
-=======
-	int batch_size = model->batch_size;
-	int num_of_batches  = N/batch_size;
+	int num_of_batches = N/batch_size;
 	int last_batch_size = N%batch_size;
 
 	gradientsArray = malloc(sizeof(float*)*model->numThreads);
 	for(int i=0;i<model->numThreads;i++)
 		gradientsArray[i] = calloc(model->vectorSize,sizeof(float));
-
+	printf("Num of batches %d && batches/threads  %d \n",num_of_batches,num_of_batches/model->numThreads );
+	
 	
 	while(!converged && epochs < model->max_epochs){
 		
 		batch_size = model->batch_size;
 		num_of_batches  = N/batch_size;
 		last_batch_size = N%batch_size;
->>>>>>> Stashed changes
-		float prev_norm = euclid_norm(model->weights,model->vectorSize);
-		int batch_first_element = 0;
-		int batch_last_element = batch_first_element + batch_size;
-		int current_batch = 0; 
-<<<<<<< Updated upstream
-
-		while(current_batch < num_of_batches+1){
-
-			float avg_gradient = 0.0;
-			float gradients_array[model->vectorSize];
-			for (int i = 0; i < model->vectorSize; i++){
-				gradients_array[i] = 0.0;
-			}
-
-			for(int i=batch_first_element; i<batch_last_element; i++){
-
-				DenseMatrix * denseX = X_train[i];
-				int denseX_size = denseX->matrixSize;
-
-				float gradient,sum_gradient=0.0;
-=======
 		int submittedJobs=0;
+
 
 		while(current_batch < num_of_batches+1){
 
 			threadArgs * args = new_threadArgs(batch_first_element,batch_last_element,submittedJobs%model->numThreads);
 			submit_job(scheduler,batchThread,(void*)args);
 			submittedJobs++;
->>>>>>> Stashed changes
-
-				/*  Comptute Loss  */
-				
-				if(denseX_size)
-					loss =  LR_predict_proba(model,denseX) - y_train[i];
-
-<<<<<<< Updated upstream
-				for(int p=0; p<denseX_size; p++){
-
-					/*  Update weights  */
-					weight_position = denseX->matrix[p]->position;
-					value           = denseX->matrix[p]->value;
 
 
-					gradients_array[weight_position] += loss*value;
-				}
+			if(submittedJobs % model->numThreads == 0 || current_batch == num_of_batches){
 
-			}
-=======
-				int batches_executed = (submittedJobs % model->numThreads)+1;
-				wait_activeJobs_finish(scheduler);
+
+         int batches_executed = (submittedJobs % model->numThreads)+1;
+				 wait_activeJobs_finish(scheduler);
 
 				float * avg_gradients = calloc(model->vectorSize,sizeof(float));
 
@@ -185,42 +146,21 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 				// model->bias -=  (float)((float)avg_bias_gradient*((float)model->learning_rate))/((float)batches_executed);
 				
 				free(avg_gradients);
->>>>>>> Stashed changes
 
-			for (int i = 0; i < model->vectorSize; i++){
-				gradients_array[i] /= batch_size;
 			}
-
-			// for(int p=0; p<denseX_size; p++){
-
-			// 	/*  Update weights  */
-			// 	weight_position = denseX->matrix[p]->position;
-			// 	value           = denseX->matrix[p]->value;
-
-
-			// 	gradient           = loss*value;
-			// 	sum_gradient      += gradient;
-
-			// 	model->weights[weight_position] -= model->learning_rate*gradient;
-			// }
-
-			// if(denseX_size)
-			// 	model->bias -= model->learning_rate*( (float)((float) sum_gradient)/ ((float) N)); 
-
+			
 			current_batch++;
-<<<<<<< Updated upstream
 
-			if(current_batch!= num_of_batches+1){
-=======
-			if(current_batch < num_of_batches){
->>>>>>> Stashed changes
 				batch_first_element += batch_size;
 				batch_last_element = batch_first_element + batch_size;
 			}else{
+				printf("LAST BATCH\n");
+				printf("N %d\n",N );
 				batch_first_element += batch_size;
 				batch_last_element += last_batch_size;
 			}
 
+			threadCounter = (threadCounter+1)%scheduler->pool_size;
 		}
 
 		float new_norm = euclid_norm(model->weights,model->vectorSize);
@@ -235,17 +175,7 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 
 		epochs++;
 	}
-
-<<<<<<< Updated upstream
-=======
-	destroy_scheduler(scheduler);
-	for(int i=0;i<model->numThreads;i++)
-		free(gradientsArray[i]);
-	free(gradientsArray);
-	
->>>>>>> Stashed changes
 	free(prev_weights);
-	// printf("\n\n");
 }
 
 float LR_predict_proba(LogisticRegression* model,DenseMatrix * denseX){
@@ -349,7 +279,9 @@ HyperParameters * constructHyperParameters(
 	float * threshold,
 	int numofthreshold,
 	int * max_epochs,
-	int numOfmax_epochs
+	int numOfmax_epochs,
+	int batch_size,
+	int numThreads
 ){
 
 
@@ -360,6 +292,8 @@ HyperParameters * constructHyperParameters(
 	hp->numofthreshold   = numofthreshold;
 	hp->max_epochs       = max_epochs;
 	hp->numOfmax_epochs  = numOfmax_epochs;
+	hp->batch_size       = batch_size;
+	hp->numThreads		 = numThreads;
 
 
 	return hp;
@@ -375,7 +309,7 @@ void GridSearch(Xy_Split * train,Xy_Split * test,HyperParameters * hp,size_t vec
 
 				if(GridSearchFile!=NULL) 
 					fprintf(GridSearchFile, "\n ------ Lr %lf   |    threshold %lf  | max_epochs %d \n",hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me] );
-				model  = LR_construct(vectorSize*2,hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me] );
+				model  = LR_construct(vectorSize*2,hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me],hp->batch_size,hp->numThreads );
 				LR_fit(model,train);
 				LR_Evaluation(model,test,GridSearchFile);
 				LR_destroy(model);
@@ -407,4 +341,13 @@ void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file){
 
 void destroyHyperParameters(HyperParameters * hp){
 	free(hp);
+}
+
+threadArgs * new_threadArgs(int batch_first_element,int batch_last_element,int gradient_position){
+
+	threadArgs * args = malloc(sizeof(threadArgs));
+	args->batch_first_element = batch_first_element;
+	args->batch_last_element = batch_last_element;
+	args->gradient_position = gradient_position;
+	return args;
 }

@@ -208,11 +208,7 @@ int main(int argc,char ** argv){
 	printf("\n-> Creating - Training model  \n");
 	float learning_rate,threshold;
 	int epochs;
-<<<<<<< Updated upstream
 
-=======
-	int numThreads = 15,batch_size=1024;
->>>>>>> Stashed changes
 	if(!strcmp("./../../data/sigmod_medium_labelled_dataset.csv",argv[csvFile])){
 		learning_rate = 0.01;
 		threshold = 0.0001;
@@ -227,7 +223,7 @@ int main(int argc,char ** argv){
 	printf("Threshold:     %lf\n", threshold);
 	printf("Max epochs:    %d\n", epochs);
 
-	LogisticRegression* LR_Model = LR_construct(VectorSize*2,learning_rate,threshold,epochs);
+	LogisticRegression* LR_Model = LR_construct(VectorSize*2,learning_rate,threshold,epochs,batch_size,numThreads);
 	LR_fit(LR_Model,vectorizedDataset->train);
 
 	printf(" <- End of Creating - Training model \n");
