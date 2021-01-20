@@ -21,6 +21,17 @@ typedef struct LogisticRegression {
 
 } LogisticRegression;
 
+<<<<<<< Updated upstream
+=======
+typedef struct threadArgs {
+
+	int batch_first_element;
+	int batch_last_element;
+	int gradient_position;
+
+} threadArgs;
+
+>>>>>>> Stashed changes
 typedef struct HyperParameters {
 	
 	float * learning_rates;
