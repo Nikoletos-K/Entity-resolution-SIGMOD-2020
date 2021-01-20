@@ -13,7 +13,8 @@ void test_create(void) {
 	float threshold = 0.1;
 	int max_epochs = 2;
 	float weights = 0.0,bias =0.0;
-	LogisticRegression* LR = LR_construct(vectorSize,learning_rate,threshold,max_epochs);
+	int batch_size = 64;
+	LogisticRegression* LR = LR_construct(vectorSize,learning_rate,threshold,max_epochs,batch_size);
 
 	
 	TEST_ASSERT(LR != NULL);

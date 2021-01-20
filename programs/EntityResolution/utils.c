@@ -10,7 +10,7 @@
 #include <math.h>
 #include <ctype.h>
 
-#include "./../../include/dictionary.h"
+// #include "./../../include/dictionary.h"
 #include "./../../include/PairsImplementation.h"
 
 CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords){
@@ -47,10 +47,10 @@ CamSpec * read_jsonSpecs(char* filename,CamSpec * cs,HashTable* stopwords){
 				if(token==NULL)
 					addWord(value,cs,stopwords);
 
-				while( token != NULL ) {
+				while( token != NULL ){
 				  addWord(token,cs,stopwords);		    
 			      token = strtok(NULL, s);
-			   }
+			    }
 				
 			}else{
 				fscanf(json_file,"%[^\n]\n",line);		// read the next line

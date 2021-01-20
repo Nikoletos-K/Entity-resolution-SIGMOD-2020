@@ -11,8 +11,6 @@
 #include <ctype.h>
 
 #include "./../../include/Clique.h"
-#include "./Vectorization.h"
-
 
 Clique** CreateCliques(DisJointSet * djSet,int* numOfsets){
 	int parent;
@@ -37,7 +35,7 @@ Clique** CreateCliques(DisJointSet * djSet,int* numOfsets){
 			cliquesArray[*numOfsets]->negativeCliques = NULL;
 			cliquesArray[*numOfsets]->numOfUnique_negativeCliques = 0;
 			cliquesArray[*numOfsets]->unique_negativeCliques = NULL;
-			cliquesArray[*numOfsets]->LRModel = NULL;
+			// cliquesArray[*numOfsets]->LRModel = NULL;
 			cliquesArray[*numOfsets]->dataset = NULL;
 
 			(*numOfsets)++;
@@ -49,7 +47,7 @@ Clique** CreateCliques(DisJointSet * djSet,int* numOfsets){
 			while(node!=NULL){
 
 				data = (CamSpec*) node->data;
-				data->arrayPosition = *numOfsets-1;
+				data->myClique = *numOfsets-1;
 				node = node->nextNode;
 			}
 		}	
@@ -61,6 +59,25 @@ Clique** CreateCliques(DisJointSet * djSet,int* numOfsets){
 	return cliquesArray;
 }
 
+Clique * constructClique(){
+	Clique* myClique = malloc(sizeof(Clique));
+	myClique->set = createList();
+	myClique->numOfNegativeCliques = 0;
+	myClique->negativeCliques = NULL;
+	myClique->numOfUnique_negativeCliques = 0;
+	myClique->unique_negativeCliques = NULL;
+	myClique->dataset = NULL;
+
+	return myClique;
+}
+
+Clique* addToClique(Clique* myClique, CamSpec* newCamera){
+
+	insert_toList(myClique->set, newCamera);
+
+	return myClique;
+}
+
 void destroyCliques(Clique** cliquesArray,int numOfCliques){
 
 	for (int i = 0; i < numOfCliques; i++){
@@ -68,8 +85,8 @@ void destroyCliques(Clique** cliquesArray,int numOfCliques){
 			destroy_Dataset(cliquesArray[i]->dataset,0);
 		if(cliquesArray[i]->bitArray!=NULL)
 			destroyBF(cliquesArray[i]->bitArray);
-		if(cliquesArray[i]->LRModel!=NULL)
-			LR_destroy(cliquesArray[i]->LRModel);
+		// if(cliquesArray[i]->LRModel!=NULL)
+		// 	LR_destroy(cliquesArray[i]->LRModel);
 		if(cliquesArray[i]->unique_negativeCliques!=NULL)
 			free(cliquesArray[i]->unique_negativeCliques);
 		if(cliquesArray[i]->negativeCliques!=NULL)
@@ -125,7 +142,7 @@ void train_test_split_Cliques(Clique ** cliqueIndex,int numOfCliques){
 				else if(currdata_inSet[l] > 0.6*alldata_inSet[l] && currdata_inSet[l] <= 0.8*alldata_inSet[l])
 					dataset = insert_toDataset(dataset,X,y,Test);
 				else
-					dataset = insert_toDataset(dataset,X,camera->arrayPosition,Validation);
+					dataset = insert_toDataset(dataset,X,camera->myClique,Validation);
 
 
 				currdata_inSet[l]++;
@@ -150,89 +167,105 @@ void train_test_split_Cliques(Clique ** cliqueIndex,int numOfCliques){
 	}
 }
 
+int compareCliques(Clique** cliqueIndex,int cliqueA, int cliqueB){
 
-void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs){
-
-	Clique* clique;
-	Xy_Split * train;
-
-	for(int i=0; i<numOfCliques; i++){
-
-		clique = cliqueIndex[i];
-		train = clique->dataset->train;
-
-		clique->LRModel = LR_construct(VectorSize,learning_rate,threshold,max_epochs);
-		LR_fit(clique->LRModel,train);
+// printf("A: %d - B: %d\n",cliqueA,cliqueB );
+	if(cliqueA == cliqueB)
+		return 1;
+	else{
+		if(cliqueIndex[cliqueA]->bitArray!=NULL){
+			if(checkBit(cliqueIndex[cliqueA]->bitArray,cliqueB))
+				return -1;
+			else
+				return 0;
+		}else
+			return 0;
 	}
+	return 0;
 }
 
+// void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs){
+
+// 	Clique* clique;
+// 	Xy_Split * train;
+
+// 	for(int i=0; i<numOfCliques; i++){
+
+// 		clique = cliqueIndex[i];
+// 		train = clique->dataset->train;
+
+// 		clique->LRModel = LR_construct(VectorSize,learning_rate,threshold,max_epochs);
+// 		LR_fit(clique->LRModel,train);
+// 	}
+// }
 
 
-float* testCliques(Clique** cliqueIndex,int numOfCliques){
 
-	Clique* clique;
-	Xy_Split * test;
-	int * prediction_labels;
-	float * accuracyArray = malloc(numOfCliques*sizeof(float));
+// float* testCliques(Clique** cliqueIndex,int numOfCliques){
 
-	for(int i=0; i<numOfCliques; i++){
+	// Clique* clique;
+	// Xy_Split * test;
+	// int * prediction_labels;
+	// float * accuracyArray = malloc(numOfCliques*sizeof(float));
 
-		clique = cliqueIndex[i];
-		test   = clique->dataset->test;
+	// for(int i=0; i<numOfCliques; i++){
 
-		prediction_labels =  malloc((test->size)*sizeof(int));
+	// 	clique = cliqueIndex[i];
+	// 	test   = clique->dataset->test;
 
-		for (int j = 0; j < test->size; j++){
-			// printf("True label: %d | ",test->y[j]);
-			prediction_labels[j] = LR_predict(clique->LRModel,test->X[j],0);
-			// printf("|  prediction:  %d \n ",prediction_labels[j]);
-		}
-		// printf("\n\n");
+	// 	prediction_labels =  malloc((test->size)*sizeof(int));
+
+	// 	for (int j = 0; j < test->size; j++){
+	// 		// printf("True label: %d | ",test->y[j]);
+	// 		prediction_labels[j] = LR_predict(clique->LRModel,test->X[j],0);
+	// 		// printf("|  prediction:  %d \n ",prediction_labels[j]);
+	// 	}
+	// 	// printf("\n\n");
 		
-		accuracyArray[i] =  accuracy(prediction_labels,test->y,test->size);
+	// 	accuracyArray[i] =  accuracy(prediction_labels,test->y,test->size);
 		
-		free(prediction_labels);	
-	}
+	// 	free(prediction_labels);	
+	// }
 
-	return accuracyArray;	
-}
+	// return accuracyArray;	
+// }
 
 
-float* validateCliques(Clique** cliqueIndex,int numOfCliques){
+// float* validateCliques(Clique** cliqueIndex,int numOfCliques){
 
-	Clique* clique;
-	Xy_Split * validation;
-	float prediction;
-	float * accuracyArray = malloc(numOfCliques*sizeof(float));
-	float max_prediction;
-	int max_clique;
-	int numOfCorrectPred;
+	// Clique* clique;
+	// Xy_Split * validation;
+	// float prediction;
+	// float * accuracyArray = malloc(numOfCliques*sizeof(float));
+	// float max_prediction;
+	// int max_clique;
+	// int numOfCorrectPred;
 
-	for(int i=0; i<numOfCliques; i++){
+	// for(int i=0; i<numOfCliques; i++){
 
-		clique = cliqueIndex[i];
-		validation = clique->dataset->validation;
-		numOfCorrectPred = 0;
+	// 	clique = cliqueIndex[i];
+	// 	validation = clique->dataset->validation;
+	// 	numOfCorrectPred = 0;
 		
-		for (int j = 0; j < validation->size; j++){
-			max_prediction = 0.0;
-			for(int k=0; k<numOfCliques; k++){
-				clique = cliqueIndex[k];
-				prediction =  LR_predict_proba(clique->LRModel,validation->X[j]);
-				// printf("clique: %d | prediction: %lf \n ",k,prediction );
-				if(prediction > max_prediction){
-					max_prediction = prediction;
-					max_clique = k;
-				}
-			}
-			if(max_clique == validation->y[j]){
-				numOfCorrectPred++;
-			}
-			// printf("---> correct:  %d | predict:  %d \n",validation->y[j],max_clique );
-		}
+	// 	for (int j = 0; j < validation->size; j++){
+	// 		max_prediction = 0.0;
+	// 		for(int k=0; k<numOfCliques; k++){
+	// 			clique = cliqueIndex[k];
+	// 			prediction =  LR_predict_proba(clique->LRModel,validation->X[j]);
+	// 			// printf("clique: %d | prediction: %lf \n ",k,prediction );
+	// 			if(prediction > max_prediction){
+	// 				max_prediction = prediction;
+	// 				max_clique = k;
+	// 			}
+	// 		}
+	// 		if(max_clique == validation->y[j]){
+	// 			numOfCorrectPred++;
+	// 		}
+	// 		// printf("---> correct:  %d | predict:  %d \n",validation->y[j],max_clique );
+	// 	}
 
-		accuracyArray[i] = (float)((float)numOfCorrectPred/ (float) validation->size)*100.0;		
-	}
+	// 	accuracyArray[i] = (float)((float)numOfCorrectPred/ (float) validation->size)*100.0;		
+	// }
 
-	return accuracyArray;	
-}
+	// return accuracyArray;	
+// }

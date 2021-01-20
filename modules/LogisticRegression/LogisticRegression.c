@@ -44,78 +44,40 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 	DenseMatrix ** X_train  = (DenseMatrix **) Xy_train->X;
 	int *  y_train          = Xy_train->y;
 	int N                   = Xy_train->size; 
-	int num_of_batches = N/batch_size;
-	int last_batch_size = N%batch_size;
 
 	while(!converged && epochs < model->max_epochs){
 	
 		float prev_norm = euclid_norm(model->weights,model->vectorSize);
-		int batch_first_element = 0;
-		int batch_last_element = batch_first_element + batch_size;
-		int current_batch = 0; 
 
-		while(current_batch < num_of_batches+1){
+		for(int i=0; i<N; i++){
 
-			float avg_gradient = 0.0;
-			float gradients_array[model->vectorSize];
-			for (int i = 0; i < model->vectorSize; i++){
-				gradients_array[i] = 0.0;
-			}
+			DenseMatrix * denseX = X_train[i];
+			int denseX_size = denseX->matrixSize;
 
-			for(int i=batch_first_element; i<batch_last_element; i++){
+			float gradient,avg_gradient=0.0;
 
-				DenseMatrix * denseX = X_train[i];
-				int denseX_size = denseX->matrixSize;
+			/*  Comptute Loss  */
+			
+			if(denseX_size)
+				loss =  LR_predict_proba(model,denseX) - y_train[i];
 
-				float gradient,sum_gradient=0.0;
+			for(int p=0; p<denseX_size; p++){
 
-				/*  Comptute Loss  */
-				
-				if(denseX_size)
-					loss =  LR_predict_proba(model,denseX) - y_train[i];
-
-				for(int p=0; p<denseX_size; p++){
-
-					/*  Update weights  */
-					weight_position = denseX->matrix[p]->position;
-					value           = denseX->matrix[p]->value;
+				/*  Update weights  */
+				weight_position = denseX->matrix[p]->position;
+				value           = denseX->matrix[p]->value;
 
 
-					gradients_array[weight_position] += loss*value;
-				}
+				gradient           = loss*value;
+				avg_gradient      += gradient;
+
+				model->weights[weight_position] -= model->learning_rate*gradient;
+
 
 			}
 
-			for (int i = 0; i < model->vectorSize; i++){
-				gradients_array[i] /= batch_size;
-			}
-
-			// for(int p=0; p<denseX_size; p++){
-
-			// 	/*  Update weights  */
-			// 	weight_position = denseX->matrix[p]->position;
-			// 	value           = denseX->matrix[p]->value;
-
-
-			// 	gradient           = loss*value;
-			// 	sum_gradient      += gradient;
-
-			// 	model->weights[weight_position] -= model->learning_rate*gradient;
-			// }
-
-			// if(denseX_size)
-			// 	model->bias -= model->learning_rate*( (float)((float) sum_gradient)/ ((float) N)); 
-
-			current_batch++;
-
-			if(current_batch!= num_of_batches+1){
-				batch_first_element += batch_size;
-				batch_last_element = batch_first_element + batch_size;
-			}else{
-				batch_first_element += batch_size;
-				batch_last_element += last_batch_size;
-				batch_size = last_batch_size;
-			}
+			if(denseX_size)
+				model->bias -= model->learning_rate*( (float)((float) avg_gradient)/ ((float) N)); 
 
 		}
 
@@ -193,7 +155,7 @@ void LR_destroy(LogisticRegression* model){
 
 int decision_boundary(float propability){
 	//printf("(%.5lf) - ",propability);
-	return (propability<=0.5 ? 0:1);
+	return (propability<0.5 ? 0:1);
 }
 
 float sigmoid(float x){
@@ -258,13 +220,14 @@ HyperParameters * constructHyperParameters(
 void GridSearch(Xy_Split * train,Xy_Split * test,HyperParameters * hp,size_t vectorSize,FILE * GridSearchFile){
 
 	LogisticRegression * model;
+	int batch_size = 9;
 	for(int me = 0; me<hp->numOfmax_epochs; me++){
 		for(int lr=0;lr<hp->numofLr;lr++){
 			for(int t=0;t<hp->numofthreshold;t++){
 
 				if(GridSearchFile!=NULL) 
 					fprintf(GridSearchFile, "\n ------ Lr %lf   |    threshold %lf  | max_epochs %d \n",hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me] );
-				model  = LR_construct(vectorSize*2,hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me] );
+				model  = LR_construct(vectorSize*2,hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me],batch_size );
 				LR_fit(model,train);
 				LR_Evaluation(model,test,GridSearchFile);
 				LR_destroy(model);
@@ -297,3 +260,4 @@ void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file){
 void destroyHyperParameters(HyperParameters * hp){
 	free(hp);
 }
+

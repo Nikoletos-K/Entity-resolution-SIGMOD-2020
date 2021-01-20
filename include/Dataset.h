@@ -32,3 +32,4 @@ Xy_Split * createXy_Split();
 Dataset * insert_toDataset(Dataset * dataset,DenseMatrix* X,int y,TrainTestVal type);
 void destroy_XySplit(Xy_Split * Xy,int deleteContent);
 void destroy_Dataset(Dataset * dataset,int deleteContent);
+Xy_Split * insert_toXy_Train(Xy_Split * train,DenseMatrix* X,int y);

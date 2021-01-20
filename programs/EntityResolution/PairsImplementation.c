@@ -12,7 +12,7 @@
 
 #include "./../../include/PairsImplementation.h"
 
-List * printPairs(Clique** cliquesArray,int numOfsets ){
+List * printPairs(Clique** cliquesArray,int numOfsets,int num_of_cameras ){
 
 	FILE * output;
 	List * sameCameras_list = createList();
@@ -20,25 +20,25 @@ List * printPairs(Clique** cliquesArray,int numOfsets ){
 	output = fopen("PAIRS.csv","w+");		// or in file
 	fprintf(output, "left_spec_id, right_spec_id\n");
 	for(int i=0;i<numOfsets;i++)	// for every spec
-		printForward(cliquesArray[i]->set,output,printCameraName,sameCameras_list);	// print every pair in the list
+		printForward(cliquesArray[i]->set,output,printCameraName,sameCameras_list,num_of_cameras);	// print every pair in the list
 	
 	fclose(output);
 
 	return sameCameras_list;
 }
 
-void printNegativePairs(List * diffPairs){
+void printNegativePairs(List * diffPairs,int num_of_cameras){
 
 	FILE * output;
 
 	output = fopen("NEGATIVE_PAIRS.csv","w+");		// or in file
 	fprintf(output, "left_spec_id, right_spec_id\n");
-	printForward(diffPairs,output,printCameraName,NULL);	// print every pair in the list
+	printForward(diffPairs,output,printCameraName,NULL,num_of_cameras);	// print every pair in the list
 	
 	fclose(output);
 }
 
-void printForward(List * list,FILE * output,void (*printData)(void*,FILE *),List * sameCameras_list){
+void printForward(List * list,FILE * output,void (*printData)(void*,FILE *),List * sameCameras_list,int num_of_cameras){
 
 	listNode * leftNode = list->firstNode,* rightNode;
 	
@@ -55,6 +55,18 @@ void printForward(List * list,FILE * output,void (*printData)(void*,FILE *),List
 			if(sameCameras_list!=NULL){	
 				CamerasPair * pair = createPair((CamSpec *) leftNode->data, (CamSpec *) rightNode->data);
 				insert_toList(sameCameras_list,(void*) pair);
+				if(pair->camera1->bitArray!=NULL && pair->camera2->bitArray!=NULL){
+					setBit(pair->camera1->bitArray,pair->camera2->arrayPosition);
+					setBit(pair->camera2->bitArray,pair->camera1->arrayPosition);
+				}else if(pair->camera1->bitArray==NULL && pair->camera2->bitArray!=NULL){
+					pair->camera1->bitArray = createBF(num_of_cameras);
+					setBit(pair->camera1->bitArray,pair->camera2->arrayPosition);
+					setBit(pair->camera2->bitArray,pair->camera1->arrayPosition);
+				}else if(pair->camera2->bitArray==NULL && pair->camera1->bitArray!=NULL){
+					pair->camera2->bitArray = createBF(num_of_cameras);
+					setBit(pair->camera1->bitArray,pair->camera2->arrayPosition);
+					setBit(pair->camera2->bitArray,pair->camera1->arrayPosition);
+				}
 			}
 			rightNode = rightNode->nextNode;
 		}
@@ -71,8 +83,8 @@ Clique** createNegConnections(List * diffPairsList,Clique ** cliqueIndex){
 
 		CamerasPair * pair = (CamerasPair*) node->data;
 
-		int cliqueKey_1 = pair->camera1->arrayPosition;
-		int cliqueKey_2 = pair->camera2->arrayPosition;
+		int cliqueKey_1 = pair->camera1->myClique;
+		int cliqueKey_2 = pair->camera2->myClique;
 
 		if(!checkBit(cliqueIndex[cliqueKey_1]->bitArray,cliqueKey_2)){
 			setBit(cliqueIndex[cliqueKey_1]->bitArray,cliqueKey_2);
@@ -133,7 +145,7 @@ CamerasPair * createPair(CamSpec * c1, CamSpec * c2){
 
 }
 
-List * createNegativePairs(Clique ** cliqueIndex,int numOfcliques,FILE * file){
+List * createNegativePairs(Clique ** cliqueIndex,int numOfcliques,FILE * file, int num_of_cameras ){
 
 	List * differentCameras = createList();
 	int negativeClique_position=-1;
@@ -157,6 +169,18 @@ List * createNegativePairs(Clique ** cliqueIndex,int numOfcliques,FILE * file){
 					CamerasPair * pair = createPair((CamSpec*)clique_node->data,(CamSpec*)negclique_node->data);
 
 					insert_toList(differentCameras ,(void*)pair);
+					if(pair->camera1->bitArray!=NULL && pair->camera2->bitArray!=NULL){
+						setBit(pair->camera1->bitArray,pair->camera2->arrayPosition);
+						setBit(pair->camera2->bitArray,pair->camera1->arrayPosition);
+					}else if(pair->camera1->bitArray==NULL && pair->camera2->bitArray!=NULL){
+						pair->camera1->bitArray = createBF(num_of_cameras);
+						setBit(pair->camera1->bitArray,pair->camera2->arrayPosition);
+						setBit(pair->camera2->bitArray,pair->camera1->arrayPosition);
+					}else if(pair->camera2->bitArray==NULL && pair->camera1->bitArray!=NULL){
+						pair->camera2->bitArray = createBF(num_of_cameras);
+						setBit(pair->camera1->bitArray,pair->camera2->arrayPosition);
+						setBit(pair->camera2->bitArray,pair->camera1->arrayPosition);
+					}
 					negclique_node = negclique_node->nextNode;
 					fprintf(file,"%s, %s \n",pair->camera1->name,pair->camera2->name);
 				}
@@ -240,8 +264,8 @@ CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,in
 	}
 
 	return Dataset;
-
 }
+
 
 Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int datasetSize,int stratify){
 
@@ -387,4 +411,221 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 		
 	}
 	free(dictionaryMap);
+}
+
+retraining_set ** LR_retrain(retraining_set** retrainingArray,LogisticRegression* model,CamSpec ** camArray, int num_of_cameras, float threshold,int* num_of_retrain_specs,size_t VectorSize){
+
+	float prediction = 0.0;
+
+	num_of_cameras = num_of_cameras/10;
+
+	for (int i = 0; i < num_of_cameras; i++){
+		if(camArray[i]->bitArray == NULL){
+			for (int j = i+1; j < num_of_cameras; j+=100){
+
+				DenseMatrix * concatedVector = concatDenseMatrices(camArray[i]->DenseVector,camArray[j]->DenseVector,VectorSize);
+				
+				int denseX_size = concatedVector->matrixSize;
+		
+				if(denseX_size){
+					prediction =  LR_predict_proba(model,concatedVector);
+
+					if(prediction < threshold || prediction> (1-threshold)){
+						retrainingArray = realloc(retrainingArray,(*num_of_retrain_specs+1)*sizeof(retraining_set*));
+						retrainingArray[*num_of_retrain_specs] = malloc(sizeof(retraining_set));
+						retrainingArray[*num_of_retrain_specs]->camera1 = camArray[i];
+						retrainingArray[*num_of_retrain_specs]->camera2 = camArray[j];
+						retrainingArray[*num_of_retrain_specs]->concatedVector = concatedVector;
+						retrainingArray[*num_of_retrain_specs]->prediction = prediction;
+						// printf("%d. %s - %s ---> %lf\n",*num_of_retrain_specs, retrainingArray[*num_of_retrain_specs]->camera1->name, retrainingArray[*num_of_retrain_specs]->camera2->name, retrainingArray[*num_of_retrain_specs]->prediction);					
+						(*num_of_retrain_specs)++;
+					}else
+						destroyDenseMatrix(concatedVector);
+					
+				}else
+					destroyDenseMatrix(concatedVector);
+			}
+		}else{
+			for (int j = i+1; j < num_of_cameras; j++){
+				if(!checkBit(camArray[i]->bitArray,j)){
+					DenseMatrix * concatedVector = concatDenseMatrices(camArray[i]->DenseVector,camArray[j]->DenseVector,VectorSize);
+				
+					int denseX_size = concatedVector->matrixSize;
+			
+					if(denseX_size){
+						prediction =  LR_predict_proba(model,concatedVector);
+
+						if(prediction < threshold || prediction> (1-threshold)){
+							retrainingArray = realloc(retrainingArray,(*num_of_retrain_specs+1)*sizeof(retraining_set*));
+							retrainingArray[*num_of_retrain_specs] = malloc(sizeof(retraining_set));
+							retrainingArray[*num_of_retrain_specs]->camera1 = camArray[i];
+							retrainingArray[*num_of_retrain_specs]->camera2 = camArray[j];
+							retrainingArray[*num_of_retrain_specs]->concatedVector = concatedVector;
+							retrainingArray[*num_of_retrain_specs]->prediction = prediction;
+							// printf("%d. %s - %s ---> %lf\n",*num_of_retrain_specs, retrainingArray[*num_of_retrain_specs]->camera1->name, retrainingArray[*num_of_retrain_specs]->camera2->name, retrainingArray[*num_of_retrain_specs]->prediction);					
+							(*num_of_retrain_specs)++;
+						}else
+							destroyDenseMatrix(concatedVector);
+						
+					}else
+						destroyDenseMatrix(concatedVector);					
+				}
+			}
+		}
+	}
+	return retrainingArray;
+}
+
+Xy_Split * resolve_transitivity_issues(Xy_Split * Xy_train,Clique*** cliqueIndex,int * numOfCliques,retraining_set** retrainingArray, int num_of_retrain_specs,int num_of_cameras, float threshold){
+
+	retraining_set* retrained_pair;
+	CamSpec * camera1;
+	CamSpec * camera2;
+	
+
+	for (int i = 0; i < num_of_retrain_specs; i++){
+		retrained_pair = retrainingArray[i];
+		camera1 = retrained_pair->camera1;
+		camera2 = retrained_pair->camera2;
+
+		if(camera1->myClique != -1 &&  camera2->myClique != -1){
+			if(!compareCliques(*cliqueIndex,camera1->myClique,camera2->myClique)){
+				if(retrained_pair->prediction < threshold){
+
+					int cliqueKey_1 = camera1->myClique;
+					int cliqueKey_2 = camera2->myClique;
+
+					if(!checkBit((*cliqueIndex)[cliqueKey_1]->bitArray,cliqueKey_2)){
+
+						setBit((*cliqueIndex)[cliqueKey_1]->bitArray,cliqueKey_2);
+						(*cliqueIndex)[cliqueKey_1] = insert_NegConnection((*cliqueIndex)[cliqueKey_1],cliqueKey_2);
+						(*cliqueIndex)[cliqueKey_1] = insert_uniqueNegConnection((*cliqueIndex)[cliqueKey_1],cliqueKey_2);
+					}
+
+					if(!checkBit((*cliqueIndex)[cliqueKey_2]->bitArray,cliqueKey_1)){
+						setBit((*cliqueIndex)[cliqueKey_2]->bitArray,cliqueKey_1);
+						(*cliqueIndex)[cliqueKey_2] = insert_NegConnection((*cliqueIndex)[cliqueKey_2],cliqueKey_1);	
+					}
+
+					Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,0);
+					retrained_pair->concatedVector = NULL;
+
+				}else{
+					Clique * clique1 =  (*cliqueIndex)[camera1->myClique];
+					Clique * clique2 =  (*cliqueIndex)[camera2->myClique];
+					clique1->set =  mergeLists(clique1->set, clique2->set);
+					camera2->myClique = camera1->myClique;
+
+					Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,1);
+					retrained_pair->concatedVector = NULL;			
+				}
+
+				if(camera1->bitArray!=NULL && camera2->bitArray!=NULL){
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}else if(camera1->bitArray==NULL && camera2->bitArray!=NULL){
+					camera1->bitArray = createBF(num_of_cameras);
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}else if(camera2->bitArray==NULL && camera1->bitArray!=NULL){
+					camera2->bitArray = createBF(num_of_cameras);
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}
+			}
+
+		}else if(camera1->myClique != -1 &&  camera2->myClique == -1){
+
+			Clique * clique1 =  (*cliqueIndex)[camera1->myClique];
+
+			if(retrained_pair->prediction > (1-threshold)){
+				insert_toList(clique1->set,camera2);
+				camera2->myClique = camera1->myClique;
+
+				if(camera1->bitArray!=NULL && camera2->bitArray!=NULL){
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}else if(camera1->bitArray==NULL && camera2->bitArray!=NULL){
+					camera1->bitArray = createBF(num_of_cameras);
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}else if(camera2->bitArray==NULL && camera1->bitArray!=NULL){
+					camera2->bitArray = createBF(num_of_cameras);
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}
+
+				Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,1);
+				retrained_pair->concatedVector = NULL;			
+
+			}
+		
+		}else if(camera1->myClique == -1 &&  camera2->myClique != -1){
+			
+			Clique * clique2 =  (*cliqueIndex)[camera2->myClique];
+
+			if(retrained_pair->prediction > (1-threshold)){
+				insert_toList(clique2->set,camera2);
+				camera1->myClique = camera2->myClique;
+
+				if(camera1->bitArray!=NULL && camera2->bitArray!=NULL){
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}else if(camera1->bitArray==NULL && camera2->bitArray!=NULL){
+					camera1->bitArray = createBF(num_of_cameras);
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}else if(camera2->bitArray==NULL && camera1->bitArray!=NULL){
+					camera2->bitArray = createBF(num_of_cameras);
+					setBit(camera1->bitArray,camera2->arrayPosition);
+					setBit(camera2->bitArray,camera1->arrayPosition);
+				}
+
+				Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,1);
+				retrained_pair->concatedVector = NULL;			
+			}
+		}else if(camera1->myClique == -1 &&  camera2->myClique == -1){
+			if(retrained_pair->prediction > (1-threshold)){
+				Clique * newClique =  constructClique();
+				newClique = addToClique(newClique, camera1);
+				newClique = addToClique(newClique, camera2);
+
+				*cliqueIndex = realloc(*cliqueIndex,(*numOfCliques+1)*sizeof(Clique*));
+				(*cliqueIndex)[*numOfCliques] = newClique;
+				(*numOfCliques)++;
+
+				Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,1);
+				retrained_pair->concatedVector = NULL;	
+			}
+
+		}		
+	}
+	return Xy_train;
+}
+
+void destroyRetrainArray(retraining_set** retrainingArray, int size){
+	
+	for (int i = 0; i < size; i++){
+		if(retrainingArray[i]->concatedVector != NULL){
+			destroyDenseMatrix(retrainingArray[i]->concatedVector);
+			retrainingArray[i]->concatedVector = NULL;	
+		}
+		free(retrainingArray[i]);
+	}
+
+	free(retrainingArray);
+}
+
+int compareRetrainingSet(const void * a, const void * b){
+
+	retraining_set * nodeA = *(retraining_set**) a;
+	retraining_set * nodeB = *(retraining_set**) b;
+
+	float diff = (((float)nodeA->prediction - (float)nodeB->prediction));
+   	
+   	if(diff>0.0) diff=-1;
+   	else if(diff== 0.0) diff=0;
+   	else diff = 1;
+
+   return diff;
 }

@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include "./Dataset.h"
 
-
 typedef struct LogisticRegression LogisticRegression;
 
 typedef struct LogisticRegression {
@@ -46,7 +45,6 @@ int decision_boundary(float probability);
 float sigmoid(float x);
 float accuracy(int * prediction_labels,int * true_labels,int numOfLabels);
 float euclid_norm(float * x, int size);
-
 
 HyperParameters * constructHyperParameters(
 	float * learning_rates,

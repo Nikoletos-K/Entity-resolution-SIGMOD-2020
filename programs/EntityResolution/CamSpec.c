@@ -13,11 +13,12 @@ CamSpec* createCamSpec(char * name,int arrayPosition){
 	CamSpec* cs = malloc(sizeof(CamSpec));
 	cs->name = strdup(name);
 	cs->arrayPosition = arrayPosition;
+	cs->myClique = -1;
 	cs->set = createList();
 	insert_toList(cs->set,cs);
 	cs->DenseVector=NULL;
 
-
+	cs->bitArray = NULL;
 	cs->dictionaryWords = malloc(sizeof(int*));
 	cs->wordCounters = malloc(sizeof(int*));
 	cs->numOfWords = 0;

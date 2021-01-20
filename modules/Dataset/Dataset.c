@@ -8,6 +8,7 @@
 #include <time.h>
 
 #include "./../../include/Dataset.h"
+#include "./../../include/LogisticRegression.h"
 
 Dataset * createDataset(){
 	
@@ -29,6 +30,16 @@ Xy_Split * createXy_Split(){
 
 	return Xy;
 }
+
+Xy_Split * insert_toXy_Train(Xy_Split * train,DenseMatrix* X,int y){
+	train->X = realloc(train->X,(train->size+1)*sizeof(DenseMatrix*));
+	train->X[train->size] = X;
+	train->y = realloc(train->y ,(train->size+1)*sizeof(int));
+	train->y[train->size] = y;
+	train->size++;
+
+	return train;
+} 
 
 Dataset * insert_toDataset(Dataset * dataset,DenseMatrix* X,int y,TrainTestVal type){
 

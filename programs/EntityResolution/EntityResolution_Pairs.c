@@ -9,9 +9,9 @@
 #include <math.h>
 
 #include "./../../include/Dataset.h"
-#include "./../../include/Vectorization.h"
-#include "./../../include/Clique.h"
-#include "./../../include/dictionary.h"
+// #include "./../../include/Vectorization.h"
+// #include "./../../include/Clique.h"
+// #include "./../../include/dictionary.h"
 #include "./../../include/PairsImplementation.h"
 
 HashTable * Dictionary;
@@ -92,7 +92,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing same cameras in PAIRS.csv: \n");
 
-	List * sameCameras = printPairs(cliqueIndex,numOfCliques); 
+	List * sameCameras = printPairs(cliqueIndex,numOfCliques,num_of_cameras); 
 	
 	printf(" <- End of printing same cameras\n");
 	t2 = (double) times(&tb2);
@@ -108,7 +108,7 @@ int main(int argc,char ** argv){
 	FILE * output = fopen("NEGATIVE_PAIRS.csv","w+");
 	fprintf(output, "left_spec_id, right_spec_id,\n");
 	cliqueIndex = createNegConnections(diffPairsList,cliqueIndex); 
-	List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques,output);
+	List * differentCameras = createNegativePairs(cliqueIndex,numOfCliques,output,num_of_cameras);
 	fclose(output);
 	printf(" <- End of forming negative cliques\n");
 	t2 = (double) times(&tb2);
@@ -170,7 +170,7 @@ int main(int argc,char ** argv){
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
-	
+
 	/* ----------------   TRAIN_TEST_VALIDATION -------------------------- */
 	
 	t1 = (double) times(&tb1);
@@ -199,7 +199,6 @@ int main(int argc,char ** argv){
 	deleteList(diffPairsList);
 
 	DJSDestructor(djSet);
-	destroyCliques(cliqueIndex,numOfCliques);
 
 	/* ----------------   TRAINING CLIQUES -------------------------- */
 
@@ -208,6 +207,8 @@ int main(int argc,char ** argv){
 	printf("\n-> Creating - Training model  \n");
 	float learning_rate,threshold;
 	int epochs;
+	int batch_size = 1024;
+	float step_value = 0.1;
 
 	if(!strcmp("./../../data/sigmod_medium_labelled_dataset.csv",argv[csvFile])){
 		learning_rate = 0.001;
@@ -218,26 +219,47 @@ int main(int argc,char ** argv){
 		learning_rate = 0.001;
 		threshold = 0.1;
 		epochs = 50;
-
 	}
-	printf("Learning rate: %lf\n", learning_rate);
-	printf("Threshold:     %lf\n", threshold);
-	printf("Max epochs:    %d\n", epochs);
+	// printf("Learning rate: %lf\n", learning_rate);
+	// printf("Threshold:     %lf\n", threshold);
+	// printf("Max epochs:    %d\n", epochs);
 
-	LogisticRegression* LR_Model = LR_construct(VectorSize*2,learning_rate,threshold,epochs);
-	LR_fit(LR_Model,vectorizedDataset->train);
+	// LogisticRegression* LR_Model = LR_construct(VectorSize*2,learning_rate,threshold,epochs);
+	// LR_fit(LR_Model,vectorizedDataset->train);
 
-	printf(" <- End of Creating - Training model \n");
-	t2 = (double) times(&tb2);
-	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	printf("PERFORMANCE of Creating - Training model  :\n");
-	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+	// printf(" <- End of Creating - Training model \n");
+	// t2 = (double) times(&tb2);
+	// cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	// printf("PERFORMANCE of Creating - Training model  :\n");
+	// printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
-	// while(threshold<0.5){
 
-	// 	LR_fit(LR_Model,vectorizedDataset->train);
-	// }
+	LogisticRegression* LR_Model = LR_construct(VectorSize*2,learning_rate,threshold,epochs,batch_size);
+	threshold = 0.1;
+	while(threshold<0.5){
+		printf("---------------\n");
+		int num_of_retrain_specs = 0;
+
+		retraining_set ** retrainingArray = malloc(sizeof(retraining_set*));
+
+
+		LR_fit(LR_Model,vectorizedDataset->train);
+		retrainingArray = LR_retrain(retrainingArray,LR_Model,camArray,num_of_cameras,threshold,&num_of_retrain_specs,VectorSize);
+
+		printf("---------------============--------------\n");
+		qsort(retrainingArray, num_of_retrain_specs, sizeof(retraining_set*), compareRetrainingSet);
+		printf("---------------============--------------\n");
+
+		vectorizedDataset->train = resolve_transitivity_issues(vectorizedDataset->train,&cliqueIndex,&numOfCliques,retrainingArray,num_of_retrain_specs,num_of_cameras,threshold);
+
+		// for (int i = 0; i < 50; i++){
+		// 	printf("%d. %s - %s ---> %lf\n",i, retrainingArray[i]->camera1->name, retrainingArray[i]->camera2->name, retrainingArray[i]->prediction);					
+		// }
+		destroyRetrainArray(retrainingArray, num_of_retrain_specs);
+
+		threshold += step_value;
+	}
 
 	printf(" <- End of Creating - Training model \n");
 	t2 = (double) times(&tb2);
@@ -250,17 +272,17 @@ int main(int argc,char ** argv){
 	/* ----------------   TESTING CLIQUES -------------------------- */
 
 
-	// t1 = (double) times(&tb1);
-	// printf("\n-> Testing model  \n");
+	t1 = (double) times(&tb1);
+	printf("\n-> Testing model  \n");
 	
-	// LR_Evaluation(LR_Model,vectorizedDataset->test,stdout);
+	LR_Evaluation(LR_Model,vectorizedDataset->test,stdout);
 
-	// printf(" <- End of Testing model  \n");
-	// t2 = (double) times(&tb2);
-	// cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-	// printf("PERFORMANCE of Testing model  :\n");
-	// printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
-	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+	printf(" <- End of Testing model  \n");
+	t2 = (double) times(&tb2);
+	cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	printf("PERFORMANCE of Testing model  :\n");
+	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
+	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
 	/* ----------------   GRID SEARCH -------------------------- */
@@ -292,6 +314,8 @@ int main(int argc,char ** argv){
 
 
 	printf("\n\n-> Restoring memory\n");
+
+	destroyCliques(cliqueIndex,numOfCliques);
 	
 	for(int i=0;i<dataset_size;i++)
 		deletePair(pairDataset[i]);
@@ -299,8 +323,6 @@ int main(int argc,char ** argv){
 
 	free(Labels);
 	LR_destroy(LR_Model);
-
-
 
 	deleteList(sameCameras);
 	deleteList(differentCameras);	
@@ -317,7 +339,7 @@ int main(int argc,char ** argv){
 	HTDestroy(CameraHT);
 
 	destroy_Dataset(vectorizedDataset,1);	
-
+	
 	destroyDataStructures();
 	printf("<- All frees done\n");
 

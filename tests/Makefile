@@ -7,7 +7,7 @@ DisJointSet_test_OBJS = DisJointSet_test.o $(MODULES)/DisJointSet/DisJointSet.o
 List_test_OBJS = List_test.o $(MODULES)/List/list.o
 bitArray_test_OBJS  = bitArray_test.o $(MODULES)/BitArray/bitArray.o
 Dataset_test_OBJS  = Dataset_test.o ./../programs/EntityResolution/Vectorization.o  $(MODULES)/Dataset/Dataset.o
-LogisticRegression_test_OBJS  = LogisticRegression_test.o   $(MODULES)/LogisticRegression/LogisticRegression.o
+LogisticRegression_test_OBJS  = LogisticRegression_test.o 	./../programs/EntityResolution/Vectorization.o $(MODULES)/BitArray/bitArray.o  $(MODULES)/LogisticRegression/LogisticRegression.o
 
 Json_test_OBJS = 																									\
 	Json_test.o ./../programs/EntityResolution/CamSpec.o 											\

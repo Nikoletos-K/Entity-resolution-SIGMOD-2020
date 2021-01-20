@@ -1,8 +1,8 @@
 #pragma once
 
 #include "./list.h"
-// #include "./Vectorization.h"
-#include "./LogisticRegression.h"
+#include "./bitArray.h"
+#include "./Vectorization.h"
 
 typedef List * Set;
 
@@ -11,7 +11,9 @@ typedef List * Set;
 typedef struct CamSpec{
 	char* name;
 	int arrayPosition;
+	int myClique;
 	Set set;
+	BF* bitArray;
 	int* dictionaryWords;
 	int * wordCounters;
 	int numOfWords;

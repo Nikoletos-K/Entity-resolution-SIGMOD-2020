@@ -1,6 +1,10 @@
 #pragma once
 
 #include "./dictionary.h"
+#include "./LogisticRegression.h"
+
+#define FALSE 0
+#define TRUE 1
 
 typedef struct Clique{
 
@@ -11,10 +15,12 @@ typedef struct Clique{
 	size_t numOfNegativeCliques; 
 	BF* bitArray;
 	Dataset * dataset;
-	LogisticRegression * LRModel;
+	// LogisticRegression * LRModel;
 
 } Clique;
 
+Clique* constructClique();
+Clique* addToClique(Clique* myClique, CamSpec* newCamera);
 Clique** CreateCliques(DisJointSet * djSet,int* numOfsets);
 void destroyCliques(Clique** setsList,int numOfsets);
 
@@ -23,3 +29,4 @@ float* testCliques(Clique** cliqueIndex,int numOfCliques);
 void GridSearchCliques(Clique * clique,int numOfCliques,FILE * file);
 void train_test_split_Cliques(Clique ** cliqueIndex,int numOfCliques);
 float* validateCliques(Clique** cliqueIndex,int numOfCliques);
+int compareCliques(Clique** cliqueIndex,int cliqueA, int cliqueB);
