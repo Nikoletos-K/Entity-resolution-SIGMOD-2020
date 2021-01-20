@@ -156,6 +156,10 @@ int main(int argc,char ** argv){
 
 	HTDestroy(stopwords);
 
+	for(int i=0;i<DictionarySize;i++)
+		free(DictionaryNodes[i]);
+	free(DictionaryNodes);
+
 	/* ----------------   PRINTING DATASET -------------------------- */
 	
 	t1 = (double) times(&tb1);
@@ -213,42 +217,41 @@ int main(int argc,char ** argv){
 	if(!strcmp("./../../data/sigmod_medium_labelled_dataset.csv",argv[csvFile])){
 		learning_rate = 0.1;
 		threshold = 0.0001;
-		epochs = 1;
+		epochs = 5;
 
 	}else{
 		learning_rate = 0.001;
 		threshold = 0.1;
 		epochs = 50;
 	}
-	// printf("Learning rate: %lf\n", learning_rate);
-	// printf("Threshold:     %lf\n", threshold);
-	// printf("Max epochs:    %d\n", epochs);
+	printf("Learning rate: %lf\n", learning_rate);
+	printf("Threshold:     %lf\n", threshold);
+	printf("Max epochs:    %d\n", epochs);
 
 	LogisticRegression* LR_Model = LR_construct(VectorSize*2,learning_rate,threshold,epochs,batch_size,numThreads);
 	threshold = 0.02;
 	int pairsThreads = 20;
 	create_retrainScheduler(pairsThreads);
-	int retrain_index=0,retrain_loops=2;
+	int retrain_index=0;
+	int retrain_loops=2;
 
-	while(threshold<0.5 || retrain_index < retrain_loops){
-		printf("---------------\n");
+	while( (threshold<0.5) || (retrain_index < retrain_loops)){
+
 		int num_of_retrain_specs = 0;
 
 		retraining_set ** retrainingArray = malloc(sizeof(retraining_set*));
 
-
+		printf("\nTRAIN MODEL - %d\n",retrain_index);
 		LR_fit(LR_Model,vectorizedDataset->train);
+		printf("\nVALIDATE MODEL: \n");
+		LR_Evaluation(LR_Model,vectorizedDataset->test,stdout);
+
 		retrainingArray = LR_retrain(retrainingArray,LR_Model,camArray,num_of_cameras,threshold,&num_of_retrain_specs,VectorSize);
 
-		printf("---------------============--------------\n");
 		qsort(retrainingArray, num_of_retrain_specs, sizeof(retraining_set*), compareRetrainingSet);
-		printf("---------------============--------------\n");
 
 		vectorizedDataset->train = resolve_transitivity_issues(vectorizedDataset->train,&cliqueIndex,&numOfCliques,retrainingArray,num_of_retrain_specs,num_of_cameras,threshold);
 
-		// for (int i = 0; i < 50; i++){
-		// 	printf("%d. %s - %s ---> %lf\n",i, retrainingArray[i]->camera1->name, retrainingArray[i]->camera2->name, retrainingArray[i]->prediction);					
-		// }
 		destroyRetrainArray(retrainingArray, num_of_retrain_specs);
 
 		retrain_index++;
@@ -271,7 +274,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Testing model  \n");
 	
-	LR_Evaluation(LR_Model,vectorizedDataset->test,stdout);
+	LR_Evaluation(LR_Model,vectorizedDataset->validation,stdout);
 
 	printf(" <- End of Testing model  \n");
 	t2 = (double) times(&tb2);
@@ -279,6 +282,19 @@ int main(int argc,char ** argv){
 	printf("PERFORMANCE of Testing model  :\n");
 	printf("- CPU_TIME: %.2lf sec\n",cpu_time/ticspersec);
 	printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
+
+	/* ----------------   PRINTING CLIQUES -------------------------- */
+	// t1 = (double) times(&tb1);
+	// printf("\n-> Printing same cameras in PAIRS.csv: \n");
+
+	// sameCameras = printPairs(cliqueIndex,numOfCliques,num_of_cameras); 
+	
+	// printf(" <- End of printing same cameras\n");
+	// t2 = (double) times(&tb2);
+	// cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+	// printf("PERFORMANCE of printing same cameras:\n");
+	// printf("- CPU_TIME:  %.2lf sec\n",cpu_time/ticspersec);
+	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
 	/* ----------------   GRID SEARCH -------------------------- */
@@ -323,11 +339,6 @@ int main(int argc,char ** argv){
 	deleteList(sameCameras);
 	deleteList(differentCameras);	
 	
-	for(int i=0;i<DictionarySize;i++)
-		free(DictionaryNodes[i]);
-	free(DictionaryNodes);
-
-
 	for(int i=0;i<num_of_cameras;i++)
 		destroyCamSpec(camArray[i]);
 	free(camArray);

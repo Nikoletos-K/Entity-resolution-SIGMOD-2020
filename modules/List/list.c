@@ -117,7 +117,7 @@ List * mergeLists(List * list1,List * list2){
 	list1->lastNode->nextNode = list2->firstNode;
 	list1->lastNode = list2->lastNode;
 	list1->numOfNodes += list2->numOfNodes;
-	list2 = list1;
+	list2 = NULL;
 
 	return list1;
 }

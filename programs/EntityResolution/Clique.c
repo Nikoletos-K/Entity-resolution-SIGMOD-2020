@@ -87,8 +87,8 @@ void destroyCliques(Clique** cliquesArray,int numOfCliques){
 			destroy_Dataset(cliquesArray[i]->dataset,0);
 		if(cliquesArray[i]->bitArray!=NULL)
 			destroyBF(cliquesArray[i]->bitArray);
-		if(cliquesArray[i]->LRModel!=NULL)
-			LR_destroy(cliquesArray[i]->LRModel);
+		// if(cliquesArray[i]->LRModel!=NULL)
+		// 	LR_destroy(cliquesArray[i]->LRModel);
 		if(cliquesArray[i]->unique_negativeCliques!=NULL)
 			free(cliquesArray[i]->unique_negativeCliques);
 		if(cliquesArray[i]->negativeCliques!=NULL)

@@ -491,10 +491,16 @@ void update_retrainArray(void * default_args){
 	float prediction = 0.0;
 	int j = i+1;
 
-	while (j < num_of_cameras && (camArray[i]->bitArray == NULL || (camArray[i]->bitArray != NULL && !checkBit(camArray[i]->bitArray,j)))){
+	while (j < num_of_cameras && (camArray[i]->bitArray == NULL || ((camArray[i]->bitArray != NULL) && !checkBit(camArray[i]->bitArray,j)))){
 
 		DenseMatrix * concatedVector = concatDenseMatrices(camArray[i]->DenseVector,camArray[j]->DenseVector,VectorSize);
-		
+	
+		if (concatedVector==NULL){
+			i++;
+			j = i+1;
+			continue;
+		}
+
 		int denseX_size = concatedVector->matrixSize;
 
 		if(denseX_size){
@@ -631,36 +637,38 @@ Xy_Split * resolve_transitivity_issues(Xy_Split * Xy_train,Clique*** cliqueIndex
 				Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,1);
 				retrained_pair->concatedVector = NULL;			
 			}
-		}else if(camera1->myClique == -1 &&  camera2->myClique == -1){
-			if(retrained_pair->prediction > (1-threshold)){
-				Clique * newClique =  constructClique(numOfCliques);
-				newClique = addToClique(newClique, camera1);
-				newClique = addToClique(newClique, camera2);
+		}
+			// else if(camera1->myClique == -1 &&  camera2->myClique == -1){
+		// 	if(retrained_pair->prediction > (1-threshold)){
+		// 		Clique * newClique =  constructClique(numOfCliques);
+				
+		// 		newClique = addToClique(newClique, camera1);
+		// 		newClique = addToClique(newClique, camera2);
 
-				camera1->myClique = *numOfCliques -1;
-				camera2->myClique = *numOfCliques -1;
+		// 		camera1->myClique = *numOfCliques -1;
+		// 		camera2->myClique = *numOfCliques -1;
 
-				*cliqueIndex = realloc(*cliqueIndex,(*numOfCliques)*sizeof(Clique*));
-				(*cliqueIndex)[*numOfCliques-1] = newClique;
+		// 		*cliqueIndex = realloc(*cliqueIndex,(*numOfCliques)*sizeof(Clique*));
+		// 		(*cliqueIndex)[*numOfCliques-1] = newClique;
 
-				if(camera1->bitArray!=NULL && camera2->bitArray!=NULL){
-					setBit(camera1->bitArray,camera2->arrayPosition);
-					setBit(camera2->bitArray,camera1->arrayPosition);
-				}else if(camera1->bitArray==NULL && camera2->bitArray!=NULL){
-					camera1->bitArray = createBF(num_of_cameras);
-					setBit(camera1->bitArray,camera2->arrayPosition);
-					setBit(camera2->bitArray,camera1->arrayPosition);
-				}else if(camera2->bitArray==NULL && camera1->bitArray!=NULL){
-					camera2->bitArray = createBF(num_of_cameras);
-					setBit(camera1->bitArray,camera2->arrayPosition);
-					setBit(camera2->bitArray,camera1->arrayPosition);
-				}
+		// 		if(camera1->bitArray!=NULL && camera2->bitArray!=NULL){
+		// 			setBit(camera1->bitArray,camera2->arrayPosition);
+		// 			setBit(camera2->bitArray,camera1->arrayPosition);
+		// 		}else if(camera1->bitArray==NULL && camera2->bitArray!=NULL){
+		// 			camera1->bitArray = createBF(num_of_cameras);
+		// 			setBit(camera1->bitArray,camera2->arrayPosition);
+		// 			setBit(camera2->bitArray,camera1->arrayPosition);
+		// 		}else if(camera2->bitArray==NULL && camera1->bitArray!=NULL){
+		// 			camera2->bitArray = createBF(num_of_cameras);
+		// 			setBit(camera1->bitArray,camera2->arrayPosition);
+		// 			setBit(camera2->bitArray,camera1->arrayPosition);
+		// 		}
 
-				Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,1);
-				retrained_pair->concatedVector = NULL;	
-			}
+		// 		Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,1);
+		// 		retrained_pair->concatedVector = NULL;	
+		// 	}
 
-		}		
+		// }		
 	}
 	return Xy_train;
 }
