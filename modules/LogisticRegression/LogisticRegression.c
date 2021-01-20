@@ -46,9 +46,9 @@ void batchThread(void * args){
 	}
 
 	// for (int i = 0; i < trainingModel->vectorSize; i++){
-	// 	// printf("%lf -> ", gradientsArray[gradient_position][i]);
+	// 	printf("%lf -> ", gradientsArray[gradient_position][i]);
 	// 	gradientsArray[gradient_position][i] /= ((float)(batch_last_element-batch_first_element));
-	// 	// printf("%lf |\n",gradientsArray[gradient_position][i] );
+	// 	printf("%lf |\n",gradientsArray[gradient_position][i] );
 	// }
 }
 
@@ -111,7 +111,7 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 		int current_batch = 0; 
 		int submittedJobs=0;
 
-		for(int i=0; i<N; i++){
+		while(current_batch < num_of_batches+1){
 
 			threadArgs * args = new_threadArgs(batch_first_element,batch_last_element,submittedJobs%model->numThreads);
 			submit_job(scheduler,batchThread,(void*)args);
@@ -233,7 +233,7 @@ void LR_destroy(LogisticRegression* model){
 
 int decision_boundary(float propability){
 	//printf("(%.5lf) - ",propability);
-	return (propability<0.5 ? 0:1);
+	return (propability<=0.5 ? 0:1);
 }
 
 float sigmoid(float x){
