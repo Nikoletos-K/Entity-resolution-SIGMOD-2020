@@ -57,7 +57,7 @@ void submit_job(JobScheduler* scheduler,void (*routine)(void*),void * args){
 
 	pthread_mutex_lock(&(scheduler->queue_mtx));
 
-	printf("New job submitted\n");
+
 	Job * job = new_job(args,routine);
 	QueuePush(scheduler->jobsQueue,(void*)job);
 	scheduler->numOfJobs++;
@@ -73,7 +73,7 @@ void submit_job(JobScheduler* scheduler,void (*routine)(void*),void * args){
 
 void * thread_function(void * scheduler_arguments){
 
-	printf("Thread created\n");
+
 	JobScheduler * scheduler = (JobScheduler*) scheduler_arguments;
 
 	while(true){
@@ -94,17 +94,15 @@ void * thread_function(void * scheduler_arguments){
 
 void execute_job(JobScheduler * scheduler){
 
-	printf("Time to execut a job\n");
+
 	Job * job = (Job *) QueuePop(scheduler->jobsQueue);
 	pthread_mutex_unlock(&(scheduler->queue_mtx));
 
 	void (*routine)(void*) = job->routine;
 	void * job_args = job->args;
 
-	printf("what here %ld\n",pthread_self());
+
  	routine(job_args);
- 	printf("oh here\n");
- 	fflush(stdout);
 
  	pthread_mutex_lock(&(scheduler->queue_mtx));
 
@@ -136,8 +134,9 @@ void shutdown_JobScheduler(JobScheduler* scheduler){
 
 	int err;
 	for(int t=0;t<scheduler->pool_size;t++){
-		if( (err = pthread_join((scheduler->threads[t]),NULL))){
-			perror2("pthread_create",err);
+
+		if((err = pthread_join(scheduler->threads[t],NULL))){
+			perror2("pthread_join",err);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -146,13 +145,14 @@ void shutdown_JobScheduler(JobScheduler* scheduler){
 void destroy_scheduler(JobScheduler* scheduler){
 
 	shutdown_JobScheduler(scheduler);
-	free(scheduler->threads);
 
-	pthread_mutex_destroy(&(scheduler->queue_mtx));
+	
 	pthread_cond_destroy(&(scheduler->queue_not_empty));
 	pthread_cond_destroy(&(scheduler->queue_empty));
 	pthread_cond_destroy(&(scheduler->cond_barrier));
+	pthread_mutex_destroy(&(scheduler->queue_mtx));
 
 	deleteQueue(scheduler->jobsQueue);
+	free(scheduler->threads);
 	free(scheduler);
 }

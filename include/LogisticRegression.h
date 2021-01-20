@@ -22,14 +22,15 @@ typedef struct LogisticRegression {
 
 } LogisticRegression;
 
+
 typedef struct threadArgs {
 
 	int batch_first_element;
 	int batch_last_element;
 	int gradient_position;
 
-
 } threadArgs;
+
 
 typedef struct HyperParameters {
 	

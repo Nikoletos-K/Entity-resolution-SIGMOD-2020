@@ -10,6 +10,8 @@
 #include "./../../include/LogisticRegression.h"
 
 
+LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs,int batch_size){
+
 LogisticRegression* trainingModel;
 
 DenseMatrix **   X_train;
@@ -20,12 +22,10 @@ JobScheduler * scheduler;
 
 void batchThread(void * args){
 
-	// fprintf(stdout, "\nThread now executs %ld \n",pthread_self());
-	
+
 	int batch_first_element = ((threadArgs*)  args)->batch_first_element;
 	int batch_last_element  = ((threadArgs*)  args)->batch_last_element;
 	int gradient_position   =  ((threadArgs*)  args)->gradient_position;
-	fprintf(stdout, "%d %d  %d\n\n",batch_first_element,batch_last_element, gradient_position );
 
 	float loss,value;
 	int weight_position;
@@ -38,23 +38,23 @@ void batchThread(void * args){
 		if(denseX_size)
 			loss =  LR_predict_proba(trainingModel,denseX) - y_train[i];
 
+
 		for(int p=0; p<denseX_size; p++){
 
-			/*  Update weights  */
 			weight_position = denseX->matrix[p]->position;
 			value           = denseX->matrix[p]->value;
-
-
 			gradientsArray[gradient_position][weight_position] += loss*value;
-		}
 
+			// printf("%lf - %lf | ",loss,value);
+		}
 	}
 
-	for (int i = 0; i < trainingModel->vectorSize; i++)
-		gradientsArray[gradient_position][i] /= (batch_last_element-batch_first_element);
-	
+	for (int i = 0; i < trainingModel->vectorSize; i++){
+		printf("%lf -> ", gradientsArray[gradient_position][i]);
+		gradientsArray[gradient_position][i] /= ((float)(batch_last_element-batch_first_element));
+		printf("%lf |\n",gradientsArray[gradient_position][i] );
+	}
 }
-
 
 
 LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs,int batch_size,int numThreads){
@@ -72,12 +72,12 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 	
 	for(int w=0;w<model->vectorSize;w++){
 		// model->weights[w] = (rand()%2 == 0 ? -1:1)*1/rand();
-		// model->weights[w] = (float) 1/(float)rand();
-		model->weights[w] = 0.0;
+		model->weights[w] = (float) ((float)1)/(float)rand();
+		// model->weights[w] = 0.0;
 	}
 
-	// model->bias = 1/rand();
-	model->bias = 0.0;
+	model->bias = (float)((float)1)/rand();
+	// model->bias = 0.0;
 	// model->bias = 1.0;
 
 	
@@ -95,7 +95,7 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 	X_train  = (DenseMatrix **) Xy_train->X;
 	y_train          		= Xy_train->y;
 	int N                   = Xy_train->size; 
-	int batch_size = model->batch_size;
+
 	int num_of_batches = N/batch_size;
 	int last_batch_size = N%batch_size;
 
@@ -104,53 +104,53 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 		gradientsArray[i] = calloc(model->vectorSize,sizeof(float));
 	printf("Num of batches %d && batches/threads  %d \n",num_of_batches,num_of_batches/model->numThreads );
 	
+	
 	while(!converged && epochs < model->max_epochs){
 		
-		printf("------ Epoch %d \n", epochs);
-		float prev_norm = euclid_norm(model->weights,model->vectorSize);
-		int batch_first_element = 0;
-		int batch_last_element = batch_first_element + batch_size;
-		int current_batch = 0; 
-		int threadCounter=0;
+		batch_size = model->batch_size;
+		num_of_batches  = N/batch_size;
+		last_batch_size = N%batch_size;
 		int submittedJobs=0;
+
 
 		while(current_batch < num_of_batches+1){
 
-			printf("--- Batch %d/%d\n",current_batch,num_of_batches+1 );
-			printf("--- Elem-start %d\n",batch_first_element);
-			printf("--- Elem-end %d\n",batch_last_element );
-
 			threadArgs * args = new_threadArgs(batch_first_element,batch_last_element,submittedJobs%model->numThreads);
-
-
 			submit_job(scheduler,batchThread,(void*)args);
 			submittedJobs++;
-			printf("----- > submittedJobs %d\n",submittedJobs );
+
 
 			if(submittedJobs % model->numThreads == 0 || current_batch == num_of_batches){
 
-				printf("\n\n----------------- All right lets get some results %d\n\n",scheduler->numOfJobs);
-				wait_activeJobs_finish(scheduler);
 
-				float * avg_gradients = malloc(sizeof(float)*model->vectorSize);
-				for(int th=0;th<submittedJobs % model->numThreads;th++){
-					for(int w=0;w<model->vectorSize;w++){
-						avg_gradients[w] += gradientsArray[th][w]; 
-						gradientsArray[th][w] = 0.0;
+         int batches_executed = (submittedJobs % model->numThreads)+1;
+				 wait_activeJobs_finish(scheduler);
+
+				float * avg_gradients = calloc(model->vectorSize,sizeof(float));
+
+				for(int w=0;w<model->vectorSize;w++){
+					for(int th=0;th<batches_executed;th++){
+						// printf("%d %d %lf /",th,w,gradientsArray[th][w] );
+						avg_gradients[w] += gradientsArray[th][w];
+						gradientsArray[th][w] = 0;
 					}
 				}
 					
+				float avg_bias_gradient = 0;
+				for(int w=0;w<model->vectorSize;w++){
+					// printf("%lf %lf *** ",model->weights[w], ((float)(avg_gradients[w]*model->learning_rate))/(float)batches_executed);
+					model->weights[w] = model->weights[w]-((float)(avg_gradients[w]*model->learning_rate))/((float)batches_executed);
+					avg_bias_gradient += avg_gradients[w];
+				}
 
-				for(int w=0;w<model->vectorSize;w++)
-					model->weights[w] -= (avg_gradients[w]*model->learning_rate)/model->numThreads;
+				// model->bias -=  (float)((float)avg_bias_gradient*((float)model->learning_rate))/((float)batches_executed);
 				
 				free(avg_gradients);
 
 			}
 			
 			current_batch++;
-			printf("------------------------------------------------------ %d\n",current_batch );
-			if(current_batch != num_of_batches){
+
 				batch_first_element += batch_size;
 				batch_last_element = batch_first_element + batch_size;
 			}else{
@@ -158,7 +158,6 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 				printf("N %d\n",N );
 				batch_first_element += batch_size;
 				batch_last_element += last_batch_size;
-				batch_size = last_batch_size;
 			}
 
 			threadCounter = (threadCounter+1)%scheduler->pool_size;
@@ -174,11 +173,8 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 			break;
 		}
 
-		// free(gradient);
 		epochs++;
 	}
-
-	
 	free(prev_weights);
 }
 
@@ -242,7 +238,7 @@ int decision_boundary(float propability){
 }
 
 float sigmoid(float x){
-	return 1/(1+exp(-x));
+	return 1/(float)(1+exp(-x));
 }
 
 
@@ -330,9 +326,9 @@ void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file){
 
 
 	for (int j = 0; j < eval_set->size; j++){
-		// printf("True label: %d | ",eval_set->y[j]);
-		prediction_labels[j]  = LR_predict(model,eval_set->X[j],0);
-		// printf("|  prediction:  %d \n ",prediction_labels[j]);
+		printf("True label: %d | ",eval_set->y[j]);
+		prediction_labels[j]  = LR_predict(model,eval_set->X[j],1);
+		printf("|  prediction:  %d \n ",prediction_labels[j]);
 	}
 
 
