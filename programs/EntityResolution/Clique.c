@@ -85,8 +85,8 @@ void destroyCliques(Clique** cliquesArray,int numOfCliques){
 			destroy_Dataset(cliquesArray[i]->dataset,0);
 		if(cliquesArray[i]->bitArray!=NULL)
 			destroyBF(cliquesArray[i]->bitArray);
-		// if(cliquesArray[i]->LRModel!=NULL)
-		// 	LR_destroy(cliquesArray[i]->LRModel);
+		if(cliquesArray[i]->LRModel!=NULL)
+			LR_destroy(cliquesArray[i]->LRModel);
 		if(cliquesArray[i]->unique_negativeCliques!=NULL)
 			free(cliquesArray[i]->unique_negativeCliques);
 		if(cliquesArray[i]->negativeCliques!=NULL)
@@ -184,93 +184,88 @@ int compareCliques(Clique** cliqueIndex,int cliqueA, int cliqueB){
 	return 0;
 }
 
-// void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs){
 void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs,int batch_size,int numThreads){
 
-// 	Clique* clique;
-// 	Xy_Split * train;
+	Clique* clique;
+	Xy_Split * train;
 
-// 	for(int i=0; i<numOfCliques; i++){
+	for(int i=0; i<numOfCliques; i++){
 
-// 		clique = cliqueIndex[i];
-// 		train = clique->dataset->train;
+		clique = cliqueIndex[i];
+		train = clique->dataset->train;
 
-// 		clique->LRModel = LR_construct(VectorSize,learning_rate,threshold,max_epochs);
-// 		LR_fit(clique->LRModel,train);
-// 	}
-// }
 		clique->LRModel = LR_construct(VectorSize,learning_rate,threshold,max_epochs,batch_size,numThreads);
 		LR_fit(clique->LRModel,train);
-	// }
+	}
 }
 
 
 
-// float* testCliques(Clique** cliqueIndex,int numOfCliques){
+float* testCliques(Clique** cliqueIndex,int numOfCliques){
 
-	// Clique* clique;
-	// Xy_Split * test;
-	// int * prediction_labels;
-	// float * accuracyArray = malloc(numOfCliques*sizeof(float));
+	Clique* clique;
+	Xy_Split * test;
+	int * prediction_labels;
+	float * accuracyArray = malloc(numOfCliques*sizeof(float));
 
-	// for(int i=0; i<numOfCliques; i++){
+	for(int i=0; i<numOfCliques; i++){
 
-	// 	clique = cliqueIndex[i];
-	// 	test   = clique->dataset->test;
+		clique = cliqueIndex[i];
+		test   = clique->dataset->test;
 
-	// 	prediction_labels =  malloc((test->size)*sizeof(int));
+		prediction_labels =  malloc((test->size)*sizeof(int));
 
-	// 	for (int j = 0; j < test->size; j++){
-	// 		// printf("True label: %d | ",test->y[j]);
-	// 		prediction_labels[j] = LR_predict(clique->LRModel,test->X[j],0);
-	// 		// printf("|  prediction:  %d \n ",prediction_labels[j]);
-	// 	}
-	// 	// printf("\n\n");
+		for (int j = 0; j < test->size; j++){
+			// printf("True label: %d | ",test->y[j]);
+			prediction_labels[j] = LR_predict(clique->LRModel,test->X[j],0);
+			// printf("|  prediction:  %d \n ",prediction_labels[j]);
+		}
+		// printf("\n\n");
 		
-	// 	accuracyArray[i] =  accuracy(prediction_labels,test->y,test->size);
+		accuracyArray[i] =  accuracy(prediction_labels,test->y,test->size);
 		
-	// 	free(prediction_labels);	
-	// }
+		free(prediction_labels);	
+	}
 
-	// return accuracyArray;	
-// }
+	return accuracyArray;	
+}
 
 
-// float* validateCliques(Clique** cliqueIndex,int numOfCliques){
+float* validateCliques(Clique** cliqueIndex,int numOfCliques){
 
-	// Clique* clique;
-	// Xy_Split * validation;
-	// float prediction;
-	// float * accuracyArray = malloc(numOfCliques*sizeof(float));
-	// float max_prediction;
-	// int max_clique;
-	// int numOfCorrectPred;
+	Clique* clique;
+	Xy_Split * validation;
+	float prediction;
+	float * accuracyArray = malloc(numOfCliques*sizeof(float));
+	float max_prediction;
+	int max_clique;
+	int numOfCorrectPred;
 
-	// for(int i=0; i<numOfCliques; i++){
+	for(int i=0; i<numOfCliques; i++){
 
-	// 	clique = cliqueIndex[i];
-	// 	validation = clique->dataset->validation;
-	// 	numOfCorrectPred = 0;
+		clique = cliqueIndex[i];
+		validation = clique->dataset->validation;
+		numOfCorrectPred = 0;
 		
-	// 	for (int j = 0; j < validation->size; j++){
-	// 		max_prediction = 0.0;
-	// 		for(int k=0; k<numOfCliques; k++){
-	// 			clique = cliqueIndex[k];
-	// 			prediction =  LR_predict_proba(clique->LRModel,validation->X[j]);
-	// 			// printf("clique: %d | prediction: %lf \n ",k,prediction );
-	// 			if(prediction > max_prediction){
-	// 				max_prediction = prediction;
-	// 				max_clique = k;
-	// 			}
-	// 		}
-	// 		if(max_clique == validation->y[j]){
-	// 			numOfCorrectPred++;
-	// 		}
-	// 		// printf("---> correct:  %d | predict:  %d \n",validation->y[j],max_clique );
-	// 	}
+		for (int j = 0; j < validation->size; j++){
+			max_prediction = 0.0;
+			for(int k=0; k<numOfCliques; k++){
+				clique = cliqueIndex[k];
+				prediction =  LR_predict_proba(clique->LRModel,validation->X[j]);
+				// printf("clique: %d | prediction: %lf \n ",k,prediction );
+				if(prediction > max_prediction){
+					max_prediction = prediction;
+					max_clique = k;
+				}
+			}
+			if(max_clique == validation->y[j]){
+				numOfCorrectPred++;
+			}
+			// printf("---> correct:  %d | predict:  %d \n",validation->y[j],max_clique );
+		}
 
-	// 	accuracyArray[i] = (float)((float)numOfCorrectPred/ (float) validation->size)*100.0;		
-	// }
+		accuracyArray[i] = (float)((float)numOfCorrectPred/ (float) validation->size)*100.0;		
+	}
 
-	// return accuracyArray;	
-// }
+	return accuracyArray;	
+}

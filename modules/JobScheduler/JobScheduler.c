@@ -67,8 +67,6 @@ void submit_job(JobScheduler* scheduler,void (*routine)(void*),void * args){
 	pthread_mutex_unlock(&(scheduler->queue_mtx));
 }
 
-// int execute_all_jobs(JobScheduler* sch){
-// }
 
 void * thread_function(void * scheduler_arguments){
 

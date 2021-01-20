@@ -15,7 +15,7 @@ typedef struct Clique{
 	size_t numOfNegativeCliques; 
 	BF* bitArray;
 	Dataset * dataset;
-	// LogisticRegression * LRModel;
+	LogisticRegression * LRModel;
 
 } Clique;
 

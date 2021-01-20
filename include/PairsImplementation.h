@@ -19,6 +19,18 @@ typedef struct retraining_set{
 	float prediction;
 }retraining_set;
 
+typedef struct pairsArgs {
+	
+	LogisticRegression* model;
+	CamSpec ** camArray;
+	int num_of_cameras;
+	float threshold;
+	size_t VectorSize;
+	int i;
+
+}pairsArgs;
+
+
 
 List * printPairs(Clique** setsList,int numOfsets,int num_of_cameras );
 void printForward(List * list,FILE * output,void (*printData)(void*,FILE *),List * sameCameras_list,int num_of_cameras);
@@ -43,3 +55,8 @@ retraining_set ** LR_retrain(retraining_set** retrainingArray,LogisticRegression
 int compareRetrainingSet(const void * a, const void * b);
 Xy_Split * resolve_transitivity_issues(Xy_Split * Xy_train,Clique*** cliqueIndex,int * numOfCliques,retraining_set** retrainingArray, int num_of_retrain_specs,int num_of_cameras, float threshold);
 void destroyRetrainArray(retraining_set** retrainingArray, int size);
+
+pairsArgs * new_pairsArgs(	LogisticRegression* model,CamSpec ** camArray,int num_of_cameras,float threshold,size_t VectorSize,int i);
+void create_retrainScheduler(int numThreads);
+void destroy_retrainScheduler();
+void update_retrainArray(void * default_args);

@@ -211,7 +211,7 @@ int main(int argc,char ** argv){
 
 	int numThreads = 15,batch_size=1024;
 	if(!strcmp("./../../data/sigmod_medium_labelled_dataset.csv",argv[csvFile])){
-		learning_rate = 0.01;
+		learning_rate = 0.1;
 		threshold = 0.0001;
 		epochs = 1;
 
@@ -225,8 +225,12 @@ int main(int argc,char ** argv){
 	// printf("Max epochs:    %d\n", epochs);
 
 	LogisticRegression* LR_Model = LR_construct(VectorSize*2,learning_rate,threshold,epochs,batch_size,numThreads);
-	threshold = 0.1;
-	while(threshold<0.5){
+	threshold = 0.02;
+	int pairsThreads = 20;
+	create_retrainScheduler(pairsThreads);
+	int retrain_index=0,retrain_loops=2;
+
+	while(threshold<0.5 || retrain_index < retrain_loops){
 		printf("---------------\n");
 		int num_of_retrain_specs = 0;
 
@@ -247,8 +251,11 @@ int main(int argc,char ** argv){
 		// }
 		destroyRetrainArray(retrainingArray, num_of_retrain_specs);
 
+		retrain_index++;
 		threshold += step_value;
 	}
+
+	destroy_retrainScheduler();
 
 	printf(" <- End of Creating - Training model \n");
 	t2 = (double) times(&tb2);

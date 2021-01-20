@@ -45,11 +45,11 @@ void batchThread(void * args){
 		}
 	}
 
-	for (int i = 0; i < trainingModel->vectorSize; i++){
-		printf("%lf -> ", gradientsArray[gradient_position][i]);
-		gradientsArray[gradient_position][i] /= ((float)(batch_last_element-batch_first_element));
-		printf("%lf |\n",gradientsArray[gradient_position][i] );
-	}
+	// for (int i = 0; i < trainingModel->vectorSize; i++){
+	// 	// printf("%lf -> ", gradientsArray[gradient_position][i]);
+	// 	gradientsArray[gradient_position][i] /= ((float)(batch_last_element-batch_first_element));
+	// 	// printf("%lf |\n",gradientsArray[gradient_position][i] );
+	// }
 }
 
 
@@ -302,7 +302,6 @@ HyperParameters * constructHyperParameters(
 void GridSearch(Xy_Split * train,Xy_Split * test,HyperParameters * hp,size_t vectorSize,FILE * GridSearchFile){
 
 	LogisticRegression * model;
-	int batch_size = 9;
 	for(int me = 0; me<hp->numOfmax_epochs; me++){
 		for(int lr=0;lr<hp->numofLr;lr++){
 			for(int t=0;t<hp->numofthreshold;t++){
