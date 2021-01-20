@@ -1,0 +1,300 @@
+
+ ------ Lr 1.000000   |    threshold 1.000000  | max_epochs 5 
+Accuracy  53.54 % 
+
+ ------ Lr 1.000000   |    threshold 0.100000  | max_epochs 5 
+Accuracy  53.54 % 
+
+ ------ Lr 1.000000   |    threshold 0.001000  | max_epochs 5 
+Accuracy  53.54 % 
+
+ ------ Lr 1.000000   |    threshold 0.000100  | max_epochs 5 
+Accuracy  53.54 % 
+
+ ------ Lr 1.000000   |    threshold 0.000010  | max_epochs 5 
+Accuracy  53.54 % 
+
+ ------ Lr 0.100000   |    threshold 1.000000  | max_epochs 5 
+Accuracy  66.78 % 
+
+ ------ Lr 0.100000   |    threshold 0.100000  | max_epochs 5 
+Accuracy  66.78 % 
+
+ ------ Lr 0.100000   |    threshold 0.001000  | max_epochs 5 
+Accuracy  66.78 % 
+
+ ------ Lr 0.100000   |    threshold 0.000100  | max_epochs 5 
+Accuracy  66.78 % 
+
+ ------ Lr 0.100000   |    threshold 0.000010  | max_epochs 5 
+Accuracy  66.78 % 
+
+ ------ Lr 0.010000   |    threshold 1.000000  | max_epochs 5 
+Accuracy  82.92 % 
+
+ ------ Lr 0.010000   |    threshold 0.100000  | max_epochs 5 
+Accuracy  82.04 % 
+
+ ------ Lr 0.010000   |    threshold 0.001000  | max_epochs 5 
+Accuracy  82.04 % 
+
+ ------ Lr 0.010000   |    threshold 0.000100  | max_epochs 5 
+Accuracy  82.04 % 
+
+ ------ Lr 0.010000   |    threshold 0.000010  | max_epochs 5 
+Accuracy  82.04 % 
+
+ ------ Lr 0.001000   |    threshold 1.000000  | max_epochs 5 
+Accuracy  92.27 % 
+
+ ------ Lr 0.001000   |    threshold 0.100000  | max_epochs 5 
+Accuracy  91.76 % 
+
+ ------ Lr 0.001000   |    threshold 0.001000  | max_epochs 5 
+Accuracy  91.76 % 
+
+ ------ Lr 0.001000   |    threshold 0.000100  | max_epochs 5 
+Accuracy  91.76 % 
+
+ ------ Lr 0.001000   |    threshold 0.000010  | max_epochs 5 
+Accuracy  91.76 % 
+
+ ------ Lr 1.000000   |    threshold 1.000000  | max_epochs 10 
+Accuracy  53.24 % 
+
+ ------ Lr 1.000000   |    threshold 0.100000  | max_epochs 10 
+Accuracy  53.24 % 
+
+ ------ Lr 1.000000   |    threshold 0.001000  | max_epochs 10 
+Accuracy  53.24 % 
+
+ ------ Lr 1.000000   |    threshold 0.000100  | max_epochs 10 
+Accuracy  53.24 % 
+
+ ------ Lr 1.000000   |    threshold 0.000010  | max_epochs 10 
+Accuracy  53.24 % 
+
+ ------ Lr 0.100000   |    threshold 1.000000  | max_epochs 10 
+Accuracy  65.27 % 
+
+ ------ Lr 0.100000   |    threshold 0.100000  | max_epochs 10 
+Accuracy  65.27 % 
+
+ ------ Lr 0.100000   |    threshold 0.001000  | max_epochs 10 
+Accuracy  65.27 % 
+
+ ------ Lr 0.100000   |    threshold 0.000100  | max_epochs 10 
+Accuracy  65.27 % 
+
+ ------ Lr 0.100000   |    threshold 0.000010  | max_epochs 10 
+Accuracy  65.27 % 
+
+ ------ Lr 0.010000   |    threshold 1.000000  | max_epochs 10 
+Accuracy  82.92 % 
+
+ ------ Lr 0.010000   |    threshold 0.100000  | max_epochs 10 
+Accuracy  80.56 % 
+
+ ------ Lr 0.010000   |    threshold 0.001000  | max_epochs 10 
+Accuracy  80.56 % 
+
+ ------ Lr 0.010000   |    threshold 0.000100  | max_epochs 10 
+Accuracy  80.56 % 
+
+ ------ Lr 0.010000   |    threshold 0.000010  | max_epochs 10 
+Accuracy  80.56 % 
+
+ ------ Lr 0.001000   |    threshold 1.000000  | max_epochs 10 
+Accuracy  92.27 % 
+
+ ------ Lr 0.001000   |    threshold 0.100000  | max_epochs 10 
+Accuracy  91.50 % 
+
+ ------ Lr 0.001000   |    threshold 0.001000  | max_epochs 10 
+Accuracy  91.50 % 
+
+ ------ Lr 0.001000   |    threshold 0.000100  | max_epochs 10 
+Accuracy  91.50 % 
+
+ ------ Lr 0.001000   |    threshold 0.000010  | max_epochs 10 
+Accuracy  91.50 % 
+
+ ------ Lr 1.000000   |    threshold 1.000000  | max_epochs 20 
+Accuracy  50.95 % 
+
+ ------ Lr 1.000000   |    threshold 0.100000  | max_epochs 20 
+Accuracy  50.95 % 
+
+ ------ Lr 1.000000   |    threshold 0.001000  | max_epochs 20 
+Accuracy  50.95 % 
+
+ ------ Lr 1.000000   |    threshold 0.000100  | max_epochs 20 
+Accuracy  50.95 % 
+
+ ------ Lr 1.000000   |    threshold 0.000010  | max_epochs 20 
+Accuracy  50.95 % 
+
+ ------ Lr 0.100000   |    threshold 1.000000  | max_epochs 20 
+Accuracy  65.25 % 
+
+ ------ Lr 0.100000   |    threshold 0.100000  | max_epochs 20 
+Accuracy  65.25 % 
+
+ ------ Lr 0.100000   |    threshold 0.001000  | max_epochs 20 
+Accuracy  65.25 % 
+
+ ------ Lr 0.100000   |    threshold 0.000100  | max_epochs 20 
+Accuracy  65.25 % 
+
+ ------ Lr 0.100000   |    threshold 0.000010  | max_epochs 20 
+Accuracy  65.25 % 
+
+ ------ Lr 0.010000   |    threshold 1.000000  | max_epochs 20 
+Accuracy  82.92 % 
+
+ ------ Lr 0.010000   |    threshold 0.100000  | max_epochs 20 
+Accuracy  79.67 % 
+
+ ------ Lr 0.010000   |    threshold 0.001000  | max_epochs 20 
+Accuracy  79.67 % 
+
+ ------ Lr 0.010000   |    threshold 0.000100  | max_epochs 20 
+Accuracy  79.67 % 
+
+ ------ Lr 0.010000   |    threshold 0.000010  | max_epochs 20 
+Accuracy  79.67 % 
+
+ ------ Lr 0.001000   |    threshold 1.000000  | max_epochs 20 
+Accuracy  92.27 % 
+
+ ------ Lr 0.001000   |    threshold 0.100000  | max_epochs 20 
+Accuracy  91.03 % 
+
+ ------ Lr 0.001000   |    threshold 0.001000  | max_epochs 20 
+Accuracy  91.03 % 
+
+ ------ Lr 0.001000   |    threshold 0.000100  | max_epochs 20 
+Accuracy  91.03 % 
+
+ ------ Lr 0.001000   |    threshold 0.000010  | max_epochs 20 
+Accuracy  91.03 % 
+
+ ------ Lr 1.000000   |    threshold 1.000000  | max_epochs 50 
+Accuracy  57.40 % 
+
+ ------ Lr 1.000000   |    threshold 0.100000  | max_epochs 50 
+Accuracy  57.40 % 
+
+ ------ Lr 1.000000   |    threshold 0.001000  | max_epochs 50 
+Accuracy  57.40 % 
+
+ ------ Lr 1.000000   |    threshold 0.000100  | max_epochs 50 
+Accuracy  57.40 % 
+
+ ------ Lr 1.000000   |    threshold 0.000010  | max_epochs 50 
+Accuracy  57.40 % 
+
+ ------ Lr 0.100000   |    threshold 1.000000  | max_epochs 50 
+Accuracy  66.75 % 
+
+ ------ Lr 0.100000   |    threshold 0.100000  | max_epochs 50 
+Accuracy  68.50 % 
+
+ ------ Lr 0.100000   |    threshold 0.001000  | max_epochs 50 
+Accuracy  68.50 % 
+
+ ------ Lr 0.100000   |    threshold 0.000100  | max_epochs 50 
+Accuracy  68.50 % 
+
+ ------ Lr 0.100000   |    threshold 0.000010  | max_epochs 50 
+Accuracy  68.50 % 
+
+ ------ Lr 0.010000   |    threshold 1.000000  | max_epochs 50 
+Accuracy  82.92 % 
+
+ ------ Lr 0.010000   |    threshold 0.100000  | max_epochs 50 
+Accuracy  80.01 % 
+
+ ------ Lr 0.010000   |    threshold 0.001000  | max_epochs 50 
+Accuracy  80.01 % 
+
+ ------ Lr 0.010000   |    threshold 0.000100  | max_epochs 50 
+Accuracy  80.01 % 
+
+ ------ Lr 0.010000   |    threshold 0.000010  | max_epochs 50 
+Accuracy  80.01 % 
+
+ ------ Lr 0.001000   |    threshold 1.000000  | max_epochs 50 
+Accuracy  92.27 % 
+
+ ------ Lr 0.001000   |    threshold 0.100000  | max_epochs 50 
+Accuracy  90.90 % 
+
+ ------ Lr 0.001000   |    threshold 0.001000  | max_epochs 50 
+Accuracy  90.43 % 
+
+ ------ Lr 0.001000   |    threshold 0.000100  | max_epochs 50 
+Accuracy  90.43 % 
+
+ ------ Lr 0.001000   |    threshold 0.000010  | max_epochs 50 
+Accuracy  90.43 % 
+
+ ------ Lr 1.000000   |    threshold 1.000000  | max_epochs 100 
+Accuracy  61.73 % 
+
+ ------ Lr 1.000000   |    threshold 0.100000  | max_epochs 100 
+Accuracy  61.73 % 
+
+ ------ Lr 1.000000   |    threshold 0.001000  | max_epochs 100 
+Accuracy  61.73 % 
+
+ ------ Lr 1.000000   |    threshold 0.000100  | max_epochs 100 
+Accuracy  61.73 % 
+
+ ------ Lr 1.000000   |    threshold 0.000010  | max_epochs 100 
+Accuracy  61.73 % 
+
+ ------ Lr 0.100000   |    threshold 1.000000  | max_epochs 100 
+Accuracy  66.75 % 
+
+ ------ Lr 0.100000   |    threshold 0.100000  | max_epochs 100 
+Accuracy  71.17 % 
+
+ ------ Lr 0.100000   |    threshold 0.001000  | max_epochs 100 
+Accuracy  71.17 % 
+
+ ------ Lr 0.100000   |    threshold 0.000100  | max_epochs 100 
+Accuracy  71.17 % 
+
+ ------ Lr 0.100000   |    threshold 0.000010  | max_epochs 100 
+Accuracy  71.17 % 
+
+ ------ Lr 0.010000   |    threshold 1.000000  | max_epochs 100 
+Accuracy  82.92 % 
+
+ ------ Lr 0.010000   |    threshold 0.100000  | max_epochs 100 
+Accuracy  81.06 % 
+
+ ------ Lr 0.010000   |    threshold 0.001000  | max_epochs 100 
+Accuracy  81.06 % 
+
+ ------ Lr 0.010000   |    threshold 0.000100  | max_epochs 100 
+Accuracy  81.06 % 
+
+ ------ Lr 0.010000   |    threshold 0.000010  | max_epochs 100 
+Accuracy  81.06 % 
+
+ ------ Lr 0.001000   |    threshold 1.000000  | max_epochs 100 
+Accuracy  92.27 % 
+
+ ------ Lr 0.001000   |    threshold 0.100000  | max_epochs 100 
+Accuracy  90.90 % 
+
+ ------ Lr 0.001000   |    threshold 0.001000  | max_epochs 100 
+Accuracy  90.35 % 
+
+ ------ Lr 0.001000   |    threshold 0.000100  | max_epochs 100 
+Accuracy  90.35 % 
+
+ ------ Lr 0.001000   |    threshold 0.000010  | max_epochs 100 
+Accuracy  90.35 % 
