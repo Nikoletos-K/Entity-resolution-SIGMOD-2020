@@ -12,9 +12,9 @@ void test_create(void) {
 	float learning_rate = 0.1;
 	float threshold = 0.1;
 	int max_epochs = 2;
+	int batch_size=256,numThreads=15;
 	float weights = 0.0,bias =0.0;
-	int batch_size = 64;
-	LogisticRegression* LR = LR_construct(vectorSize,learning_rate,threshold,max_epochs,batch_size);
+	LogisticRegression* LR = LR_construct(vectorSize,learning_rate,threshold,max_epochs,batch_size,numThreads);
 
 	
 	TEST_ASSERT(LR != NULL);
@@ -40,8 +40,9 @@ void test_create_hp(void) {
 	int numofthreshold = 5;
 	int max_epochs[5] = {5,10,20,50,100};
 	int numOfmax_epochs = 5;
-
-	HyperParameters * hp = constructHyperParameters(learning_rates,numofLr,thresholds,numofthreshold,max_epochs,numOfmax_epochs);
+	int batch_size=256,numThreads=15;
+	
+	HyperParameters * hp = constructHyperParameters(learning_rates,numofLr,thresholds,numofthreshold,max_epochs,numOfmax_epochs,batch_size,numThreads);
 	
 		
 	TEST_ASSERT(hp != NULL);

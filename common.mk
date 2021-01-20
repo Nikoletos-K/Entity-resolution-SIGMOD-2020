@@ -51,7 +51,7 @@ override CFLAGS += -g -Werror -Wall -MMD -I$(INCLUDE)
 # Linker options
 #   -lm        Link με τη math library
 #
-LDFLAGS += -lm
+LDFLAGS += -lm -lpthread
 
 # Αν στα targets με τα οποία έχει κληθεί το make (μεταβλητή MAKECMDGOALS) υπάρχει κάποιο
 # coverage*, τότε προσθέτουμε το --coverage στα compile & link flags
@@ -138,6 +138,7 @@ run: $(RUN_TARGETS)
 # Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target valgrind-<prog> που το εκτελεί μέσω valgrind με παραμέτρους <prog>_ARGS
 valgrind-%: %
 	valgrind --error-exitcode=1 --track-origins=yes --leak-check=full --show-leak-kinds=all ./$* $($*_ARGS)
+# 	valgrind --error-exitcode=1 --tool=helgrind ./$* $($*_ARGS)
 
 valgrind: $(VAL_TARGETS)
 

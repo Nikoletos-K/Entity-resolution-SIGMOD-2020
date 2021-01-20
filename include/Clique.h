@@ -24,7 +24,7 @@ Clique* addToClique(Clique* myClique, CamSpec* newCamera);
 Clique** CreateCliques(DisJointSet * djSet,int* numOfsets);
 void destroyCliques(Clique** setsList,int numOfsets);
 
-void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs);
+void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs,int batch_size,int numThreads);
 float* testCliques(Clique** cliqueIndex,int numOfCliques);
 void GridSearchCliques(Clique * clique,int numOfCliques,FILE * file);
 void train_test_split_Cliques(Clique ** cliqueIndex,int numOfCliques);

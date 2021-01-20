@@ -185,6 +185,7 @@ int compareCliques(Clique** cliqueIndex,int cliqueA, int cliqueB){
 }
 
 // void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs){
+void trainCliques(Clique** cliqueIndex,int numOfCliques,float learning_rate,float threshold,int max_epochs,int batch_size,int numThreads){
 
 // 	Clique* clique;
 // 	Xy_Split * train;
@@ -198,6 +199,10 @@ int compareCliques(Clique** cliqueIndex,int cliqueA, int cliqueB){
 // 		LR_fit(clique->LRModel,train);
 // 	}
 // }
+		clique->LRModel = LR_construct(VectorSize,learning_rate,threshold,max_epochs,batch_size,numThreads);
+		LR_fit(clique->LRModel,train);
+	// }
+}
 
 
 

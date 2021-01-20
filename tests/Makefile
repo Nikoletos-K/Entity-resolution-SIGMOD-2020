@@ -7,7 +7,8 @@ DisJointSet_test_OBJS = DisJointSet_test.o $(MODULES)/DisJointSet/DisJointSet.o
 List_test_OBJS = List_test.o $(MODULES)/List/list.o
 bitArray_test_OBJS  = bitArray_test.o $(MODULES)/BitArray/bitArray.o
 Dataset_test_OBJS  = Dataset_test.o ./../programs/EntityResolution/Vectorization.o  $(MODULES)/Dataset/Dataset.o
-LogisticRegression_test_OBJS  = LogisticRegression_test.o 	./../programs/EntityResolution/Vectorization.o $(MODULES)/BitArray/bitArray.o  $(MODULES)/LogisticRegression/LogisticRegression.o
+# LogisticRegression_test_OBJS  = LogisticRegression_test.o 	./../programs/EntityResolution/Vectorization.o $(MODULES)/BitArray/bitArray.o  $(MODULES)/LogisticRegression/LogisticRegression.o
+LogisticRegression_test_OBJS  = LogisticRegression_test.o   $(MODULES)/LogisticRegression/LogisticRegression.o  $(MODULES)/JobScheduler/JobScheduler.o $(MODULES)/Queue/Queue.o
 
 Json_test_OBJS = 																									\
 	Json_test.o ./../programs/EntityResolution/CamSpec.o 											\
@@ -17,11 +18,13 @@ Json_test_OBJS = 																									\
 	./../programs/EntityResolution/dictionary.o 										\
 	./../programs/EntityResolution/utils.o 		  		 									\
 	$(MODULES)/LogisticRegression/LogisticRegression.o 								  					\
+	$(MODULES)/JobScheduler/JobScheduler.o 								  					\
 	$(MODULES)/List/list.o 		 																		\
 	$(MODULES)/DisJointSet/DisJointSet.o 																			\
 	$(MODULES)/HashTable/HashTable.o  																		\
 	$(MODULES)/RBTree/RBTree.o 																			\
 	$(MODULES)/BitArray/bitArray.o  																		\
+	$(MODULES)/Queue/Queue.o  																		\
 	$(MODULES)/Dataset/Dataset.o 		
 
 # Ο βασικός κορμός του Makefile
