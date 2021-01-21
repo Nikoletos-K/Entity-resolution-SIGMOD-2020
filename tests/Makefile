@@ -9,6 +9,7 @@ bitArray_test_OBJS  = bitArray_test.o $(MODULES)/BitArray/bitArray.o
 Dataset_test_OBJS  = Dataset_test.o ./../programs/EntityResolution/Vectorization.o  $(MODULES)/Dataset/Dataset.o
 # LogisticRegression_test_OBJS  = LogisticRegression_test.o 	./../programs/EntityResolution/Vectorization.o $(MODULES)/BitArray/bitArray.o  $(MODULES)/LogisticRegression/LogisticRegression.o
 LogisticRegression_test_OBJS  = LogisticRegression_test.o   $(MODULES)/LogisticRegression/LogisticRegression.o  $(MODULES)/JobScheduler/JobScheduler.o $(MODULES)/Queue/Queue.o
+Queue_test_OBJS = Queue_test.o $(MODULES)/Queue/Queue.o
 
 Json_test_OBJS = 																									\
 	Json_test.o ./../programs/EntityResolution/CamSpec.o 											\

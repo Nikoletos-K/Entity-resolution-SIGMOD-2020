@@ -139,7 +139,7 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 					avg_bias_gradient += avg_gradients[w];
 				}
 
-				// model->bias -=  (float)((float)avg_bias_gradient*((float)model->learning_rate))/((float)batches_executed);
+				model->bias -=  (float)((float)avg_bias_gradient*((float)model->learning_rate))/((float)batches_executed);
 				
 				free(avg_gradients);
 
