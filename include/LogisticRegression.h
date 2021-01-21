@@ -34,11 +34,15 @@ typedef struct HyperParameters {
 	
 	float * learning_rates;
 	int numofLr;
-	float * threshold;
-	int numofthreshold;
+	float * threshold_euclid;
+	int numofthreshold_euclid;
+	float * threshold_retrain;
+	int numofthreshold_retrain;
 	int * max_epochs;
 	int numOfmax_epochs;
-	int batch_size;
+	int * batch_sizes;
+	int numOfbathes;
+	int *Threads;
 	int numThreads;
 
 
@@ -61,15 +65,18 @@ float euclid_norm(float * x, int size);
 HyperParameters * constructHyperParameters(
 	float * learning_rates,
 	int numofLr,
-	float * threshold,
-	int numofthreshold,
+	float * threshold_euclid,
+	int numofthreshold_euclid,
+	float * threshold_retrain,
+	int numofthreshold_retrain,
 	int * max_epochs,
 	int numOfmax_epochs,
-	int batch_size,
+	int * batch_sizes,
+	int numOfbathes,
+	int *Threads,
 	int numThreads
 );
 
 void destroyHyperParameters(HyperParameters * hp);
 
-void GridSearch(Xy_Split * train,Xy_Split * test,HyperParameters * hp,size_t vectorSize,FILE * file);
 threadArgs * new_threadArgs(int batch_first_element,int batch_last_element,int gradient_position);

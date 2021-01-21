@@ -55,7 +55,7 @@ void batchThread(void * args){
 
 LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs,int batch_size,int numThreads){
 
-	srand(time(NULL));
+	// srand(time(NULL));
 
 	LogisticRegression* model = malloc(sizeof(LogisticRegression));
 	model->weights    = malloc(vectorSize*sizeof(float));
@@ -68,12 +68,12 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 	
 	for(int w=0;w<model->vectorSize;w++){
 		// model->weights[w] = (rand()%2 == 0 ? -1:1)*1/rand();
-		model->weights[w] = (float) ((float)1)/(float)rand();
-		// model->weights[w] = 0.0;
+		// model->weights[w] = (float) ((float)1)/(float)rand();
+		model->weights[w] = 0.0;
 	}
 
-	model->bias = (float)((float)1)/rand();
-	// model->bias = 0.0;
+	// model->bias = (float)((float)1)/rand();
+	model->bias = 0.0;
 	// model->bias = 1.0;
 
 	
@@ -275,47 +275,34 @@ float manhattan_norm(float * x, int size){
 HyperParameters * constructHyperParameters(
 	float * learning_rates,
 	int numofLr,
-	float * threshold,
-	int numofthreshold,
+	float * threshold_euclid,
+	int numofthreshold_euclid,
+	float * threshold_retrain,
+	int numofthreshold_retrain,
 	int * max_epochs,
 	int numOfmax_epochs,
-	int batch_size,
+	int * batch_sizes,
+	int numOfbathes,
+	int *Threads,
 	int numThreads
 ){
 
 
 	HyperParameters * hp = malloc(sizeof(HyperParameters));
-	hp->learning_rates   = learning_rates;
-	hp->numofLr          = numofLr;
-	hp->threshold        = threshold;
-	hp->numofthreshold   = numofthreshold;
-	hp->max_epochs       = max_epochs;
-	hp->numOfmax_epochs  = numOfmax_epochs;
-	hp->batch_size       = batch_size;
-	hp->numThreads		 = numThreads;
-
+	hp->learning_rates = learning_rates;
+	hp->numofLr = numofLr;
+	hp->threshold_euclid = threshold_euclid;
+	hp->numofthreshold_euclid = numofthreshold_euclid;
+	hp->threshold_retrain = threshold_retrain;
+	hp->numofthreshold_retrain = numofthreshold_retrain;
+	hp->max_epochs = max_epochs;
+	hp->numOfmax_epochs = numOfmax_epochs;
+	hp->batch_sizes = batch_sizes;
+	hp->numOfbathes = numOfbathes;
+	hp->Threads = Threads;
+	hp->numThreads = numThreads;
 
 	return hp;
-}
-
-
-void GridSearch(Xy_Split * train,Xy_Split * test,HyperParameters * hp,size_t vectorSize,FILE * GridSearchFile){
-
-	LogisticRegression * model;
-	for(int me = 0; me<hp->numOfmax_epochs; me++){
-		for(int lr=0;lr<hp->numofLr;lr++){
-			for(int t=0;t<hp->numofthreshold;t++){
-
-				if(GridSearchFile!=NULL) 
-					fprintf(GridSearchFile, "\n ------ Lr %lf   |    threshold %lf  | max_epochs %d \n",hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me] );
-				model  = LR_construct(vectorSize*2,hp->learning_rates[lr],hp->threshold[t],hp->max_epochs[me],hp->batch_size,hp->numThreads );
-				LR_fit(model,train);
-				LR_Evaluation(model,test,GridSearchFile);
-				LR_destroy(model);
-
-			}
-		}
-	}
 }
 
 void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file){
@@ -325,15 +312,15 @@ void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file){
 
 
 	for (int j = 0; j < eval_set->size; j++){
-		printf("True label: %d | ",eval_set->y[j]);
-		prediction_labels[j]  = LR_predict(model,eval_set->X[j],1);
-		printf("|  prediction:  %d \n ",prediction_labels[j]);
+		// printf("True label: %d | ",eval_set->y[j]);
+		prediction_labels[j]  = LR_predict(model,eval_set->X[j],0);
+		// printf("|  prediction:  %d \n ",prediction_labels[j]);
 	}
 
 
 	float acc = accuracy(prediction_labels,eval_set->y,eval_set->size);
 
-	fprintf(file,"Accuracy %6.2lf %% \n",acc);
+	fprintf(file,"%6.2lf",acc);
 
 	free(prediction_labels);
 }

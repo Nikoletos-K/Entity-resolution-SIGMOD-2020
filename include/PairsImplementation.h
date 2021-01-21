@@ -56,6 +56,8 @@ int compareRetrainingSet(const void * a, const void * b);
 Xy_Split * resolve_transitivity_issues(Xy_Split * Xy_train,Clique*** cliqueIndex,int * numOfCliques,retraining_set** retrainingArray, int num_of_retrain_specs,int num_of_cameras, float threshold);
 void destroyRetrainArray(retraining_set** retrainingArray, int size);
 
+void printFinalPairs(Clique** cliquesArray,int numOfCliques,void (*printData)(void*,FILE *));
+
 pairsArgs * new_pairsArgs(	LogisticRegression* model,CamSpec ** camArray,int num_of_cameras,float threshold,size_t VectorSize,int i);
 void create_retrainScheduler(int numThreads);
 void destroy_retrainScheduler();

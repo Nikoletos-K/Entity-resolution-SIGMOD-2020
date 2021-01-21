@@ -79,7 +79,34 @@ void printForward(List * list,FILE * output,void (*printData)(void*,FILE *),List
 	}
 }
 
+void printFinalPairs(Clique** cliquesArray,int numOfCliques,void (*printData)(void*,FILE *)){
 
+	FILE * output = fopen("FINAL_PAIRS.csv","w+");;
+	List * list;
+
+	fprintf(output, "left_spec_id, right_spec_id\n");
+
+	for(int i=0;i<numOfCliques;i++){	// for every spec
+		list = cliquesArray[i]->set;
+		listNode * leftNode = list->firstNode,* rightNode;
+		
+		while(leftNode!=NULL){
+
+			rightNode = leftNode->nextNode;
+			while(rightNode!=NULL){
+
+				printData(leftNode->data,output);
+				fprintf(output,", ");
+				printData(rightNode->data,output);
+				fprintf(output,"\n");
+
+				rightNode = rightNode->nextNode;
+			}
+			leftNode = leftNode->nextNode;
+		}
+	}
+	fclose(output);
+}
 
 Clique** createNegConnections(List * diffPairsList,Clique ** cliqueIndex){
 
@@ -201,7 +228,7 @@ List * createNegativePairs(Clique ** cliqueIndex,int numOfcliques,FILE * file, i
 
 CamerasPair ** create_PairsDataset(List * sameCameras,List * differentCameras,int * Labels,int dataset_size,int stratify){
 
-	srand(time(NULL));
+	// srand(time(NULL));
 
 
 	CamerasPair ** Dataset = malloc(dataset_size*sizeof(CamerasPair *));
@@ -276,7 +303,7 @@ Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int data
 
 	Dataset * dataset = createDataset();
 
-	srand(time(NULL));
+	// srand(time(NULL));
 	// int random_seed = rand();
 
 	int validationItems = 0;
@@ -442,35 +469,6 @@ retraining_set ** LR_retrain(retraining_set** retrainingArray_in,LogisticRegress
 		pairsArgs * args = new_pairsArgs(model,camArray,num_of_cameras,threshold,VectorSize,i);
 		
 		submit_job(pairsScheduler,update_retrainArray,(void*)args);
-
-
-		// int j = i+1;
-		// while (j < num_of_cameras && (camArray[i]->bitArray == NULL || (camArray[i]->bitArray != NULL && !checkBit(camArray[i]->bitArray,j)))){
-
-		// 	DenseMatrix * concatedVector = concatDenseMatrices(camArray[i]->DenseVector,camArray[j]->DenseVector,VectorSize);
-			
-		// 	int denseX_size = concatedVector->matrixSize;
-	
-		// 	if(denseX_size){
-		// 		prediction =  LR_predict_proba(model,concatedVector);
-
-		// 		if(prediction < threshold || prediction> (1-threshold)){
-		// 			retrainingArray = realloc(retrainingArray,(*num_of_retrain_specs+1)*sizeof(retraining_set*));
-		// 			retrainingArray[*num_of_retrain_specs] = malloc(sizeof(retraining_set));
-		// 			retrainingArray[*num_of_retrain_specs]->camera1 = camArray[i];
-		// 			retrainingArray[*num_of_retrain_specs]->camera2 = camArray[j];
-		// 			retrainingArray[*num_of_retrain_specs]->concatedVector = concatedVector;
-		// 			retrainingArray[*num_of_retrain_specs]->prediction = prediction;
-		// 			// printf("%d. %s - %s ---> %lf\n",*num_of_retrain_specs, retrainingArray[*num_of_retrain_specs]->camera1->name, retrainingArray[*num_of_retrain_specs]->camera2->name, retrainingArray[*num_of_retrain_specs]->prediction);					
-		// 			(*num_of_retrain_specs)++;
-		// 		}else
-		// 			destroyDenseMatrix(concatedVector);
-				
-		// 	}else
-		// 		destroyDenseMatrix(concatedVector);
-
-		// 	j+=100;
-		// }
 	}
 
 	wait_activeJobs_finish(pairsScheduler);
