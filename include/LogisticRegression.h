@@ -53,7 +53,7 @@ LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float thr
 void LR_fit(LogisticRegression* model,Xy_Split * Xy_train);
 int LR_predict(LogisticRegression* model,DenseMatrix * denseX,int f);
 void LR_destroy(LogisticRegression* model);
-void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file);
+void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file,int printClassificationReport);
 float CrossEntropy(float prediction,float x,float y, size_t vectorSize);
 
 float LR_predict_proba(LogisticRegression* model,DenseMatrix * denseX);
@@ -61,6 +61,7 @@ int decision_boundary(float probability);
 float sigmoid(float x);
 float accuracy(int * prediction_labels,int * true_labels,int numOfLabels);
 float euclid_norm(float * x, int size);
+void classification_report(int * prediction_labels,int * true_labels,int numOfLabels,float * recall,float * precision,float * f1);
 
 HyperParameters * constructHyperParameters(
 	float * learning_rates,

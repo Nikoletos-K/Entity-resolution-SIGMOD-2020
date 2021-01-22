@@ -305,11 +305,10 @@ HyperParameters * constructHyperParameters(
 	return hp;
 }
 
-void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file){
+void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file,int printClassificationReport){
 
 
 	int * prediction_labels = malloc((eval_set->size)*sizeof(int));
-
 
 	for (int j = 0; j < eval_set->size; j++){
 		// printf("True label: %d | ",eval_set->y[j]);
@@ -320,9 +319,94 @@ void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file){
 
 	float acc = accuracy(prediction_labels,eval_set->y,eval_set->size);
 
-	fprintf(file,"%6.2lf",acc);
+
+	if(printClassificationReport==1){
+		float recall=0, precision=0, f1=0;
+		classification_report(prediction_labels,eval_set->y,eval_set->size,&recall,&precision,&f1);
+		fprintf(file,"%6.2lf,",acc);
+		fprintf(file,"%6.2lf,",recall);
+		fprintf(file,"%6.2lf,",precision);
+		fprintf(file,"%6.2lf,",f1);
+	}else if(printClassificationReport==2){
+		float recall=0, precision=0, f1=0;
+		classification_report(prediction_labels,eval_set->y,eval_set->size,&recall,&precision,&f1);
+		fprintf(stdout,"Accuracy:  %6.2lf %% \n",acc);
+		fprintf(stdout,"Recall:    %6.2lf %% \n",recall);
+		fprintf(stdout,"Precision: %6.2lf %% \n",precision);
+		fprintf(stdout,"F1:        %6.2lf %% \n",f1);
+	}else if(printClassificationReport==3){
+		float recall=0, precision=0, f1=0;
+		classification_report(prediction_labels,eval_set->y,eval_set->size,&recall,&precision,&f1);
+		fprintf(file,"%6.2lf,",acc);
+		fprintf(file,"%6.2lf,",recall);
+		fprintf(file,"%6.2lf,",precision);
+		fprintf(file,"%6.2lf,",f1);
+		fprintf(stdout,"Accuracy:  %6.2lf %% \n",acc);
+		fprintf(stdout,"Recall:    %6.2lf %% \n",recall);
+		fprintf(stdout,"Precision: %6.2lf %% \n",precision);
+		fprintf(stdout,"F1:        %6.2lf %% \n",f1);
+	}else
+		fprintf(file,"%6.2lf,",acc);
+
 
 	free(prediction_labels);
+}
+
+void classification_report(int * prediction_labels,int * true_labels,int numOfLabels,float * recall,float * precision,float * f1){
+
+	int true_positive=0,false_negative=0,false_positive=0;
+
+	for(int i=0;i<numOfLabels;i++){
+		if(prediction_labels[i] == 1 && prediction_labels[i] == true_labels[i])
+			true_positive++;
+
+		else if(prediction_labels[i] == 0 && true_labels[i] == 1)
+			false_negative++;	
+
+		else if(prediction_labels[i] == 1 && true_labels[i] == 0)
+			false_positive++;	
+
+	}
+	
+	if(true_positive == 0 && false_negative==0){
+		*recall = 0;
+	}else
+		*recall = ((float)((float)true_positive)/(float)(true_positive+false_negative));
+
+	if(true_positive == 0 && false_positive==0){
+		*precision = 0;
+	}else
+		*precision = ((float)((float)true_positive)/(float)(true_positive+false_positive));
+
+	if(*recall == 0 && *precision ==0 ){
+		*f1 = 0;
+	}else
+		*f1 = (2*(*precision*(*recall))/((*precision)+(*recall)));
+	
+
+	*recall *= (float)100;
+	*precision *= (float)100;
+	*f1 *= (float)100;
+
+	return;
+}
+
+float precision(int * prediction_labels,int * true_labels,int numOfLabels){
+
+	float acc = 0.0;
+	for(int i=0;i<numOfLabels;i++)
+		acc += (prediction_labels[i] == true_labels[i] ? 1.0:0.0 );
+	
+	return ((float)(((float)acc)  / ((float)numOfLabels)))*100;
+}
+
+float f1(int * prediction_labels,int * true_labels,int numOfLabels){
+
+	float acc = 0.0;
+	for(int i=0;i<numOfLabels;i++)
+		acc += (prediction_labels[i] == true_labels[i] ? 1.0:0.0 );
+	
+	return ((float)(((float)acc)  / ((float)numOfLabels)))*100;
 }
 
 void destroyHyperParameters(HyperParameters * hp){

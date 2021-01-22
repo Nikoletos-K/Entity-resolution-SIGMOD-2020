@@ -27,10 +27,11 @@ void GridSearch(
 	CamSpec ** camerasArray,
 	int numOfCameras,
 	Clique** cliqueArray,
-	int num_of_cliques){
+	int num_of_cliques
+	){
 
 	if(GridSearchFile!=NULL) 
-		fprintf(GridSearchFile, "learning_rate, threshold_euclid, threshold_retrain, numOfEpochs, batch_size,numOfThreads, ValidScore-1, ValidScore-2, ValidScore-3, TestScore, Time-CPU, Time-Real,\n");
+		fprintf(GridSearchFile, "learning_rate,threshold_euclid,numOfEpochs,batch_size,numOfThreads,TestAccuracy,TestRecall,TestPrecision,TestF1,ValidAccuracy,ValidRecall,ValidPrecision,ValidF1,Time-CPU,Time-Real,\n");
 	else{
 	 return;
 	}
@@ -44,70 +45,71 @@ void GridSearch(
 	LogisticRegression * model;
 	for (int lr = 0; lr < hp->numofLr; lr++){
 		for (int the = 0; the < hp->numofthreshold_euclid; the++){
-			for (int thr = 0; thr < hp->numofthreshold_retrain; thr++){
-				for (int ep = 0; ep < hp->numOfmax_epochs; ep++){
-					for (int b = 0; b < hp->numOfbathes; b++){
-						for (int th = 0; th < hp->numThreads; th++){
+			for (int ep = 0; ep < hp->numOfmax_epochs; ep++){
+				for (int b = 0; b < hp->numOfbathes; b++){
+					for (int th = 0; th < hp->numThreads; th++){
 
-							t1 = (double) times(&tb1);
-							fprintf(GridSearchFile,"%lf, %lf, %lf, %d, %d, %d,",hp->learning_rates[lr],hp->threshold_euclid[the],hp->threshold_retrain[thr],hp->max_epochs[ep],hp->batch_sizes[b],hp->Threads[th]);
+						t1 = (double) times(&tb1);
+						printf("---------------------------\n");
+						printf("Learning rate: %lf | threshold_euclid: %lf |  numOfmax_epochs: %d | numOfbathes %d | numThreads: %d \n",hp->learning_rates[lr],hp->threshold_euclid[the],hp->max_epochs[ep],hp->batch_sizes[b],hp->Threads[th]);
 
-							model = LR_construct(VectorSize*2,hp->learning_rates[lr],hp->threshold_euclid[the],hp->max_epochs[ep],hp->batch_sizes[b],hp->Threads[th]);
-							float step_value = 0.01;
-							Xy_Split * train = Dataset_train;
-							Xy_Split * test = Dataset_test;
-							Xy_Split * validation = Dataset_validation;
+						fprintf(GridSearchFile,"%1.5lf,%1.3lf,%2d,%5d,%2d,",hp->learning_rates[lr],hp->threshold_euclid[the],hp->max_epochs[ep],hp->batch_sizes[b],hp->Threads[th]);
 
-							CamSpec ** camArray = camerasArray;
-							int num_of_cameras = numOfCameras;
-							Clique** cliqueIndex = cliqueArray;
-							int numOfCliques = num_of_cliques;
+						model = LR_construct(VectorSize*2,hp->learning_rates[lr],hp->threshold_euclid[the],hp->max_epochs[ep],hp->batch_sizes[b],hp->Threads[th]);
+						// float step_value = 0.01;
+						Xy_Split * train      = Dataset_train;
+						Xy_Split * test       = Dataset_test;
+						Xy_Split * validation = Dataset_validation;
 
-							int retrain_index=0;
-							int retrain_loops=3;
-							float threshold = hp->threshold_retrain[thr];
+						// CamSpec ** camArray = camerasArray;
+						// int num_of_cameras = numOfCameras;
+						// Clique** cliqueIndex = cliqueArray;
+						// int numOfCliques = num_of_cliques;
 
-							while( (threshold<0.5) && (retrain_index < retrain_loops)){
+						// int retrain_index=0;
+						// int retrain_loops=3;
+						// float threshold = hp->threshold_retrain[thr];
 
-								int num_of_retrain_specs = 0;
+						// while( (threshold<0.5) && (retrain_index < retrain_loops)){
 
-								retraining_set ** retrainingArray = malloc(sizeof(retraining_set*));
+						// 	printf("-> Retrain %d \n",retrain_index);
+						// 	int num_of_retrain_specs = 0;
 
-								LR_fit(model,train);
+							// retraining_set ** retrainingArray = malloc(sizeof(retraining_set*));
 
-								LR_Evaluation(model,test,GridSearchFile);
-								fprintf(GridSearchFile,",");
+						LR_fit(model,train);
+						printf("\n");
+						printf("Test performance\n");
+						LR_Evaluation(model,test,GridSearchFile,3);
 
-								retrainingArray = LR_retrain(retrainingArray,model,camArray,num_of_cameras,threshold,&num_of_retrain_specs,VectorSize);
+						// 	retrainingArray = LR_retrain(retrainingArray,model,camArray,num_of_cameras,threshold,&num_of_retrain_specs,VectorSize);
 
-								qsort(retrainingArray, num_of_retrain_specs, sizeof(retraining_set*), compareRetrainingSet);
+						// 	qsort(retrainingArray, num_of_retrain_specs, sizeof(retraining_set*), compareRetrainingSet);
 
-								train = resolve_transitivity_issues(train,&cliqueIndex,&numOfCliques,retrainingArray,num_of_retrain_specs,num_of_cameras,threshold);
+						// 	train = resolve_transitivity_issues(train,&cliqueIndex,&numOfCliques,retrainingArray,num_of_retrain_specs,num_of_cameras,threshold);
 
-								destroyRetrainArray(retrainingArray, num_of_retrain_specs);
+						// 	destroyRetrainArray(retrainingArray, num_of_retrain_specs);
 
-								retrain_index++;
-								threshold += step_value;
-							}
+						// 	retrain_index++;
+						// 	threshold += step_value;
+						// }
+						printf("\n");
+						printf("Validation performance\n");
+						LR_Evaluation(model,validation,GridSearchFile,3);
+						printf("\n");
 
-							LR_Evaluation(model,validation,GridSearchFile);
-							fprintf(GridSearchFile,",");
+						t2 = (double) times(&tb2);
+						cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
+						fprintf(GridSearchFile,"%.2lf,",cpu_time/ticspersec);
+						fprintf(GridSearchFile," %.2lf,\n",(t2-t1)/ticspersec);
 
-							t2 = (double) times(&tb2);
-							cpu_time = (double) ((tb2.tms_utime + tb2.tms_stime) - (tb1.tms_utime + tb1.tms_stime));
-							fprintf(GridSearchFile,"%.2lf,",cpu_time/ticspersec);
-							fprintf(GridSearchFile," %.2lf,\n",(t2-t1)/ticspersec);
-
-							LR_destroy(model);
-						}
-			
+						LR_destroy(model);
+						printf("---------------------------\n");
+						printf("\n");
 					}
-			
 				}
-			
 			}
 		}
-		
 	}
 	destroy_retrainScheduler();
 }
@@ -296,7 +298,7 @@ int main(int argc,char ** argv){
 
 	DJSDestructor(djSet);
 
-	/* ----------------   TRAINING CLIQUES -------------------------- */
+	/* ----------------   TRAINING  -------------------------- */
 
 
 	// t1 = (double) times(&tb1);
@@ -336,7 +338,7 @@ int main(int argc,char ** argv){
 	// 	printf("\nTRAIN MODEL - %d\n",retrain_index);
 	// 	LR_fit(LR_Model,vectorizedDataset->train);
 	// 	printf("\nVALIDATE MODEL: \n");
-	// 	LR_Evaluation(LR_Model,vectorizedDataset->test,stdout);printf("\n");
+	// 	LR_Evaluation(LR_Model,vectorizedDataset->test,stdout,1);printf("\n");
 
 	// 	retrainingArray = LR_retrain(retrainingArray,LR_Model,camArray,num_of_cameras,threshold,&num_of_retrain_specs,VectorSize);
 
@@ -360,14 +362,14 @@ int main(int argc,char ** argv){
 	// printf("- REAL_TIME: %.2lf sec\n",(t2-t1)/ticspersec);
 
 
-	/* ----------------   TESTING CLIQUES -------------------------- */
+	/* ----------------   TESTING  -------------------------- */
 
 
 	// t1 = (double) times(&tb1);
 	// printf("\n-> Testing model  \n");
 
 	// printf("\n");
-	// LR_Evaluation(LR_Model,vectorizedDataset->validation,stdout);
+	// LR_Evaluation(LR_Model,vectorizedDataset->validation,stdout,1);
 	// printf("\n");
 
 	// printf(" <- End of Testing model  \n");
@@ -435,7 +437,7 @@ int main(int argc,char ** argv){
 	HyperParameters * hp = constructHyperParameters(learning_rates,numofLr,threshold_euclid,numofthreshold_euclid,threshold_retrain,numofthreshold_retrain,max_epochs,numOfmax_epochs,batch_sizes,numOfbathes,Threads,numThreads);
 	
 
-	FILE * fp = fopen("GRIDSEARCH_medium.csv","w+");
+	FILE * fp = fopen("GRIDSEARCH_medium_NoRetrain.csv","w+");
 
 	GridSearch(	vectorizedDataset->train,vectorizedDataset->test,vectorizedDataset->validation,hp,VectorSize,fp,camArray,num_of_cameras,cliqueIndex,numOfCliques);
 	
