@@ -40,22 +40,12 @@ void batchThread(void * args){
 			weight_position = denseX->matrix[p]->position;
 			value           = denseX->matrix[p]->value;
 			gradientsArray[gradient_position][weight_position] += loss*value;
-
-			// printf("%lf - %lf | ",loss,value);
 		}
 	}
-
-	// for (int i = 0; i < trainingModel->vectorSize; i++){
-	// 	printf("%lf -> ", gradientsArray[gradient_position][i]);
-	// 	gradientsArray[gradient_position][i] /= ((float)(batch_last_element-batch_first_element));
-	// 	printf("%lf |\n",gradientsArray[gradient_position][i] );
-	// }
 }
 
 
 LogisticRegression* LR_construct(size_t vectorSize,float learning_rate,float threshold,int max_epochs,int batch_size,int numThreads){
-
-	// srand(time(NULL));
 
 	LogisticRegression* model = malloc(sizeof(LogisticRegression));
 	model->weights    = malloc(vectorSize*sizeof(float));
@@ -126,7 +116,6 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 
 				for(int w=0;w<model->vectorSize;w++){
 					for(int th=0;th<batches_executed;th++){
-						// printf("%d %d %lf /",th,w,gradientsArray[th][w] );
 						avg_gradients[w] += gradientsArray[th][w];
 						gradientsArray[th][w] = 0;
 					}
@@ -134,7 +123,6 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 					
 				float avg_bias_gradient = 0;
 				for(int w=0;w<model->vectorSize;w++){
-					// printf("%lf %lf *** ",model->weights[w], ((float)(avg_gradients[w]*model->learning_rate))/(float)batches_executed);
 					model->weights[w] = model->weights[w]-((float)(avg_gradients[w]*model->learning_rate))/((float)batches_executed);
 					avg_bias_gradient += avg_gradients[w];
 				}
@@ -158,11 +146,9 @@ void LR_fit(LogisticRegression* model,Xy_Split * Xy_train){
 
 		float new_norm = euclid_norm(model->weights,model->vectorSize);
 
-		// printf("| %lf | ", fabs(new_norm - prev_norm) );
 		fflush(stdout);
 		if(fabs(new_norm - prev_norm) < model->threshold){
 			printf("Converged in %d epochs\n",epochs );
-			// free(gradient);
 			break;
 		}
 
@@ -232,7 +218,6 @@ void LR_destroy(LogisticRegression* model){
 }
 
 int decision_boundary(float propability){
-	//printf("(%.5lf) - ",propability);
 	return (propability<=0.5 ? 0:1);
 }
 
@@ -311,9 +296,7 @@ void LR_Evaluation(LogisticRegression * model,Xy_Split * eval_set,FILE * file,in
 	int * prediction_labels = malloc((eval_set->size)*sizeof(int));
 
 	for (int j = 0; j < eval_set->size; j++){
-		// printf("True label: %d | ",eval_set->y[j]);
 		prediction_labels[j]  = LR_predict(model,eval_set->X[j],0);
-		// printf("|  prediction:  %d \n ",prediction_labels[j]);
 	}
 
 
