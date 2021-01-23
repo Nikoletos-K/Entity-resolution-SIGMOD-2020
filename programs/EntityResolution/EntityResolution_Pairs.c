@@ -104,15 +104,15 @@ int main(int argc,char ** argv){
 		else if(!strcmp("-csv",argv[i]))
 			csvFile = i+1;	
 		else if(!strcmp("-lr",argv[i]))
-			cmd_learning_rate = atoi(argv[i+1]);
+			cmd_learning_rate = atof(argv[i+1]);
 		else if(!strcmp("-et",argv[i]))
-			cmd_euclid_threshold = atoi(argv[i+1]);
+			cmd_euclid_threshold = atof(argv[i+1]);
 		else if(!strcmp("-rt",argv[i]))
-			cmd_retrain_threshold = atoi(argv[i+1]);
+			cmd_retrain_threshold = atof(argv[i+1]);
 		else if(!strcmp("-ep",argv[i]))
 			cmd_epochs = atoi(argv[i+1]);
 		else if(!strcmp("-sv",argv[i]))
-			cmd_step_value = atoi(argv[i+1]);
+			cmd_step_value = atof(argv[i+1]);
 		else if(!strcmp("-rl",argv[i]))
 			cmd_retrain_loops = atoi(argv[i+1]);
 		else if(!strcmp("-bs",argv[i]))

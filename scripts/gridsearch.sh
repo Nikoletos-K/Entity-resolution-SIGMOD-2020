@@ -95,7 +95,6 @@ numOfArguments=$#
 # rt_array=(0.01)
 
 cd ..;
-make > make.txt;
 cd ./programs/EntityResolution/;
 
 echo -n -e "\n";
@@ -112,7 +111,7 @@ for lr in ${learningRate_array[@]}; do
 						echo -n -e "\033[0;34m#$RESET";
 						for rl in ${rl_array[@]}; do
 							for rt in ${rt_array[@]}; do
-								./entityResolutionPairs -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv -lr $lr -et $e -rt $rtT -ep $e -rl $rl -bs $b -nt $nT > execute.txt;
+								./entityResolutionPairs -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv -lr $lr -et $euT -rt $rtT -ep $e -rl $rl -bs $b -nt $nT > execute.txt
 							done
 						done
 					done

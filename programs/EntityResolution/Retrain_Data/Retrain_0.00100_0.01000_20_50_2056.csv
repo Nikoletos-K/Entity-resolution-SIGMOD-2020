@@ -1,0 +1,2 @@
+learning_rate,threshold_euclid,threshold_retrain,numOfEpochs,batch_size,numOfThreads,TestAccuracy,TestRecall,TestPrecision,TestF1,ValidAccuracy,ValidRecall,ValidPrecision,ValidF1,Time-CPU,Time-Real,
+0.001000,0.000100,0.010000,50, 2056,20, 91.97,  6.27, 37.19, 10.73, 92.09,  4.32, 37.80,  7.75, 89.90, 21.87, 29.13, 24.98, 91.40, 12.53, 33.96, 18.31, 88.62, 34.40, 29.47, 31.75, 91.10, 14.21, 32.18, 19.71, 88.72, 37.19, 30.72, 33.65, 90.64, 19.92, 32.35, 24.66, 90.65, 21.59, 33.33, 26.20,13.530000,26.150000,

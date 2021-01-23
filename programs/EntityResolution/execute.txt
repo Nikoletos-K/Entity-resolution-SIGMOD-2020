@@ -1,0 +1,201 @@
+
+--------------- ENTITY RESOLUTION SYSTEM ----------------
+
+-> Starting reading directory (./../../data/camera_specs)  
+    and informing data structures from given .json files
+ <- End of reading directory
+PERFORMANCE of reading directory and informing our data structures:
+- CPU_TIME: 1.91 sec
+- REAL_TIME: 3.75 sec
+
+-> Starting reading .csv file  (./../../data/sigmod_medium_labelled_dataset.csv)  
+    and informing sets
+ <- End
+PERFORMANCE of reading .csv file and forming cliques:
+- CPU_TIME: 0.04 sec
+- REAL_TIME: 0.05 sec
+
+-> Printing same cameras in PAIRS.csv: 
+ <- End of printing same cameras
+PERFORMANCE of printing same cameras:
+- CPU_TIME:  0.00 sec
+- REAL_TIME: 0.00 sec
+
+-> Forming negative cliques: 
+ <- End of forming negative cliques
+PERFORMANCE of forming negative cliques:
+- CPU_TIME:  0.01 sec
+- REAL_TIME: 0.02 sec
+
+-> Forming Vectors  
+Dictionary size: 18190
+ <- End of forming Vectors 
+PERFORMANCE of Vectors :
+- CPU_TIME:  0.11 sec
+- REAL_TIME: 0.14 sec
+
+-> Forming DATASET 
+Same Cameras:      3582
+Different Cameras: 43083
+Dataset size:      46665
+Stratified factor: 13
+ <- End of forming DATASET
+PERFORMANCE of DATASET:
+- CPU_TIME:  0.00 sec
+- REAL_TIME: 0.00 sec
+
+-> Printing dataset to DATASET.csv 
+ <- End of printing dataset
+PERFORMANCE of printing dataset:
+- CPU_TIME: 0.01 sec
+- REAL_TIME: 0.04 sec
+
+-> Forming train,test and validation sets 
+- Test set READY 
+- Validation set READY 
+- Train set READY 
+Train      size: 27999
+Test       size: 9333
+Validation size: 9333
+ <- End of forming train,test and validation sets
+PERFORMANCE of forming train,test and validation sets:
+- CPU_TIME:  0.30 sec
+- REAL_TIME: 0.64 sec
+
+-> Creating - Training & Testing model  
+Learning rate: 0.000100
+Threshold:     0.000100
+Max epochs:    50
+Retrain threshold:     0.020000 
+
+---------------------------
+-> Retrain 0 
+Test-set performance
+Accuracy:   92.31 % 
+Recall:      0.00 % 
+Precision:   0.00 % 
+F1:          0.00 % 
+
+Positive cameras entered:      0 
+Negative cameras entered:      0 
+---------------------------
+
+
+---------------------------
+-> Retrain 1 
+Test-set performance
+Accuracy:   92.31 % 
+Recall:      0.00 % 
+Precision:   0.00 % 
+F1:          0.00 % 
+
+Positive cameras entered:      0 
+Negative cameras entered:      0 
+---------------------------
+
+
+---------------------------
+-> Retrain 2 
+Test-set performance
+Accuracy:   92.31 % 
+Recall:      0.00 % 
+Precision:   0.00 % 
+F1:          0.00 % 
+
+Positive cameras entered:      0 
+Negative cameras entered:      0 
+---------------------------
+
+
+---------------------------
+-> Retrain 3 
+Test-set performance
+Accuracy:   92.31 % 
+Recall:      0.00 % 
+Precision:   0.00 % 
+F1:          0.00 % 
+
+Positive cameras entered:      0 
+Negative cameras entered:      0 
+---------------------------
+
+
+---------------------------
+-> Retrain 4 
+Test-set performance
+Accuracy:   92.31 % 
+Recall:      0.00 % 
+Precision:   0.00 % 
+F1:          0.00 % 
+
+Positive cameras entered:      0 
+Negative cameras entered:      0 
+---------------------------
+
+
+---------------------------
+-> Retrain 5 
+Test-set performance
+Accuracy:   92.31 % 
+Recall:      0.00 % 
+Precision:   0.00 % 
+F1:          0.00 % 
+
+Positive cameras entered:      0 
+Negative cameras entered:      0 
+---------------------------
+
+
+---------------------------
+-> Retrain 6 
+Test-set performance
+Accuracy:   92.31 % 
+Recall:      0.00 % 
+Precision:   0.00 % 
+F1:          0.00 % 
+
+Positive cameras entered:      0 
+Negative cameras entered:      0 
+---------------------------
+
+
+---------------------------
+-> Retrain 7 
+Test-set performance
+Accuracy:   92.31 % 
+Recall:      0.00 % 
+Precision:   0.00 % 
+F1:          0.00 % 
+
+Positive cameras entered:      0 
+Negative cameras entered:      0 
+---------------------------
+
+
+-> Testing model with Validation set  
+
+Accuracy:   92.31 % 
+Recall:      0.00 % 
+Precision:   0.00 % 
+F1:          0.00 % 
+
+ <- End of Validation of model  
+PERFORMANCE of Training - Testing model  :
+- CPU_TIME: 13.36 sec
+- REAL_TIME: 25.32 sec
+
+-> Printing same cameras in FINAL_PAIRS.csv: 
+ <- End of printing same cameras
+PERFORMANCE of printing same cameras:
+- CPU_TIME:  0.00 sec
+- REAL_TIME: 0.00 sec
+
+
+-> Restoring memory
+<- All frees done
+
+PERFORMANCE of system overall:
+- CPU_TIME: 15.95 sec
+- REAL_TIME: 30.43 sec
+
+----------------- END_OF_EXECUTION -------------------
