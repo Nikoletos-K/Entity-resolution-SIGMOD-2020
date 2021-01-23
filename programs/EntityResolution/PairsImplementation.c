@@ -303,9 +303,6 @@ Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int data
 
 	Dataset * dataset = createDataset();
 
-	// srand(time(NULL));
-	// int random_seed = rand();
-
 	int validationItems = 0;
 	int trainItems      = 0;
 	int testItems       = 0;
@@ -409,7 +406,6 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 	int mapIndex = 1;
 	for (int i = DictionarySize-1; i >= DictionarySize-VectorSize; i--){
 		int position  = DictionaryNodes[i]->wordID; 
-		// printf("%lf %d %s\n",DictionaryNodes[i]->averageTfIdf,DictionaryNodes[i]->jsonsIn,DictionaryNodes[i]->word );
 		dictionaryMap[position] = mapIndex;
 		mapIndex++;
 	}
@@ -434,13 +430,10 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 					tf = wordCounters[p]/(float)numOfWords;
 					idf = log(num_of_cameras/DictionaryNodes[vector_position]->jsonsIn);
 					camArray[i] -> DenseVector = DenseMatrix_insert(camArray[i] -> DenseVector,tf*idf,final_vector_position-1);
-					// printf("## %d\n", final_vector_position-1);			
 				}
-			}
-		
+			}	
 		}else
 			camArray[i] -> DenseVector = NULL;
-		
 	}
 	free(dictionaryMap);
 }
@@ -456,8 +449,6 @@ void destroy_retrainScheduler(){
 
 
 retraining_set ** LR_retrain(retraining_set** retrainingArray_in,LogisticRegression* model,CamSpec ** camArray, int num_of_cameras, float threshold,int* num_of_retrain_specs_in,size_t VectorSize){
-
-	// float prediction = 0.0;
 
 	retrainingArray = retrainingArray_in;
 	num_of_retrain_specs = num_of_retrain_specs_in;
@@ -477,7 +468,6 @@ retraining_set ** LR_retrain(retraining_set** retrainingArray_in,LogisticRegress
 
 void update_retrainArray(void * default_args){
 
-	
 	pairsArgs * args = (pairsArgs*) default_args;
 
 	LogisticRegression* model = (LogisticRegression*) args->model;
@@ -512,7 +502,6 @@ void update_retrainArray(void * default_args){
 				retrainingArray[*num_of_retrain_specs]->camera2 = camArray[j];
 				retrainingArray[*num_of_retrain_specs]->concatedVector = concatedVector;
 				retrainingArray[*num_of_retrain_specs]->prediction = prediction;
-				// printf("%d. %s - %s ---> %lf\n",*num_of_retrain_specs, retrainingArray[*num_of_retrain_specs]->camera1->name, retrainingArray[*num_of_retrain_specs]->camera2->name, retrainingArray[*num_of_retrain_specs]->prediction);					
 				(*num_of_retrain_specs)++;
 				pthread_mutex_unlock(&(pairsScheduler->queue_mtx));
 			}else

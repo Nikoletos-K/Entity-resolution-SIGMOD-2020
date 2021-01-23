@@ -22,8 +22,8 @@ entityResolutionPairs_OBJS = 				\
 # entityResolutionClique_ARGS = -jd ./../../data/camera_specs -csv ./../../data/sigmod_large_labelled_dataset.csv
 
 
-# entityResolutionPairs_ARGS = -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
-entityResolutionPairs_ARGS = -jd ./../../data/camera_specs -csv ./../../data/sigmod_large_labelled_dataset.csv
+entityResolutionPairs_ARGS = -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
+# entityResolutionPairs_ARGS = -jd ./../../data/camera_specs -csv ./../../data/sigmod_large_labelled_dataset.csv
 
 
 include ../../common.mk

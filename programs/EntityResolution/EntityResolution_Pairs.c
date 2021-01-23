@@ -489,7 +489,7 @@ int main(int argc,char ** argv){
 	free(pairDataset);
 
 	free(Labels);
-	// LR_destroy(LR_Model);
+	LR_destroy(LR_Model);
 
 	deleteList(sameCameras);
 	deleteList(differentCameras);	
