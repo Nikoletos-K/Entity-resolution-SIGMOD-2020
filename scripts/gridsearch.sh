@@ -6,11 +6,11 @@ RESET="\033[0m"
 # Arrays for first name and last name
 learningRate_array=(0.1 0.01 0.001 0.0001)
 epochs_array=(20 50)
-batch_array=(516 1024 2056)
-euThreshold_array=(0.1 0.01 0.001 0.0001)
+batch_array=(1024 2056)
+euThreshold_array=(0.001 0.0001)
 rtThreshold_array=(0.01 0.02)
 nt_array=(10 20)
-rl_array=(3 5 8 10)
+rl_array=(3 5 8)
 rt_array=(0.01)
 
 # Getting the size of the arrays
@@ -29,29 +29,29 @@ function bad()  { echo -e "$RED [ FAIL ] $RESET"; exit 1; }
 
 # function that checks the file properties
 function fileCheck(){
-	echo -n "  -Exists " 
-	if [ -e $1 ]; 
+	echo -n "  -Exists "
+	if [ -e $1 ];
 		then good
 	else
 		bad
 	fi
-	
+
 	echo -n "  -Regular file "
-	if [ -f $1 ]; 
+	if [ -f $1 ];
 		then good
 	else
 		bad
 	fi
-	
+
 	echo -n "  -Read permission "
-	if [ -r $1 ]; 
+	if [ -r $1 ];
 		then good
 	else
 		bad
 	fi
 
 	echo -n "  -File not empty "
-	if [ -s $1 ]; 
+	if [ -s $1 ];
 		then good
 	else
 		bad
@@ -61,7 +61,7 @@ function fileCheck(){
 
 # function that checks directory properties
 function directoryCheck(){
-	if [ -e $1 ]; 
+	if [ -e $1 ];
 		then echo "Directory $1 already exists"
 		echo -n "- Want to replace it? [y/n] "
 		read answer
@@ -71,7 +71,7 @@ function directoryCheck(){
 			echo -n Script ended
 			bad
 		fi
-	fi	
+	fi
 	mkdir $1
 	echo -n -e "Directory $INPUT_DIRECTORY created"
 	good
@@ -83,14 +83,7 @@ echo  "  - Number of input parameters = $#"
 echo  "  - All arguments: $* "
 
 numOfArguments=$#
-learningRate_array=(0.1 0.01 0.001 0.0001)
-epochs_array=(20 50)
-batch_array=(516 1024 2056)
-euThreshold_array=(0.1 0.01 0.001 0.0001)
-rtThreshold_array=(0.01 0.02)
-nt_array=(10 20)
-rl_array=(3 5 8 10)
-rt_array=(0.01)
+
 
 # learningRate_array=(0.1)
 # epochs_array=(20)
@@ -100,13 +93,15 @@ rt_array=(0.01)
 # nt_array=(10)
 # rl_array=(3)
 # rt_array=(0.01)
-# Creation loop
-	# Reading sorted files from an array
+
 cd ..;
-make;
+make > make.txt;
 cd ./programs/EntityResolution/;
-pwd;
-echo -n -e "\n"; 
+
+echo -n -e "\n";
+echo -n -e "Starting executing the system for multiple variables\n";
+counter=1;
+allLoops=`expr $learningRate_size \* $epochs_size \* $batch_size`;
 for lr in ${learningRate_array[@]}; do
 	for e in ${epochs_array[@]}; do
 		for b in ${batch_array[@]}; do
@@ -123,7 +118,8 @@ for lr in ${learningRate_array[@]}; do
 					done
 				done
 			done
-			echo -n -e "] \n" 
+			echo -n -e "] $counter / $allLoops \n" 
+			((counter=counter+1))
 		done
 	done
 done

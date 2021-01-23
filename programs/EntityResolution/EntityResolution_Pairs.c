@@ -305,7 +305,7 @@ int main(int argc,char ** argv){
 
 
 	if(cmd_learning_rate!=-1){
-		learning_rate=  cmd_learning_rate;
+		learning_rate=  cmd_learning_rate;	
 		threshold = cmd_euclid_threshold;
 		epochs = cmd_epochs;
 		numThreads= cmd_numThreads;
@@ -346,11 +346,11 @@ int main(int argc,char ** argv){
 	printf("Retrain threshold:     %lf \n", retrain_threshold);
 
 	char fileName[100];
-	sprintf(fileName,"./Retrain_Data/Retrain_%2.4lf_%2.4lf_%d_%d_%d.csv",learning_rate,retrain_threshold,pairsThreads,epochs,batch_size);
+	sprintf(fileName,"./Retrain_Data/Retrain_%2.5lf_%2.5lf_%d_%d_%d.csv",learning_rate,retrain_threshold,pairsThreads,epochs,batch_size);
 
 	FILE * fp = fopen(fileName,"w+");
 	fprintf(fp, "learning_rate,threshold_euclid,threshold_retrain,numOfEpochs,batch_size,numOfThreads,TestAccuracy,TestRecall,TestPrecision,TestF1,ValidAccuracy,ValidRecall,ValidPrecision,ValidF1,Time-CPU,Time-Real,\n");
-	fprintf(fp,"%1.5lf,%1.3lf,%1.6lf,%2d,%5d,%2d,",learning_rate,threshold,retrain_threshold,epochs,batch_size,pairsThreads);
+	fprintf(fp,"%1.6lf,%1.6lf,%1.6lf,%2d,%5d,%2d,",learning_rate,threshold,retrain_threshold,epochs,batch_size,pairsThreads);
 
 	create_retrainScheduler(pairsThreads);
 
