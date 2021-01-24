@@ -19,8 +19,24 @@ float* concatVectors(float * vector1,float * vector2,int vectorSize){
 	memcpy(newVector,vector1,sizeof(float)*vectorSize);
 	memcpy(newVector+vectorSize,vector2,sizeof(float)*vectorSize);
 
+	// free(vector1);
+	// free(vector2);
+
+
 	return newVector;
 }
+
+// void printVector(CamSpec ** camArray,int num_of_cameras){
+
+// 	for(int i=0;i<num_of_cameras;i++){
+// 		printf("\n%03d:  ",i);
+// 		for(int p=0;p<VectorSize;p++){
+// 			printf("%.4f ",camArray[i]->vector[p]);
+// 		}
+// 		printf("\n\n");
+// 	}	
+
+// }
 
 DenseMatrixNode * createDenseMatrixNode(DMValuetype value,int position){
 
@@ -81,8 +97,15 @@ DenseMatrix * concatDenseMatrices(DenseMatrix * DMatrix1,DenseMatrix * DMatrix2,
 
 	DenseMatrix * DMatrix = createDenseMatrix();
 
-	for(int i=0;i<DMatrix1->matrixSize;i++)
+	// DMatrix->matrix = realloc(DMatrix->matrix,(DMatrix1->matrixSize)*sizeof(DenseMatrixNode*));
+	// memcpy(DMatrix->matrix,DMatrix1->matrix,(DMatrix1->matrixSize)*sizeof(DenseMatrixNode*));
+	// DMatrix->matrixSize += DMatrix1->matrixSize;
+	for(int i=0;i<DMatrix1->matrixSize;i++){
+		// printf("--%d %lf %d\n",i,DMatrix1->matrix[i]->value ,DMatrix1->matrix[i]->position );
 		DMatrix = DenseMatrix_insert(DMatrix,DMatrix1->matrix[i]->value ,DMatrix1->matrix[i]->position );
+	}
+
+
 
 	for(int i=0;i<DMatrix2->matrixSize;i++){
 				// printf("--%d %lf %d\n",i,DMatrix2->matrix[i]->value ,DMatrix2->matrix[i]->position );
@@ -90,4 +113,5 @@ DenseMatrix * concatDenseMatrices(DenseMatrix * DMatrix1,DenseMatrix * DMatrix2,
 	}
 	
 	return DMatrix;	
+
 }

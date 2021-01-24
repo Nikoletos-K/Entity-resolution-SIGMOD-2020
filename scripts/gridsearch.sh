@@ -4,14 +4,15 @@ RED="\033[31m"
 RESET="\033[0m"
 
 # Arrays for first name and last name
-learningRate_array=(0.1 0.01 0.001 0.0001)
-epochs_array=(20 50)
-batch_array=(1024 2056)
-euThreshold_array=(0.001 0.0001)
-rtThreshold_array=(0.01 0.02)
-nt_array=(10 20)
-rl_array=(3 5 8)
-rt_array=(0.01)
+learningRate_array=(0.001)
+epochs_array=(50)
+batch_array=(2056)
+euThreshold_array=(0.0001)
+rtThreshold_array=(0.02 0.05)
+nt_array=(20)
+rl_array=(3 9)
+# rt_array=(0.02 0.05)
+sv_array=(0.01)
 
 # Getting the size of the arrays
 learningRate_size=${#learningRate_array[@]}
@@ -22,7 +23,7 @@ rtThreshold_size=${#rtThreshold_array[@]}
 nt_size=${#nt_array[@]}
 rl_size=${#rl_array[@]}
 rt_size=${#rt_array[@]}
-
+sv_size=${#sv_array[@]}
 
 function good() { echo -e "$GREEN [ PASS ]  $RESET"; }
 function bad()  { echo -e "$RED [ FAIL ] $RESET"; exit 1; }
@@ -98,10 +99,10 @@ for lr in ${learningRate_array[@]}; do
 			for euT in ${euThreshold_array[@]}; do
 				for rtT in ${rtThreshold_array[@]}; do
 					for nT in ${nt_array[@]}; do
-						echo -n -e "\033[0;34m#$RESET";
-						for rl in ${rl_array[@]}; do
-							for rt in ${rt_array[@]}; do
-								./entityResolutionPairs -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv -lr $lr -et $euT -rt $rtT -ep $e -rl $rl -bs $b -nt $nT > execute.txt
+						for sv in ${sv_array[@]}; do
+							for rl in ${rl_array[@]}; do
+								./entityResolutionPairs -jd ./../../data/camera_specs -csv ./../../data/sigmod_large_labelled_dataset.csv -lr $lr -sv $sv -et $euT -rt $rtT -ep $e -rl $rl -bs $b -nt $nT
+								echo -n -e "\033[0;34m#$RESET";
 							done
 						done
 					done

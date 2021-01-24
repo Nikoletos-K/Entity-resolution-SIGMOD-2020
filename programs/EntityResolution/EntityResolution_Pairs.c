@@ -298,7 +298,7 @@ int main(int argc,char ** argv){
 
 	float learning_rate,threshold;
 	int epochs,numThreads,batch_size;
-	float retrain_threshold = 0.01;
+	float retrain_threshold = 0.05;
 	float step_value = 0.01;
 	int pairsThreads = 20;
 	int retrain_loops=10;
@@ -344,9 +344,11 @@ int main(int argc,char ** argv){
 	printf("Threshold:     %lf\n", threshold);
 	printf("Max epochs:    %d\n", epochs);
 	printf("Retrain threshold:     %lf \n", retrain_threshold);
+	printf("Retrain max loops:     %d \n", retrain_loops);
+	printf("Retrain step value:    %lf \n", step_value);
 
-	char fileName[100];
-	sprintf(fileName,"./Retrain_Data/Retrain_%2.5lf_%2.5lf_%d_%d_%d.csv",learning_rate,retrain_threshold,pairsThreads,epochs,batch_size);
+	char fileName[200];
+	sprintf(fileName,"./Retrain_Data/Retrain_%2.5lf_%2.5lf_%d_%d_%d_%d_%1.2lf.csv",learning_rate,retrain_threshold,pairsThreads,epochs,batch_size,retrain_loops,step_value);
 
 	FILE * fp = fopen(fileName,"w+");
 	fprintf(fp, "learning_rate,threshold_euclid,threshold_retrain,numOfEpochs,batch_size,numOfThreads,TestAccuracy,TestRecall,TestPrecision,TestF1,ValidAccuracy,ValidRecall,ValidPrecision,ValidF1,Time-CPU,Time-Real,\n");
@@ -358,7 +360,7 @@ int main(int argc,char ** argv){
 
 		printf("\n");
 		printf("---------------------------\n");
-		printf("-> Retrain %d \n",retrain_index);
+		printf("-> Retrain %d | Threshold %1.3lf \n",retrain_index,retrain_threshold);
 		int num_of_retrain_specs = 0;
 
 		retraining_set ** retrainingArray = malloc(sizeof(retraining_set*));
@@ -409,7 +411,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing same cameras in FINAL_PAIRS.csv: \n");
 
-	printFinalPairs(cliqueIndex,numOfCliques,printCameraName);
+	// printFinalPairs(cliqueIndex,numOfCliques,printCameraName);
 
 	
 	printf(" <- End of printing same cameras\n");
@@ -489,7 +491,7 @@ int main(int argc,char ** argv){
 	free(pairDataset);
 
 	free(Labels);
-	LR_destroy(LR_Model);
+	// LR_destroy(LR_Model);
 
 	deleteList(sameCameras);
 	deleteList(differentCameras);	

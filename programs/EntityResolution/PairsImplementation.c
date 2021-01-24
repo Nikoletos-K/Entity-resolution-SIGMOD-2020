@@ -303,6 +303,9 @@ Dataset * train_test_split_pairs(CamerasPair ** pairsArray,int * Labels,int data
 
 	Dataset * dataset = createDataset();
 
+	// srand(time(NULL));
+	// int random_seed = rand();
+
 	int validationItems = 0;
 	int trainItems      = 0;
 	int testItems       = 0;
@@ -406,6 +409,7 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 	int mapIndex = 1;
 	for (int i = DictionarySize-1; i >= DictionarySize-VectorSize; i--){
 		int position  = DictionaryNodes[i]->wordID; 
+		// printf("%lf %d %s\n",DictionaryNodes[i]->averageTfIdf,DictionaryNodes[i]->jsonsIn,DictionaryNodes[i]->word );
 		dictionaryMap[position] = mapIndex;
 		mapIndex++;
 	}
@@ -430,10 +434,13 @@ void createVectors(CamSpec ** camArray,int num_of_cameras){
 					tf = wordCounters[p]/(float)numOfWords;
 					idf = log(num_of_cameras/DictionaryNodes[vector_position]->jsonsIn);
 					camArray[i] -> DenseVector = DenseMatrix_insert(camArray[i] -> DenseVector,tf*idf,final_vector_position-1);
+					// printf("## %d\n", final_vector_position-1);			
 				}
-			}	
+			}
+		
 		}else
 			camArray[i] -> DenseVector = NULL;
+		
 	}
 	free(dictionaryMap);
 }
@@ -452,22 +459,24 @@ retraining_set ** LR_retrain(retraining_set** retrainingArray_in,LogisticRegress
 
 	retrainingArray = retrainingArray_in;
 	num_of_retrain_specs = num_of_retrain_specs_in;
-
-	num_of_cameras = num_of_cameras/10;
+	int pairsExamined = 0;
+	num_of_cameras = num_of_cameras/5;
 
 	for (int i = 0; i < num_of_cameras; i++){
 
 		pairsArgs * args = new_pairsArgs(model,camArray,num_of_cameras,threshold,VectorSize,i);
-		
+		pairsExamined++;
 		submit_job(pairsScheduler,update_retrainArray,(void*)args);
 	}
 
 	wait_activeJobs_finish(pairsScheduler);
+	printf("Pairs cheched for strong probability: %d\n",pairsExamined );
 	return retrainingArray;
 }
 
 void update_retrainArray(void * default_args){
 
+	
 	pairsArgs * args = (pairsArgs*) default_args;
 
 	LogisticRegression* model = (LogisticRegression*) args->model;
@@ -478,6 +487,7 @@ void update_retrainArray(void * default_args){
 	int i = (int) args->i;
 	float prediction = 0.0;
 	int j = i+1;
+	
 
 	while (j < num_of_cameras && (camArray[i]->bitArray == NULL || ((camArray[i]->bitArray != NULL) && !checkBit(camArray[i]->bitArray,j)))){
 
@@ -492,6 +502,7 @@ void update_retrainArray(void * default_args){
 		int denseX_size = concatedVector->matrixSize;
 
 		if(denseX_size){
+			
 			prediction =  LR_predict_proba(model,concatedVector);
 
 			if(prediction < threshold || prediction > (1-threshold)){
@@ -512,7 +523,6 @@ void update_retrainArray(void * default_args){
 
 		j+=100;
 	}
-
 }
 
 
