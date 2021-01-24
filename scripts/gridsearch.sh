@@ -84,16 +84,6 @@ echo  "  - All arguments: $* "
 
 numOfArguments=$#
 
-
-# learningRate_array=(0.1)
-# epochs_array=(20)
-# batch_array=(516)
-# euThreshold_array=(0.1)
-# rtThreshold_array=(0.01)
-# nt_array=(10)
-# rl_array=(3)
-# rt_array=(0.01)
-
 cd ..;
 cd ./programs/EntityResolution/;
 
