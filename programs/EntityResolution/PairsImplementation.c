@@ -460,7 +460,7 @@ retraining_set ** LR_retrain(retraining_set** retrainingArray_in,LogisticRegress
 	retrainingArray = retrainingArray_in;
 	num_of_retrain_specs = num_of_retrain_specs_in;
 	int pairsExamined = 0;
-	num_of_cameras = num_of_cameras/5;
+	num_of_cameras = num_of_cameras/10;
 
 	for (int i = 0; i < num_of_cameras; i++){
 
@@ -470,7 +470,7 @@ retraining_set ** LR_retrain(retraining_set** retrainingArray_in,LogisticRegress
 	}
 
 	wait_activeJobs_finish(pairsScheduler);
-	printf("Pairs cheched for strong probability: %d\n",pairsExamined );
+	printf("Pairs checked for strong probability: %d\n",pairsExamined );
 	return retrainingArray;
 }
 

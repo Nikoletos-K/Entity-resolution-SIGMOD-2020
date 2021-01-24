@@ -32,7 +32,8 @@ void printCamSpec(void * data){
 
 void destroyCamSpec(CamSpec * cs){
 	free(cs->name);
-	deleteList(cs->set);
+	if(cs->set != NULL)
+		deleteList(cs->set);
 	if(cs->DenseVector!=NULL)
 		destroyDenseMatrix(cs->DenseVector);
 	// free(cs->vector);

@@ -298,10 +298,10 @@ int main(int argc,char ** argv){
 
 	float learning_rate,threshold;
 	int epochs,numThreads,batch_size;
-	float retrain_threshold = 0.05;
+	float retrain_threshold = 0.03;
 	float step_value = 0.01;
 	int pairsThreads = 20;
-	int retrain_loops=10;
+	int retrain_loops=5;
 
 
 	if(cmd_learning_rate!=-1){
@@ -322,6 +322,8 @@ int main(int argc,char ** argv){
 			learning_rate = 0.001;
 			threshold = 0.0001;
 			epochs = 50;
+			retrain_threshold = 0.2;
+			step_value = 0.01;
 
 		}else{
 			numThreads = 20;
@@ -343,6 +345,7 @@ int main(int argc,char ** argv){
 	printf("Learning rate: %lf\n", learning_rate);
 	printf("Threshold:     %lf\n", threshold);
 	printf("Max epochs:    %d\n", epochs);
+	printf("Batch size:    %d \n",batch_size);
 	printf("Retrain threshold:     %lf \n", retrain_threshold);
 	printf("Retrain max loops:     %d \n", retrain_loops);
 	printf("Retrain step value:    %lf \n", step_value);
@@ -411,7 +414,7 @@ int main(int argc,char ** argv){
 	t1 = (double) times(&tb1);
 	printf("\n-> Printing same cameras in FINAL_PAIRS.csv: \n");
 
-	// printFinalPairs(cliqueIndex,numOfCliques,printCameraName);
+	printFinalPairs(cliqueIndex,numOfCliques,printCameraName);
 
 	
 	printf(" <- End of printing same cameras\n");
@@ -491,7 +494,7 @@ int main(int argc,char ** argv){
 	free(pairDataset);
 
 	free(Labels);
-	// LR_destroy(LR_Model);
+	LR_destroy(LR_Model);
 
 	deleteList(sameCameras);
 	deleteList(differentCameras);	

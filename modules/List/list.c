@@ -47,7 +47,8 @@ int deleteList(List * list){
 	while(tempNode!=NULL){
 		rmNode = tempNode;
 		tempNode = tempNode->nextNode;
-		free(rmNode);
+		if(rmNode!=NULL)	
+			free(rmNode);
 	}
 	free(list);
 
