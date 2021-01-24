@@ -298,7 +298,7 @@ int main(int argc,char ** argv){
 
 	float learning_rate,threshold;
 	int epochs,numThreads,batch_size;
-	float retrain_threshold = 0.01;
+	float retrain_threshold = 0.03;
 	float step_value = 0.01;
 	int pairsThreads = 20;
 	int retrain_loops=5;
@@ -327,7 +327,7 @@ int main(int argc,char ** argv){
 
 		}else{
 			numThreads = 20;
-			batch_size=512;
+			batch_size=2056;
 			learning_rate = 0.001;
 			threshold = 0.001;
 			epochs = 50;
