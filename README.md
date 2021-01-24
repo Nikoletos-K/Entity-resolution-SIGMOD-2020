@@ -13,13 +13,11 @@
 
 * __Τρόπος μεταγλώττισης και εκτέλεσης :__ 
     * Για τους δύο τρόπους: στον αρχικό φάκελο με την εντολή ```make run-programs```
-    * Για την υλοποίηση κλικών:  μέσα στον φάκελο ```programs/EntityResolution``` με την εντολή ```make run-entityResolutionCliques```
-    * Για την υλοποίηση ζευγριών:  μέσα στον φάκελο ```programs/EntityResolution``` με την εντολή ```make run-entityResolutionPairs```
+    * Για την υλοποίηση κλικών:  μέσα στον φάκελο ```programs/EntityResolution``` με την εντολή ```make run-entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv```
 
 * __Τρόπος μεταγλώττισης και εκτέλεσης με την χρήση valgrind:__  
     * Για τους δύο τρόπους: στον αρχικό φάκελο με την εντολή ```make valgrind-programs```
-    * Για την υλοποίηση κλικών:  μέσα στον φάκελο ```programs/EntityResolution``` με την εντολή ```make valgrind-entityResolutionCliques```
-    * Για την υλοποίηση ζευγριών:  μέσα στον φάκελο ```programs/EntityResolution``` με την εντολή ```make valgrind-entityResolutionPairs```
+    * Για την υλοποίηση κλικών:  μέσα στον φάκελο ```programs/EntityResolution``` με την εντολή ```make valgrind-entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv```
 
 * __Τρόπος μεταγλώττισης και εκτέλεσης των test:__  
 Στον αρχικό φάκελο με την εντολή ```make run-tests```
