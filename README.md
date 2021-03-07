@@ -2,6 +2,8 @@
 ![](https://img.shields.io/badge/Language-%20C-blue)  
 [![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)](http://commonmark.org)
 [![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
+[![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/)
+
 
 ---
 
@@ -83,8 +85,8 @@ www.ebay.com//3, buy.net//10, 0
 
 -  __Generic list__: To create the clicks, a table of double-linked lists was implemented, where each node of the list was pointed to a camera, which belonged to the clique of the specific position of the table.
 - __Hashtable-RBT__ :In cases where data had to be searched, a Hashtable was used where each position led to a Red Black Tree. The nodes of each tree indicated the information they were looking for. This structure was used in the case of vocabulary, where with each new word entry it had to be checked if that word already existed, and in the case of specs, where again it had to be checked if one already existed.
-- 
-
+- __Bitarray__: Bitarray was used to store the relationships between clicks but also between specs. Each click has a table of bits, the size of the number of clicks. The click has a negative correlation with the clickers in the positions with value 1. More , in the implementation of the third part of the work we needed to know the pairs that have been created, so that in the retrain process they are not trained themselves. This information is captured via a bitArray in each spec size equal to the number of all specs. Each spec stores in the table the positions corresponding to specs that have either a positive or a negative correlation.
+- __Disjoint set__: The Disjoint set data structure was used to create clicks. It is essentially an array of integers, where each position represents a spec and the value of this position stores the "father" of the spec, ie elements with the same "father" belong and in the same clique. After reading the Dataset W, any positive correlation implies that the two elements belong to the same clique. Then the table is updated.
 
 ## Unit testing
 For the testing of the structures but also of the models that we have created, we used the library ```acutest.h```.\
@@ -234,10 +236,16 @@ cd programs/EntityResolution
 ./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
 ```
 
-## Shell-Bash script
+## Shell script - **Bash** 
+Implemented a shell script that executes the system for multiple variables. We took advantage of this test in order to make a gridsearch. \
+Execution:
+```
+cd ./scripts
+./gridsearch.sh
+```
 
 ## Python notebook
-We created a notebook for making 
+We created a notebook, in order to interpreter system results. 
 
 ## Environment
 - Programing language: __C__
