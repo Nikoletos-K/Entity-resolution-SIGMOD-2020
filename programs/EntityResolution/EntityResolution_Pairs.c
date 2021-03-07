@@ -327,7 +327,7 @@ int main(int argc,char ** argv){
 
 		}else{
 			numThreads = 20;
-			batch_size=512;
+			batch_size=2056;
 			learning_rate = 0.001;
 			threshold = 0.001;
 			epochs = 50;

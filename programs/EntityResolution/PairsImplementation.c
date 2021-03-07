@@ -561,16 +561,17 @@ Xy_Split * resolve_transitivity_issues(Xy_Split * Xy_train,Clique*** cliqueIndex
 					Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,0);
 					retrained_pair->concatedVector = NULL;
 					pairs_added_negative++;
-				}else{
-					Clique * clique1 =  (*cliqueIndex)[camera1->myClique];
-					Clique * clique2 =  (*cliqueIndex)[camera2->myClique];
-					clique1->set =  mergeLists(clique1->set, clique2->set);
-					camera2->myClique = camera1->myClique;
-
-					Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,1);
-					retrained_pair->concatedVector = NULL;	
-					pairs_added_positive++;	
 				}
+				// else{
+				// 	Clique * clique1 =  (*cliqueIndex)[camera1->myClique];
+				// 	Clique * clique2 =  (*cliqueIndex)[camera2->myClique];
+				// 	clique1->set =  mergeLists(clique1->set, clique2->set);
+				// 	camera2->myClique = camera1->myClique;
+
+				// 	Xy_train = insert_toXy_Train(Xy_train,retrained_pair->concatedVector,1);
+				// 	retrained_pair->concatedVector = NULL;	
+				// 	pairs_added_positive++;	
+				// }
 
 				if(camera1->bitArray!=NULL && camera2->bitArray!=NULL){
 					setBit(camera1->bitArray,camera2->arrayPosition);
