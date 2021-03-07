@@ -1,9 +1,8 @@
 ![run-tests](../../workflows/run-tests/badge.svg)
 ![](https://img.shields.io/badge/Language-%20C-blue)  
-[![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)](http://commonmark.org)
-[![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
-[![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/)
-
+![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)
+![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)
+![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)
 
 ---
 
@@ -248,6 +247,10 @@ We created a notebook, in order to interpreter system results.
 - gcc version: 9.3.0
 - The experiments were conducted using virtual machines utilizing 4 cores of an Intel Core i7 - 8565U CPU and 8GB of main memory
 
+
+---
+
+© Myrto Igglezou && Konstantinos Nikoletos 
 
 
      
