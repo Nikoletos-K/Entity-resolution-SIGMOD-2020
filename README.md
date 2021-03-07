@@ -25,6 +25,7 @@ At the end of the iterations, a final estimate of the model is made through the
 validation set. 
 
 
+
 ## System task
 
 Our goal was to find all pairs of product specs in dataset X that match, that is, refer to the same real-world product. Our output is stored in a CSV file containing only the matching spec pairs found by your system. 
@@ -35,6 +36,8 @@ left_spec_id, right_spec_id
 www.ebay.com//10, www.ebay.com//20
 www.ebay.com//10, buy.net//100
 ```
+
+
 
 ## Initial data
 
@@ -114,7 +117,7 @@ In this implementation every calculation of some derivatives and the gradient in
 #### Stochastic GD
 This algorithm was implemented as part of the second implementation and in short, the model accepts the vector data and for each of them finds the loss and the gradient and updates the stored weights. For this algorithm we observe the following:
 
--It takes more seasons than the other to converge, but the convergence effort is not smooth due to the constant change of weights.
+- It needs more epochs than the other to converge, but the convergence effort is not smooth due to the constant change of weights.
 - Significant reduction of the model training time. 
 
 
@@ -128,10 +131,11 @@ The retraining of the model is achieved through a loop that lasts either certain
 At first, the model is trained through the Mini batch GD algorithm of logistic regression using multi-threading. Then, again using multi-threading, all the pairs that had not been determined positive or negative correlation are traversed and given to the model. If a strong positive or negative probability arises, the new pair is stored in a table. This table is then sorted by quick sort from highest probability to lowest. Through the resolve-transitivity-issues function some pairs are integrated into the training set
 
 
-### Model performance
+## Model performance
 
 Metrics: __Accuracy,Precision,Recall,F1-Score__
 
+#### Best results for medium labelled dataset ***without re-train***
 
 | Learning rate | Threshold euclid | Epochs | Batch size | Threads | Test Accuracy | Test Recall | Test Precision | Test F1 | Validation Accuracy | Valid Recall  | Valid Precision | Valid F1 | Time CPU | Time Real |
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----  | ---- | ---- | ---- | ---- |
@@ -140,6 +144,50 @@ Metrics: __Accuracy,Precision,Recall,F1-Score__
 | 0.001 | 0.00100 | 50 | 2056 | 10 | 92.69 | 8.50  | 70.93 | 15.17 | 92.74 | 8.36  | 75.00 | 15.04 | 1.39 | 1.53 |
 | 0.100 | 0.10000 | 50 | 2056 | 10 | 92.45 | 16.02 | 53.00 | 24.60 | 92.68 | 17.41 | 58.14 | 26.80 | 1.40 | 1.50 |
 | 0.100 | 0.00100 | 50 | 2056 | 10 | 92.45 | 16.02 | 53.00 | 24.60 | 92.68 | 17.41 | 58.14 | 26.80 | 1.35 | 1.44 |
+
+#### Best results for large labelled dataset ***without re-train***
+
+| Learning rate | Threshold euclid | Epochs | Batch size | Threads | Test Accuracy | Test Recall | Test Precision | Test F1 | Validation Accuracy | Valid Recall  | Valid Precision | Valid F1 | Time CPU | Time Real |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----  | ---- | ---- | ---- | ---- |
+| 0.001| 0.00001 | 50 | 512 | 20 | 88.52 | 12.06 | 75.64 | 20.81 | 88.61 | 12.60 | 77.26 | 21.66 | 9.85  | 10.48 |
+| 0.001| 0.00010 | 50 | 512 | 20 | 88.52 | 12.06 | 75.64 | 20.81 | 88.61 | 12.60 | 77.26 | 21.66 | 9.86  | 13.65 |
+| 0.001| 0.00100 | 50 | 512 | 20 | 88.52 | 12.06 | 75.64 | 20.81 | 88.61 | 12.60 | 77.26 | 21.66 | 9.86  | 10.50 |
+| 0.001| 0.10000 | 50 | 512 | 20 | 88.49 | 11.50 | 76.44 | 19.99 | 88.56 | 11.97 | 77.68 | 20.74 | 9.24  | 9.85  |
+| 0.010| 0.00001 | 50 | 512 | 10 | 88.42 | 9.79  | 80.02 | 17.45 | 88.44 | 9.99  | 80.34 | 17.77 | 10.00 | 10.62 |
+
+
+#### Best results for large labelled dataset ***with re-train***
+
+| Learning rate | Threshold euclid | Epochs | Batch size | Threads | Test Accuracy | Test Recall | Test Precision | Test F1 | Validation Accuracy | Valid Recall  | Valid Precision | Valid F1 | Time CPU | Time Real |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----  | ---- | ---- | ---- | ---- |
+| 0.00100| 0.0001   | 0.020000 | 50 | 2056 | 20 | 92.80 | 14.62 | 64.02 | 23.81 | 5.61  | 10.20 |
+| 0.001000| 0.000100 | 0.020000 | 50 | 1024 | 20 | 92.37 | 3.34  | 57.14 | 6.32  | 13.45 | 18.61 |
+| 0.001000| 0.000100 | 0.010000 | 50 | 1024 | 20 | 92.37 | 3.34  | 57.14 | 6.32  | 13.57 | 18.81 |
+| 0.10000| 0.000    | 0.020    | 5  | 1024 | 20 | 92.31 | 0.00  | 0.00  | 0.00  | 1.85  | 5.33  |
+
+
+
+
+#### Scores per retrain epoch
+
+![](./images/performance.png?raw=true "Plots")
+
+
+
+
+## Performance remarks for medium dataset
+
+### Remarks based on the diagrams
+- The red curve (Accuracy) that mainly remains stationary, which means that the retrain ultimately does not significantly increase accuracy. (eg Plot 3)
+- In other cases, however, due to incorrect predictions that changed the shape of the cliques, the red curve (Accuracy) shows large falls and rises, resulting in the model becoming worse than it was in the beginning. (eg Plot 11,8)
+- The Recall curve (blue) has the opposite convergence than the Accuracy curve (red), something to be expected as when the model better predicts the same pairs, it loses accuracy from the different objects (eg PLot 3,5,6)
+- The Recall, Precision, F1 curves remain lower than the red one as there is a weakness in predicting the same pairs.
+
+### Comments based on the scoreboards:
+- Only in one case the model predicts all zeros and some aces (92.80% accuracy)
+- The batch with size 2056 again offers the best results as well as without retrain. 
+
+
 
 
 ## __Compile & Execution__
@@ -173,14 +221,6 @@ cd programs/EntityResolution
 __Myrto Igglezou__ \
 __Konstantinos Nikoletos__   
 
-### Δομές που χρησιμοποιήθηκαν:
-
-* Έχει υλοποιηθεί ένα hashtable που κάθε θέση του πίνακα έχει έναν δείκτη σε red black tree. Με το διάβασμα του dataset Χ κάθε πληροφορία ενός spec, αποθηκεύεται 
-σε ένα struct και μέσω του hashtable κάθε κόμβος του RBT δείχνει σε ένα τέτοιο struct. Στόχος αυτής της υλοποίησης είναι η ταχύτερη αναζήτηση του spec όταν χρειάζεται.
-* Για την διαμόρφωση των κλικών χρησιμοποιήθηκε disjoint set. Κάθε spec αντιστοιχίζεται σε μια θέση του πίνακα του set. Συγκεκριμένα, υλοποιήθηκε ένα struct που αποτελείται απο 3 πίνακες, έναν που κρατά τον "πατέρα" κόμβο κάθε spec, έναν που κράτα το rank και έναν που αντιστοιχίζει κάθε θέση του πίνακα με το struct του.
-* Μόλις διαμορφωθούν τα set δημιουργείται μια λίστα στον κάθε πάτερα, στην οποία προστίθονται τα spec που ταιριάζουν με αυτόν, και κατ' επέκταση και όλοι αυτοί οι κόμβοι μεταξύ τους.
-* Σε κάθε κλίκα υπάρχει ένας bit-Array που χρησιμέυει στην γρήγορη δημιουργία των αρνητικών συσχετίσεων. Ο πίνακας έχει μέγεθος ίσο με το πλήθος των κλικών και κάθε θέση παίνρει την τιμή 1 αν σχετίζεται αρνητικά με την κλίκα που ανήκει ο κάθε πίνακας.
-* Για την διαχείρηση των threads δημιουργήθηκε η δομή της ουράς.
 
 ### Άλλες σχεδιαστικές επιλογές:
 
