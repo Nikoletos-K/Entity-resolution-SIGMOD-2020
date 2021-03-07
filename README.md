@@ -41,11 +41,25 @@ www.ebay.com//10, www.ebay.com//20
 www.ebay.com//10, buy.net//100
 ```
 
-<details>
-<summary style="font-size: 12px;">Initial data</summary>
-<br>
-<br><br>
-</details>
+## __Compile & Execution__
+In the initial directory type
+- ```make```: Simple compile
+- ```make run-programs```: Compiles and executes the main program
+- ```make run-tests```:  Compiles and executes all the tests
+- ```make valgring-programs```:  Compiles and executes the main program with valgrind
+- ```make valgring-tests```:  Compiles and executes all the tests with valgrind
+
+### Alternatively 
+For Dataset-W ```sigmod_large_labelled_dataset.csv``` in the initial directory
+```
+cd programs/EntityResolution
+./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
+```
+or for Dataset-Y ```sigmod_medium_labelled_dataset.csv``` in the initial directory
+```
+cd programs/EntityResolution
+./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
+```
 
 ## Input data
 
@@ -215,26 +229,7 @@ In the various stages of the work it was observed that the following design opti
 - __Sparse Matrix__: For optimal storage of vectors only the non-negative positions of the vector are stored. In this way the reading, but also their storage becomes faster.
 
 - __Red Black Tree__: In cases where it was necessary to search for data, a red black tree was used, since for the search, in the worst case it has complexity O (logn), while on the contrary other structures have O (n).
-
-## __Compile & Execution__
-In the initial directory type
-- ```make```: Simple compile
-- ```make run-programs```: Compiles and executes the main program
-- ```make run-tests```:  Compiles and executes all the tests
-- ```make valgring-programs```:  Compiles and executes the main program with valgrind
-- ```make valgring-tests```:  Compiles and executes all the tests with valgrind
-
-### Alternatively 
-For Dataset-W ```sigmod_large_labelled_dataset.csv``` in the initial directory
-```
-cd programs/EntityResolution
-./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
-```
-or for Dataset-Y ```sigmod_medium_labelled_dataset.csv``` in the initial directory
-```
-cd programs/EntityResolution
-./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
-```
+ 
 
 ## Shell script - **Bash** 
 Implemented a shell script that executes the system for multiple variables. We took advantage of this test in order to make a gridsearch. \
@@ -253,31 +248,8 @@ We created a notebook, in order to interpreter system results.
 - gcc version: 9.3.0
 - The experiments were conducted using virtual machines utilizing 4 cores of an Intel Core i7 - 8565U CPU and 8GB of main memory
 
-## Team members
-
-__Myrto Igglezou__ \
-__Konstantinos Nikoletos__   
 
 
-### Άλλες σχεδιαστικές επιλογές:
-
-*  Δημιουργήθηκε συνάρτηση grid-search, η οποία έκανε train και test για διαφορετικές τιμές learning rate, num of epochs και threshold, με σκοπό να βρεθεί ο συνδυασμός με το καλύτερο accuracy. Τα αρχεία με τα αποτελέσματα της συνάρτησης είναι στα αρχεία " " και " " για τα αρχεία medium και large αντίστοιχα.
-*  Το vectorization των δεδομένων έγινε με τα εξής βήματα:
-    1. Πρώτα,  υπολογίστηκε το μέσο tf-idf για κάθε λέξη.
-    2. Έπειτα, επιλέχθηκαν οι 1000 λέξεις με το υψηλότερο μέσο tf-idf.
-    3. Μετά, για αυτές τις λέξεις υπολογίστηκε το BoW για κάθε spec με βάση αυτές. Στην συνέχεια, με μικρές προσαρμογές, έγινε το tf-idf vectorization. 
-    4. Τέλος, δημιουργείται ένας πίνακας που αποθηκέυει τις μη αρνητικές τιμές του διανύσματος.
-*  Για τον πειραματισμό εκτέλεσης του προγράμματος με διαφορετικές παραμέτρους, δημιουργήθηκε ένα script σε unix, που τρέχει το πρόγραμμα με διαφορετικές τιμές στα πεδία:
-     1. Learning rate
-     2. Threshold
-     3. Αριθμός εποχών
-     4. Αριθμός Thread
-     5. Μέγεθος των batches
-*  Για την εκτίμηση του μοντέλου χρησιμοποιήθηκαν οι μετρικές accuracy, f1 , recall και precision.
-*  Στο διάβασμα όλων των ζευγαριών, στο τμήμα του retrain, το διάβασμά τους γίνεται ανά 50, ωστέ να αποφευχθεί η υπερβολική χρήση μνήμης.
-*  Έχει δημιουργηθεί ένα αρχείο Jupyter notebook, που διαβάζει τα αποτελέσματα των πειραματισμών και δημιουργεί τα γραφήματα. Για να εκτελεστεί το script χρειάζεται η εξής διαδικασία:
-   1. $ cd  ./scripts
-   2. $ ./gridsearch.sh
      
      
 
