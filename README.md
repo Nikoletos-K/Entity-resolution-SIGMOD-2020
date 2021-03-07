@@ -76,6 +76,72 @@ www.ebay.com//3, buy.net//10, 0
 - 
 
 
+## Unit testing
+For the testing of the structures but also of the models that we have created, we used the library ```acutest.h```.\
+
+
+More information about the [acutest library](https://github.com/mity/acutest)
+
+## Multi-threading implementation
+
+For the faster execution of the program, it has been paralleled in two points of the program. But before the operation is mentioned in these points, it will
+become a concise explanation of the implementation of multithreading. The function is in the folder ```/modules/JobScheduler``` and consists of:
+- A scheduler, which actually accepts jobs and assigns them to threads, uses a priority queue to temporarily store the jobs. We have a thread pool and a continuous flow of independent jobs. When a task is created, it enters the scheduler's priority queue and waits to be executed. The work is performed in the order they were created (first-in-first-out - FIFO). Each thread waits in line until it is assigned a task and, after performing it, returns to the queue to undertake a new task. For the proper operation of a timer, it is necessary to use semaphores in the queue, in order to block the threads there, and the critical section, so that tasks can be properly imported and exported from the queue.
+
+- The implementation of the scheduler has been done with the Queue structure
+
+We have created two timers, one that parallels the calculation of gradients in batches (the function will be explained in the next chapter
+she) and one that creates parallel pairs to become the retrain.
+
+We have created two timers, one that parallels the calculation of gradients in batches (this function will be explained in the next chapter) and one that creates parallel pairs to retrain.
+
+Benefits of this option:
+1. The number of threads is not abused (as they are reused) and we take advantage of all the acceleration they can offer.
+2. Independent tasks such as those mentioned above are parallelized resulting in acceleration. 
+
+## Machine learning model - Logistic Regression
+
+### Gradient descent algorithms - GD
+We tried three versions of this model:
+
+#### Full-Batch GD
+In this implementation every calculation of some derivatives and the gradient in general required access to the entire Dataset, which we observed that:
+
+- Improved and accelerated the convergence process in seasons (ie fewer seasons for convergence), presenting smoother transitions, however it proved to be a bad tactic due to the very high volume of repetitions in each season.
+
+- Brought a huge increase in the training time of the model. The implementation of Full-Batch Gradient Descent was our first attempt, which we rejected as it was not requested, but also because, based on our experiments, it took too long to execute. 
+
+#### Stochastic GD
+This algorithm was implemented as part of the second implementation and in short, the model accepts the vector data and for each of them finds the loss and the gradient and updates the stored weights. For this algorithm we observe the following:
+
+-It takes more seasons than the other to converge, but the convergence effort is not smooth due to the constant change of weights.
+- Significant reduction of the model training time. 
+
+
+#### Mini-Batch GD
+Mini-Batch GD is our final algorithm, which has been implemented and exists in the final implementation of our system. In short, this algorithm is a hybrid of the previous two as it updates the algorithm weights for each data set. The 516, 10264 and 2056 elements are selected as the beam size, based on which our experiments were performed. This algorithm offers us the best results and for which we make the following observations:
+- Shows a smoother convergence behavior than the stochastic algorithm.
+- Execution time is not long.
+
+### Re-trainning to strong probabilities
+The retraining of the model is achieved through a loop that lasts either certain repetitions or stops for specific values of a threshold. \
+At first, the model is trained through the Mini batch GD algorithm of logistic regression using multi-threading. Then, again using multi-threading, all the pairs that had not been determined positive or negative correlation are traversed and given to the model. If a strong positive or negative probability arises, the new pair is stored in a table. This table is then sorted by quick sort from highest probability to lowest. Through the resolve-transitivity-issues function some pairs are integrated into the training set
+
+
+### Model performance
+
+Metrics: __Accuracy,Precision,Recall,F1-Score__
+
+
+| Learning rate | Threshold euclid | Epochs | Batch size | Threads | Test Accuracy | Test Recall | Test Precision | Test F1 | Validation Accuracy | Valid Recall  | Valid Precision | Valid F1 | Time CPU | Time Real |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----  | ---- | ---- | ---- | ---- |
+| 0.001 | 0.00010 | 50 | 2056 | 10 | 92.69 | 8.50  | 70.93 | 15.17 | 92.74 | 8.36  | 75.00 | 15.04 | 1.41 | 1.52 |
+| 0.001 | 0.00001 | 50 | 2056 | 10 | 92.69 | 8.50  | 70.93 | 15.17 | 92.74 | 8.36  | 75.00 | 15.04 | 1.41 | 1.54 |
+| 0.001 | 0.00100 | 50 | 2056 | 10 | 92.69 | 8.50  | 70.93 | 15.17 | 92.74 | 8.36  | 75.00 | 15.04 | 1.39 | 1.53 |
+| 0.100 | 0.10000 | 50 | 2056 | 10 | 92.45 | 16.02 | 53.00 | 24.60 | 92.68 | 17.41 | 58.14 | 26.80 | 1.40 | 1.50 |
+| 0.100 | 0.00100 | 50 | 2056 | 10 | 92.45 | 16.02 | 53.00 | 24.60 | 92.68 | 17.41 | 58.14 | 26.80 | 1.35 | 1.44 |
+
+
 ## __Compile & Execution__
 In the initial directory type
 - ```make```: Simple compile
