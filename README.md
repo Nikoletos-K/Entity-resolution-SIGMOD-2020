@@ -42,12 +42,12 @@ www.ebay.com//10, buy.net//100
 ```
 
 <details>
-<summary style="fontsize: 12px;">Initial data</summary>
+<summary style="font-size: 12px;">Initial data</summary>
 <br>
 <br><br>
 </details>
 
-## Initial data
+## Input data
 
 We are provided with a dataset including ~30k specs in JSON format, each spec containing a list of (attribute_name, attribute_value) pairs extracted from a different web page, collected across 24 different web sources. We will refer to this dataset as dataset X.
 
