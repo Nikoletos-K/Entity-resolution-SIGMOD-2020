@@ -1,5 +1,7 @@
 ![run-tests](../../workflows/run-tests/badge.svg)
 ![](https://img.shields.io/badge/Language-%20C-blue)  
+[![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)](http://commonmark.org)
+[![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
 
 ---
 
@@ -37,7 +39,11 @@ www.ebay.com//10, www.ebay.com//20
 www.ebay.com//10, buy.net//100
 ```
 
-
+<details>
+<summary style="fontsize: 12px;">Initial data</summary>
+<br>
+<br><br>
+</details>
 
 ## Initial data
 
@@ -72,6 +78,7 @@ left_spec_id, right_spec_id, label
 www.ebay.com//1, www.ebay.com//2, 1
 www.ebay.com//3, buy.net//10, 0
 ```
+
 ## Data structures and algorithms used
 
 -  __Generic list__: To create the clicks, a table of double-linked lists was implemented, where each node of the list was pointed to a camera, which belonged to the clique of the specific position of the table.
@@ -188,7 +195,24 @@ Metrics: __Accuracy,Precision,Recall,F1-Score__
 - The batch with size 2056 again offers the best results as well as without retrain. 
 
 
+## Alternative implementation
+In the second part of the implementation of the system we were called to implement the categorization tactic in an alternative way. More specifically:
 
+- Each clique is trained separately with its own objects and therefore a categorization model is created for each clique.
+- Then a set of objects from all cliques is formed and each object is tested in each clique. The clique that will give the highest probability will be the one that the object belongs to. This implementation was rejected due to its very low performance, but and why in the end it was not in demand. 
+
+## Implementation techniques for increasing systems performance
+In the various stages of the work it was observed that the following design options improved the execution time of the program, without straining the memory:
+
+- __Bit-array__: In order to avoid the storage of unnecessary information but also the continuous access of memory, the bit Array was used where possible, eg storage of positive and negative correlations.
+
+- __Disjoint set__: A disjoint set was used to form the clicks, as opposed to the use of lists and indicators. The space reserved was smaller and the calculations were significantly faster.
+
+- __Dictionary__: In order to avoid multiple json accesses, all the necessary information is collected and all possible calculations are done on the first reading of the files.
+
+- __Sparse Matrix__: For optimal storage of vectors only the non-negative positions of the vector are stored. In this way the reading, but also their storage becomes faster.
+
+- __Red Black Tree__: In cases where it was necessary to search for data, a red black tree was used, since for the search, in the worst case it has complexity O (logn), while on the contrary other structures have O (n).
 
 ## __Compile & Execution__
 In the initial directory type
@@ -209,6 +233,11 @@ or for Dataset-Y ```sigmod_medium_labelled_dataset.csv``` in the initial directo
 cd programs/EntityResolution
 ./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
 ```
+
+## Shell-Bash script
+
+## Python notebook
+We created a notebook for making 
 
 ## Environment
 - Programing language: __C__
