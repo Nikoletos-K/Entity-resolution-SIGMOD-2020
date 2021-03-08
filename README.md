@@ -1,8 +1,8 @@
-![run-tests](../../workflows/run-tests/badge.svg)
+![run-tests](../../workflows/run-tests/badge.svg) \
 ![](https://img.shields.io/badge/Language-%20C-blue)  
-![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)
-![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)
-![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)
+![](https://img.shields.io/badge/Made%20with-Markdown-1f425f)
+![](https://img.shields.io/pypi/l/ansicolortags)
+![](https://img.shields.io/badge/Made%20with-Bash-1f425f)
 
 ---
 
