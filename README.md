@@ -243,9 +243,9 @@ We created a notebook, in order to interpreter system results.
 
 ## Environment
 - Programing language: __C__
-- Operating system: Ubuntu Linux 20.04
-- gcc version: 9.3.0
-- The experiments were conducted using virtual machines utilizing 4 cores of an Intel Core i7 - 8565U CPU and 8GB of main memory
+- Operating system: __Ubuntu Linux 20.04__
+- gcc version: __9.3.0__
+- The experiments were conducted using virtual machines utilizing 4 cores of an __Intel Core i7 - 8565U CPU__ and 8GB of main memory
 
 
 ---
