@@ -250,7 +250,7 @@ We created a notebook, in order to interpreter system results.
 
 ---
 
-© Myrto Igglezou && Konstantinos Nikoletos 
+© Myrto Iglezou && Konstantinos Nikoletos 
 
 
      
