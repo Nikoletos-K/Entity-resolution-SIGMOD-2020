@@ -159,7 +159,7 @@ Metrics: __Accuracy,Precision,Recall,F1-Score__
 
 #### Best results for medium labelled dataset ***without re-train***
 
-| Learning rate | Threshold euclid | Epochs | Batch size | Threads | Test Accuracy | Test Recall | Test Precision | Test F1 | Validation Accuracy | Valid Recall  | Valid Precision | Valid F1 | Time CPU | Time Real |
+| Learning rate | Threshold euclid | Epochs | Batch size | Threads | Test Accuracy | Test Recall | Test Precision | Test F1 | Validation Accuracy | Validation Recall  | Validation Precision | Validation F1 | Time CPU | Time Real |
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----  | ---- | ---- | ---- | ---- |
 | 0.001 | 0.00010 | 50 | 2056 | 10 | 92.69 | 8.50  | 70.93 | 15.17 | 92.74 | 8.36  | 75.00 | 15.04 | 1.41 | 1.52 |
 | 0.001 | 0.00001 | 50 | 2056 | 10 | 92.69 | 8.50  | 70.93 | 15.17 | 92.74 | 8.36  | 75.00 | 15.04 | 1.41 | 1.54 |
@@ -169,7 +169,7 @@ Metrics: __Accuracy,Precision,Recall,F1-Score__
 
 #### Best results for large labelled dataset ***without re-train***
 
-| Learning rate | Threshold euclid | Epochs | Batch size | Threads | Test Accuracy | Test Recall | Test Precision | Test F1 | Validation Accuracy | Valid Recall  | Valid Precision | Valid F1 | Time CPU | Time Real |
+| Learning rate | Threshold euclid | Epochs | Batch size | Threads | Test Accuracy | Test Recall | Test Precision | Test F1 | Validation Accuracy | Validation Recall  | Validation Precision | Validation F1 | Time CPU | Time Real |
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----  | ---- | ---- | ---- | ---- |
 | 0.001| 0.00001 | 50 | 512 | 20 | 88.52 | 12.06 | 75.64 | 20.81 | 88.61 | 12.60 | 77.26 | 21.66 | 9.85  | 10.48 |
 | 0.001| 0.00010 | 50 | 512 | 20 | 88.52 | 12.06 | 75.64 | 20.81 | 88.61 | 12.60 | 77.26 | 21.66 | 9.86  | 13.65 |
@@ -180,8 +180,8 @@ Metrics: __Accuracy,Precision,Recall,F1-Score__
 
 #### Best results for large labelled dataset ***with re-train***
 
-| Learning rate | Threshold euclid | Epochs | Batch size | Threads | Test Accuracy | Test Recall | Test Precision | Test F1 | Validation Accuracy | Valid Recall  | Valid Precision | Valid F1 | Time CPU | Time Real |
-| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----  | ---- | ---- | ---- | ---- |
+| Learning rate | Threshold euclid | Retrain threshold | Epochs | Batch size | Threads | Validation Accuracy | Validation Recall  | Validation Precision | Validation F1 | Time CPU | Time Real |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----  | ----  |
 | 0.00100| 0.0001   | 0.020000 | 50 | 2056 | 20 | 92.80 | 14.62 | 64.02 | 23.81 | 5.61  | 10.20 |
 | 0.001000| 0.000100 | 0.020000 | 50 | 1024 | 20 | 92.37 | 3.34  | 57.14 | 6.32  | 13.45 | 18.61 |
 | 0.001000| 0.000100 | 0.010000 | 50 | 1024 | 20 | 92.37 | 3.34  | 57.14 | 6.32  | 13.57 | 18.81 |
