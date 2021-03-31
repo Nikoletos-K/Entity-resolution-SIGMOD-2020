@@ -69,7 +69,7 @@ All specs refer to cameras and include information about the camera model (e.g. 
 
 ### Example of product specification in JSON format
 
-```json
+```
 {
   "<page title>": "Samsung Smart WB50F Digital Camera White Price in India with Offers & Full Specifications | PriceDekho.com",
   "brand": "Samsung",
