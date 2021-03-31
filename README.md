@@ -102,7 +102,7 @@ www.ebay.com//3, buy.net//10, 0
 - __Disjoint set__: The Disjoint set data structure was used to create clicks. It is essentially an array of integers, where each position represents a spec and the value of this position stores the "father" of the spec, ie elements with the same "father" belong and in the same clique. After reading the Dataset W, any positive correlation implies that the two elements belong to the same clique. Then the table is updated.
 
 ## Unit testing
-For the testing of the structures but also of the models that we have created, we used the library ```acutest.h```.\
+For the testing of the structures but also of the models that we have created, we used the library ```acutest.h```.
 
 
 More information about the [acutest library](https://github.com/mity/acutest)
