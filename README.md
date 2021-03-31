@@ -31,7 +31,7 @@ validation set.
 
 ## System task
 
-Our goal was to find all pairs of product specs in dataset X that match, that is, refer to the same real-world product. Our output is stored in a CSV file containing only the matching spec pairs found by your system. 
+Our goal was to find all pairs of product specs in dataset X that match, is or refer to the same real-world product. Our output is stored in a CSV file containing only the matching spec pairs found by your system. 
 
 Example of output CSV file
 ```
@@ -52,7 +52,7 @@ In the initial directory type
 For Dataset-W ```sigmod_large_labelled_dataset.csv``` in the initial directory
 ```
 cd programs/EntityResolution
-./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
+./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_large_labelled_dataset.csv
 ```
 or for Dataset-Y ```sigmod_medium_labelled_dataset.csv``` in the initial directory
 ```
