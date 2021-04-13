@@ -52,12 +52,12 @@ In the initial directory type
 For Dataset-W ```sigmod_large_labelled_dataset.csv``` in the initial directory
 ```
 cd programs/EntityResolution
-./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_large_labelled_dataset.csv
+./entityResolutionPairs -jd ./../../data/camera_specs -csv ./../../data/sigmod_large_labelled_dataset.csv
 ```
 or for Dataset-Y ```sigmod_medium_labelled_dataset.csv``` in the initial directory
 ```
 cd programs/EntityResolution
-./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
+./entityResolutionPairs -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
 ```
 
 #### Command line execution with given parameters
