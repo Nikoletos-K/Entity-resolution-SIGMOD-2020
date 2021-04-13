@@ -64,7 +64,16 @@ cd programs/EntityResolution
 For example, cmd for large dataset is:
 
 ```
-./entityResolutionPairs -jd ./../../data/camera_specs -csv ./../../data/sigmod_large_labelled_dataset.csv -lr learning_rate -sv step_value -et euclid_threshold -rt retrain_threshold -ep num_of_epochs -rl retrain_loops -bs batch_size -nt number_of_threads
+./entityResolutionPairs -jd ./../../data/camera_specs 
+                        -csv ./../../data/sigmod_large_labelled_dataset.csv 
+                        -lr learning_rate 
+                        -sv step_value 
+                        -et euclid_threshold 
+                        -rt retrain_threshold 
+                        -ep num_of_epochs 
+                        -rl retrain_loops 
+                        -bs batch_size 
+                        -nt number_of_threads
 
 ```
 Available options:
