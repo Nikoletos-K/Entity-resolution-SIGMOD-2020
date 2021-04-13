@@ -60,6 +60,27 @@ cd programs/EntityResolution
 ./entityResolutionCliques -jd ./../../data/camera_specs -csv ./../../data/sigmod_medium_labelled_dataset.csv
 ```
 
+#### Command line execution with given parameters
+For example, cmd for large dataset is:
+
+```
+./entityResolutionPairs -jd ./../../data/camera_specs -csv ./../../data/sigmod_large_labelled_dataset.csv -lr learning_rate -sv step_value -et euclid_threshold -rt retrain_threshold -ep num_of_epochs -rl retrain_loops -bs batch_size -nt number_of_threads
+
+```
+Available options:
+
+- ```-lr```: Learning rate 
+- ```-sv```: Step value for the retrain phase [0.001, 0.5]
+- ```-et```: Euclid threshold, for the Logistic Regression converge  
+- ```-rt```: Retrain threshold 
+- ```-ep```: Models max number of running epochs 
+- ```-rl```: Max number of loops for the retrain process 
+- ```-bs```: Models batch size 
+- ```-nt```: Number of threads running in the thread pool
+
+
+
+
 ## Input data
 
 We are provided with a dataset including ~30k specs in JSON format, each spec containing a list of (attribute_name, attribute_value) pairs extracted from a different web page, collected across 24 different web sources. We will refer to this dataset as dataset X.
