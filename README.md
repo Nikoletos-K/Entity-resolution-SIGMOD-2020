@@ -74,7 +74,6 @@ For example, cmd for large dataset is:
                         -rl retrain_loops 
                         -bs batch_size 
                         -nt number_of_threads
-
 ```
 Available options:
 
