@@ -11,6 +11,8 @@ Entity Resolution is the problem of identifying and matching different manifesta
 
 For this task we needed to identify which product specifications (in short, specs) from multiple e-commerce websites represent the same real-world product. All specs refer to cameras and include information about the camera model (e.g. Canon EOS 5D Mark II) and, possibly, accessories (e.g. lens kit, bag, tripod). The challenge is to develop an Entity Resolution system for matching the specs with the same camera models with high precision and recall.
 
+This system was made as part of a course in our bachelor degree in winter semester 2020-2021.
+
 Contest website: [ACM SIGMOD Programming Contest 2020](http://www.inf.uniroma3.it/db/sigmod2020contest/task.html)
 
 ## System functionality - Abstract
